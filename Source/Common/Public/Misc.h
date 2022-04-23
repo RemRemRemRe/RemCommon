@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/NetDriver.h"
 
 // 1.Consider ValidatePointer ? no upper case?
 // 2.Why define these macros? @see comment of TIdentity, SFINAE template parameter can not be deduced
@@ -145,5 +146,9 @@ namespace Common
 		typedef typename T::ElementType ElementType;
 		return IsNetMode<ElementType*>(ObjectPtr);
 	}
+
+	COMMON_API FORCEINLINE bool IsClassDefaultObject(const UObject* Object);
+
+	COMMON_API FORCEINLINE FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 	
 }
