@@ -17,7 +17,8 @@ namespace Common::PropertyHelper
 
 			int32 ArrayRootId = ++InId;
 			
-			if constexpr (TIsSame<PropertyType, FArrayProperty>::Value)
+			if constexpr (TOr<	TIsSame<PropertyType, FArrayProperty>,
+								TIsSame<PropertyType, FProperty>>::Value)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, ArrayRootId, InParentId);
@@ -37,7 +38,8 @@ namespace Common::PropertyHelper
 
 			int32 MapRootId = ++InId;
 
-			if constexpr (TIsSame<PropertyType, FMapProperty>::Value)
+			if constexpr (TOr<	TIsSame<PropertyType, FMapProperty>,
+								TIsSame<PropertyType, FProperty>>::Value)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, MapRootId, InParentId);
@@ -50,15 +52,20 @@ namespace Common::PropertyHelper
 				if (Helper.IsValidIndex(DynamicIndex))
 				{
 					int32 MapEntryId = ++InId;
-					FString KeyString = FString::Printf(TEXT("[%d]"), MapIndex++);
-					FString TypeString = FString::Printf(TEXT("{%s, %s}"), *MapProperty->KeyProp->GetCPPType(), *MapProperty->ValueProp->GetCPPType());
-					InFunction(InProperty, InContainer, 0, TypeString, KeyString, TEXT("{...}"), MapEntryId, MapRootId);
+					
+					if constexpr (TOr<	TIsSame<PropertyType, FMapProperty>,
+										TIsSame<PropertyType, FProperty>>::Value)
+					{
+						FString KeyString = FString::Printf(TEXT("[%d]"), MapIndex++);
+						FString TypeString = FString::Printf(TEXT("{%s, %s}"), *MapProperty->KeyProp->GetCPPType(), *MapProperty->ValueProp->GetCPPType());
+						InFunction(InProperty, InContainer, 0, TypeString, KeyString, TEXT("{...}"), MapEntryId, MapRootId);
+					}
 
-					const void* KeyPtr = Helper.GetKeyPtr(DynamicIndex);
-					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->KeyProp, KeyPtr, MapProperty->KeyProp->GetName(), InFunction, InId, MapEntryId);
-
-					const void* ValuePtr = Helper.GetValuePtr(DynamicIndex);
-					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->ValueProp, ValuePtr, MapProperty->ValueProp->GetName(), InFunction, InId, MapEntryId);
+					const void* PairPtr = Helper.GetPairPtr(DynamicIndex);
+					
+					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->KeyProp, PairPtr, MapProperty->KeyProp->GetName(), InFunction, InId, MapEntryId);
+					
+					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->ValueProp, PairPtr, MapProperty->ValueProp->GetName(), InFunction, InId, MapEntryId);
 
 					--Num;
 				}
@@ -70,7 +77,8 @@ namespace Common::PropertyHelper
 
 			int32 SetRootId = ++InId;
 
-			if constexpr (TIsSame<PropertyType, FSetProperty>::Value)
+			if constexpr (TOr<	TIsSame<PropertyType, FSetProperty>,
+								TIsSame<PropertyType, FProperty>>::Value)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, SetRootId, InParentId);
@@ -95,7 +103,8 @@ namespace Common::PropertyHelper
 		{
 			int32 StructRootId = ++InId;
 
-			if constexpr (TIsSame<PropertyType, FStructProperty>::Value)
+			if constexpr (TOr<	TIsSame<PropertyType, FStructProperty>,
+								TIsSame<PropertyType, FProperty>>::Value)
 			{
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, TEXT("{...}"), StructRootId, InParentId);
 			}
@@ -143,7 +152,7 @@ namespace Common::PropertyHelper
 		}
 	}
 
-	template<typename T /* = FObjectPropertyBase */>
+	template<typename T = FObjectPropertyBase>
 	FORCEINLINE bool IsPropertyClassChildOf(const FProperty* PropertyToCheck, const UStruct* SomeBase)
 	{
 		const T* ObjectProperty = CastField<T>(PropertyToCheck);
