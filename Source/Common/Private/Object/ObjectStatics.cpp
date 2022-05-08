@@ -13,7 +13,7 @@ namespace Common::ObjectStatics
 {
 	
 void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
-	const TFunctionRef<void(UObject*)> Predicate)
+	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate)
 {
 	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(ArrayProperty->Inner);
 	CheckPointer(ObjectProperty, return;);
@@ -22,11 +22,9 @@ void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* In
 	
 	for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
 	{
-		UObject* Object = Cast<UObject>(
-			ObjectProperty->GetObjectPropertyValue(Helper.GetRawPtr(DynamicIndex)));
-		CheckPointer(Object, continue;);
+		uint8* PropertyValueAddress = Helper.GetRawPtr(DynamicIndex);
 
-		Predicate(Object);
+		Predicate(PropertyValueAddress, DynamicIndex);
 	}
 }
 

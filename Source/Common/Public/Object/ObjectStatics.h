@@ -21,7 +21,8 @@ class COMMON_API UObjectStatics : public UBlueprintFunctionLibrary
 
 namespace Common::ObjectStatics
 {
-	COMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer, TFunctionRef<void(UObject*)> Predicate);
+	COMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
+		TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate);
 
 	COMMON_API bool IsImplementedInBlueprint(const UFunction* Function);
 }

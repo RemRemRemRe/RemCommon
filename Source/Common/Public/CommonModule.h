@@ -18,7 +18,7 @@ public:
 	 */
 	static FORCEINLINE ICommonModule& Get()
 	{
-		return FModuleManager::LoadModuleChecked< ICommonModule >( "CommonModule" );
+		return FModuleManager::LoadModuleChecked< ICommonModule >( "Common" );
 	}
 
 	/**
@@ -28,7 +28,7 @@ public:
 	 */
 	static FORCEINLINE bool IsAvailable()
 	{
-		return FModuleManager::Get().IsModuleLoaded( "CommonModule" );
+		return FModuleManager::Get().IsModuleLoaded( "Common" );
 	}
 	
 };
