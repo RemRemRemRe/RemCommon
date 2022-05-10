@@ -9,6 +9,21 @@ UObject* UObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass*
 	return SoftObjectPtr.Get();
 }
 
+bool UObjectStatics::IsBlueprintObject(const UObject* Object)
+{
+	CheckPointer(Object, false);
+	
+	return Object->GetClass()->HasAnyClassFlags(CLASS_CompiledFromBlueprint)
+		|| !Object->GetClass()->HasAnyClassFlags(CLASS_Native);
+}
+
+bool UObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
+{
+	CheckPointer(Object, false);
+	
+	return !Object->HasAnyFlags(RF_BeginDestroyed) && !Object->IsUnreachable();
+}
+
 namespace Common::ObjectStatics
 {
 	
