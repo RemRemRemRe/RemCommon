@@ -11,7 +11,7 @@ public:
 	/**
 	 * @return minimal number of bits needed to represent a given integer
 	 */
-	COMMON_API FORCEINLINE UE_CONSTEVAL static uint8 GetBitsNeeded(uint64 Integer)
+	COMMON_API FORCEINLINE constexpr static uint8 GetBitsNeeded(uint64 Integer)
 	{
 		uint8 Bits = 0;
 		for (uint8 BitsStep = 32; BitsStep > 0; BitsStep >>= 1)

@@ -2,9 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/NetDriver.h"
-
 // 1.Consider ValidatePointer ? no upper case?
 // 2.Why define these macros? @see comment of TIdentity, SFINAE template parameter can not be deduced
 
@@ -14,7 +11,6 @@
 
 namespace Common
 {
-
 	// Validator for NONE UObject pointers
 	template<typename T>
 	bool IsValidPtr(
@@ -44,6 +40,13 @@ namespace Common
 		>::Type Object)
 	{
 		return IsValid(Object);
+	}
+
+	// Handle nullptr case, parameter name is emitted
+	template<typename T>
+	bool IsValidPtr(std::nullptr_t)
+	{
+		return false;
 	}
 
 	// GetNetMode for UObjects
@@ -106,7 +109,7 @@ namespace Common
 				TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UObject>
 			>::Value,
 			const T
-		>::Type Object, ENetMode NetMode)
+		>::Type Object, const ENetMode NetMode)
 	{
 		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, AActor>::Value)
 		{
@@ -141,10 +144,10 @@ namespace Common
 		typename TEnableIf<
 			TIsTObjectPtr<T>::Value,
 			const T
-		>::Type ObjectPtr)
+		>::Type ObjectPtr, const ENetMode NetMode)
 	{
 		typedef typename T::ElementType ElementType;
-		return IsNetMode<ElementType*>(ObjectPtr);
+		return IsNetMode<ElementType*>(ObjectPtr, NetMode);
 	}
 
 	COMMON_API FORCEINLINE bool IsClassDefaultObject(const UObject* Object);
