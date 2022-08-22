@@ -153,7 +153,7 @@ namespace Common::PropertyHelper
 	}
 
 	template<typename T = FObjectPropertyBase>
-	FORCEINLINE bool IsPropertyClassChildOf(const FProperty* PropertyToCheck, const UStruct* SomeBase)
+	bool IsPropertyClassChildOf(const FProperty* PropertyToCheck, const UStruct* SomeBase)
 	{
 		const T* ObjectProperty = CastField<T>(PropertyToCheck);
 			

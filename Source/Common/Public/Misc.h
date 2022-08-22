@@ -65,7 +65,7 @@ namespace Common
 			const AActor* Actor = Cast<AActor>(Object);
 			return Actor->GetNetMode();
 		}
-		
+
 		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UActorComponent>::Value)
 		{
 			const UActorComponent* ActorComponent = Cast<UActorComponent>(Object);
@@ -83,7 +83,7 @@ namespace Common
 			const UNetDriver* NetDriver = Cast<UNetDriver>(Object);
 			return NetDriver->GetNetMode();
 		}
-		
+
 		return NM_MAX;
 	}
 
@@ -116,7 +116,7 @@ namespace Common
 			const AActor* Actor = Cast<AActor>(Object);
 			return Actor->IsNetMode(NetMode);
 		}
-		
+
 		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UActorComponent>::Value)
 		{
 			const UActorComponent* ActorComponent = Cast<UActorComponent>(Object);
@@ -134,10 +134,10 @@ namespace Common
 			const UNetDriver* NetDriver = Cast<UNetDriver>(Object);
 			return NetDriver->GetNetMode() == NetMode;
 		}
-		
+
 		return {};
 	}
-	
+
 	// IsNetMode for TObjectPtr
 	template<typename T>
 	bool IsNetMode(
@@ -150,8 +150,21 @@ namespace Common
 		return IsNetMode<ElementType*>(ObjectPtr, NetMode);
 	}
 
-	COMMON_API FORCEINLINE bool IsClassDefaultObject(const UObject* Object);
+	COMMON_API bool IsClassDefaultObject(const UObject* Object);
 
-	COMMON_API FORCEINLINE FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
-	
+	COMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
+
+	template<typename T>
+	typename TEnableIf<
+		TModels<CStaticStructProvider, T>::Value,
+		FString
+	>::Type ToString(const T& Struct)
+	{
+		FString HumanReadableMessage;
+
+		T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Struct,
+			/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+		return HumanReadableMessage;
+	}
+
 }
