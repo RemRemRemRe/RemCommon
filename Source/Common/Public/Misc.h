@@ -180,5 +180,49 @@ namespace Common
 			/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
 		return HumanReadableMessage;
 	}
+	
+	namespace Impl
+	{
+		struct CHasGetLocalRole
+		{
+			template <typename T>
+			auto Requires(ENetRole Role, const T* Object) -> decltype(
+				Role = Object->GetLocalRole()
+			);
+		};
+
+		struct CHasGetOwnerRole
+		{
+			template <typename T>
+			auto Requires(ENetRole Role, const T* Object) -> decltype(
+				Role = Object->GetOwnerRole()
+			);
+		};
+	}
+	
+	template<typename T>
+	typename TEnableIf<TModels<Impl::CHasGetLocalRole, T>::Value, ENetRole
+	>::Type GetNetRole(const T* Object)
+	{
+		return Object->GetLocalRole();
+	}
+
+	template<typename T>
+	typename TEnableIf<TModels<Impl::CHasGetOwnerRole, T>::Value, ENetRole
+	>::Type GetNetRole(const T* Object)
+	{
+		return Object->GetOwnerRole();
+	}
+
+	template<typename T>
+	FString GetNetRoleString(const T* Object)
+	{
+		if constexpr (TModels<Impl::CHasGetLocalRole, T>::Value || TModels<Impl::CHasGetOwnerRole, T>::Value)
+		{
+			return StaticEnum<ENetRole>()->GetValueAsString(GetNetRole(Object));
+		}
+		return {};
+	}
+	
 
 }

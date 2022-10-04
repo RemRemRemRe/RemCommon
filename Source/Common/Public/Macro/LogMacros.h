@@ -18,47 +18,60 @@
 
 #define LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, Format, ...) \
 	{ \
-		FString OriginalStr = FString::Printf(Format, __VA_ARGS__); \
-		FString FinalStr = Prefix + OriginalStr + Suffix; \
+		const FString OriginalStr = FString::Printf(Format, __VA_ARGS__); \
+		const FString FinalStr = Prefix + OriginalStr + TEXT(" ") + Suffix; \
 		UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FinalStr); \
 	}
 
-#define DECLARE_ROLE_PREFIX(ActorOrComponent) \
+#define DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
 	FString Prefix; \
 	if (ActorOrComponent != nullptr) \
 	{ \
 		if (IS_NET_MODE(ActorOrComponent, NM_DedicatedServer) || IS_NET_MODE(ActorOrComponent, NM_ListenServer)) \
 		{ \
-			Prefix = FString::Printf(TEXT("Server  : ")); \
+			Prefix = FString::Printf(TEXT("Server   ")); \
 		} \
-		else if (IS_NET_MODE(ActorOrComponent, NM_Client)) \
+		else \
 		{ \
-			Prefix = FString::Printf(TEXT("Client %d: "), GPlayInEditorID); \
+			Prefix = FString::Printf(TEXT("Client %d "), GPlayInEditorID); \
 		} \
+		\
+		if (const FString RoleString = Common::GetNetRoleString(ActorOrComponent); \
+			!RoleString.IsEmpty()) \
+		{ \
+			Prefix += FString::Printf(TEXT("%s : "), *RoleString); \
+		} \
+		else \
+		{ \
+			Prefix += TEXT(": "); \
+		}\
 	}
 
 // Log message with optional role name prefix
 #define UE_LOG_ROLE(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+	do \
 	{ \
-		DECLARE_ROLE_PREFIX(ActorOrComponent); \
+		DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
 		\
 		LOGGER_INTERNAL(Prefix, TEXT(""), CategoryName, Verbosity, Format, __VA_ARGS__) \
-	}
+	} while (false)
 
 // Log message with __FUNCTION__ suffix
 #define UE_LOG_FUNCTION(CategoryName, Verbosity, Format, ...) \
+	do \
 	{ \
 		FString Prefix; \
 		LOGGER_INTERNAL(Prefix, FString(__FUNCTION__), CategoryName, Verbosity, Format, __VA_ARGS__) \
-	}
+	} while (false)
 
 // Log message with optional role name prefix, __FUNCTION__ suffix
 #define UE_LOG_ROLE_FUNCTION(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+	do \
 	{ \
-		DECLARE_ROLE_PREFIX(ActorOrComponent); \
+		DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
 		\
 		LOGGER_INTERNAL(Prefix, FString(__FUNCTION__), CategoryName, Verbosity, Format, __VA_ARGS__) \
-	}
+	} while (false)
 
 #define BOOL_TO_STRING(Condition) ( (Condition) ? TEXT("True") : TEXT("False") )
 
