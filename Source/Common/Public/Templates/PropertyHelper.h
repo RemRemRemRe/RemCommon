@@ -2,9 +2,9 @@
 
 namespace Common::PropertyHelper
 {
-	typedef TFunctionRef<void(const FProperty* InProperty, const void* InContainer, int32 StaticIndex,
-		const FString& TypeString, const FString& KeyString, const FString& SizeString, int32 Id, int32 ParentId)>
-	FIteratePropertiesFunction;
+	using FIteratePropertiesFunction =
+		TFunctionRef<void(const FProperty* InProperty, const void* InContainer, int32 StaticIndex,
+			const FString& TypeString, const FString& KeyString, const FString& SizeString, int32 Id, int32 ParentId)>;
 	
 	template<typename PropertyType>
 	typename TEnableIf<TIsDerivedFrom<PropertyType, FProperty>::Value, void>::

@@ -9,6 +9,20 @@
 #define GET_NET_MODE(Object, NetMode) Common::GetNetMode<decltype(Object)>(Object, NetMode)
 #define IS_NET_MODE(Object, NetMode) Common::IsNetMode<decltype(Object)>(Object, NetMode)
 
+#if WITH_EDITOR
+
+#define RETURN_IF_NOT_GAME_WORLD \
+	if (!GetWorld() || !GetWorld()->IsGameWorld()) \
+	{ \
+		return; \
+	}
+
+#else
+
+#define RETURN_IF_NOT_GAME_WORLD
+
+#endif
+
 namespace Common
 {
 	// Validator for NONE UObject pointers
@@ -96,7 +110,7 @@ namespace Common
 			const T
 		>::Type ObjectPtr)
 	{
-		typedef typename T::ElementType ElementType;
+		using ElementType = typename T::ElementType;
 		return GetNetMode<ElementType*>(ObjectPtr);
 	}
 
@@ -146,7 +160,7 @@ namespace Common
 			const T
 		>::Type ObjectPtr, const ENetMode NetMode)
 	{
-		typedef typename T::ElementType ElementType;
+		using ElementType = typename T::ElementType;
 		return IsNetMode<ElementType*>(ObjectPtr, NetMode);
 	}
 

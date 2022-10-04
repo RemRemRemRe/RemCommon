@@ -39,19 +39,6 @@ namespace Common::BitOperation
 			static_cast<Underlying>(Lhs) &= static_cast<Underlying>(Rhs)
 		);
 	}
-	
-	template<typename Enum>
-	typename TEnableIf<std::conjunction_v<
-				std::is_enum<Enum>,
-				typename TEnumClassBitOperationTraits<Enum>::Result
-			>, bool>::
-	Type constexpr operator&& (Enum Lhs, Enum Rhs) noexcept
-	{
-		using Underlying = std::underlying_type_t<Enum>;
-		
-		const Underlying Result = static_cast<Underlying>(Lhs & Rhs);
-		return Result > 0;
-	}
 
 	template<typename Enum>
 	typename TEnableIf<std::conjunction_v<
@@ -79,19 +66,6 @@ namespace Common::BitOperation
 		return static_cast<Enum> (
 			static_cast<Underlying>(Lhs) |= static_cast<Underlying>(Rhs)
 		);
-	}
-	
-	template<typename Enum>
-	typename TEnableIf<std::conjunction_v<
-				std::is_enum<Enum>,
-				typename TEnumClassBitOperationTraits<Enum>::Result
-			>, bool>::
-	Type constexpr operator|| (Enum Lhs, Enum Rhs) noexcept
-	{
-		using Underlying = std::underlying_type_t<Enum>;
-		
-		const Underlying Result = static_cast<Underlying>(Lhs | Rhs);
-		return Result > 0;
 	}
 	
 	template<typename Enum>

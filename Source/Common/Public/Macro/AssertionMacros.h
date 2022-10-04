@@ -10,7 +10,7 @@
 // #define LET_IT_CRASH
 // #define DISABLE_LOG
 // #define DISABLE_ASSERTION
-// #define DISABLE_CHECK_MACRO
+#define DISABLE_CHECK_MACRO UE_BUILD_SHIPPING || UE_BUILD_TEST 
 
 #ifdef LET_IT_CRASH
     #define INVALID_HANDLING_STATEMENT(...)
@@ -127,7 +127,7 @@
  * Use this to validate a pointer.
  *  - Pointer is necessary, other parameters are optional.
  *
-* @param Condition                 the condition to assert
+ * @param Condition                 the condition to assert
  * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  * @param Message                   formatted log message when pointer is invalid
@@ -144,8 +144,33 @@
     #define CheckCondition(...)
     #define CheckPointer(...)
 #else
+
+/**
+ * Use this to validate a condition.
+ *  - Condition is necessary, other parameters are optional.
+ *
+ * @param Condition                 the condition to assert
+ * @param InvalidHandlingStatement  statements to execute when condition is false. can be any number of statements as you want (surround them with '{}' if ',' is used)
+ * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
+ * @param Message                   formatted log message when condition is false
+ * @param CategoryName              name of the logging category. default to LogTemp
+ * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
+ */
     #define CheckCondition(...) EnsureCondition(__VA_ARGS__)
+
+/**
+ * Use this to validate a pointer.
+ *  - Pointer is necessary, other parameters are optional.
+ *
+ * @param Condition                 the condition to assert
+ * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
+ * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
+ * @param Message                   formatted log message when pointer is invalid
+ * @param CategoryName              name of the logging category. default to LogTemp
+ * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
+ */
     #define CheckPointer(...) EnsurePointer(__VA_ARGS__)
+
 #endif // DISABLE_CHECK_MACRO
 
 #pragma endregion Check Condition
