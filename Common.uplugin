@@ -15,6 +15,7 @@
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"ExplicitlyLoaded": true,
+	"EnabledByDefault": false,
 	"BuiltInInitialFeatureState": "Active",
 	"Modules": [
 		{
