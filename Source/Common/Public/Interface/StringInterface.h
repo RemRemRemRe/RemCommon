@@ -9,7 +9,7 @@
 #include "StringInterface.generated.h"
 
 /** Interface for printing a object in string format */
-UINTERFACE(BlueprintType, MinimalAPI, meta=(CannotImplementInterfaceInBlueprint))
+UINTERFACE(BlueprintType, NotBlueprintable)
 class UStringInterface : public UInterface
 {
 	GENERATED_BODY()

@@ -2,6 +2,8 @@
 
 
 #include "Object/ObjectStatics.h"
+
+#include "GameFramework/PlayerState.h"
 #include "Macro/AssertionMacros.h"
 
 UObject* UObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
@@ -22,6 +24,28 @@ bool UObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
 	CheckPointer(Object, false);
 	
 	return !Object->HasAnyFlags(RF_BeginDestroyed) && !Object->IsUnreachable();
+}
+
+APlayerState* UObjectStatics::GetPlayerState(const AActor* Actor)
+{
+	EnsurePointer(Actor, return {});
+	
+	if (const APawn* Pawn = Cast<APawn>(Actor))
+	{
+		return Pawn->GetPlayerState();
+	}
+	
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
+	{
+		return PlayerController->GetPlayerState<APlayerState>();
+	}
+
+	if (const APlayerState* PlayerState = Cast<APlayerState>(Actor))
+	{
+		return const_cast<APlayerState*>(PlayerState);
+	}
+	
+	return {};
 }
 
 namespace Common::ObjectStatics
