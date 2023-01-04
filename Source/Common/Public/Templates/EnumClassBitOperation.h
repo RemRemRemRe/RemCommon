@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-
-namespace Common::BitOperation
+namespace Common::Enum::BitOperation
 {
 	// @see https://wiggling-bits.net/using-enum-classes-as-type-safe-bitmasks/
 	
@@ -121,4 +120,3 @@ namespace Common::BitOperation
 		return Result == 0;
 	}	
 }
-

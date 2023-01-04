@@ -3,7 +3,6 @@
 #pragma once
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////// Define getters that return pointer and reference, OR one of them (with const and none-const version)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +31,8 @@
 	\
 	ReturnType* Get##NamePredicate() \
 	{ \
-		return const_cast<ReturnType*>(const_cast<const Type*>(this)->Get##NamePredicate()); \
+		using ThisType = std::remove_pointer_t<decltype(this)>; \
+		return const_cast<ReturnType*>(const_cast<const ThisType*>(this)->Get##NamePredicate()); \
 	}
 
 /**
@@ -47,7 +47,8 @@
 	\
 	ReturnType& Get##NamePredicate##NameSuffix() \
 	{ \
-		return const_cast<ReturnType&>(const_cast<const Type*>(this)->Get##NamePredicate##NameSuffix()); \
+		using ThisType = std::remove_pointer_t<decltype(this)>; \
+		return const_cast<ReturnType&>(const_cast<const ThisType*>(this)->Get##NamePredicate##NameSuffix()); \
 	}
 
 /**
@@ -171,24 +172,25 @@
 #define DEFINE_TYPED_GETTER_RETURN_TYPE(NamePredicate, ReturnType, ValidationStatement) \
 	DEFINE_CONST_ONLY_TYPED_GETTER_RETURN_TYPE(NamePredicate, ReturnType, ValidationStatement) \
 	\
-	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(/*none const*/, /*none const*/, NamePredicate, ValidationStatement, \
-	return const_cast<ReturnType>(const_cast<const Type*>(this)->Get##NamePredicate<T>()))
+	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(/*none const*/, NamePredicate, ValidationStatement, \
+	return const_cast<ReturnType>(const_cast<const ThisType*>(this)->Get##NamePredicate<T>()))
 
 #define DEFINE_CONST_ONLY_TYPED_GETTER_RETURN_TYPE(NamePredicate, ReturnType, ValidationStatement) \
 	DEFINE_CONST_ONLY_TYPED_GETTER_RETURN_TYPE_STATEMENT(NamePredicate, ValidationStatement, \
-	return static_cast<const ReturnType>(Get##NamePredicate()));
+	return static_cast<const ReturnType>(Get##NamePredicate()))
 
 
 #define DEFINE_CONST_ONLY_TYPED_GETTER_RETURN_TYPE_STATEMENT(NamePredicate, ValidationStatement, ReturnStatement) \
-	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(const, const, NamePredicate, ValidationStatement, ReturnStatement)
+	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(const, NamePredicate, ValidationStatement, ReturnStatement)
 
 #define DEFINE_CONST_ONLY_TYPED_GETTER_RETURN_NONE_CONST_TYPE_STATEMENT(NamePredicate, ValidationStatement, ReturnStatement) \
-	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(/*none const*/, const, NamePredicate, ValidationStatement, ReturnStatement)
+	INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(const, NamePredicate, ValidationStatement, ReturnStatement)
 
-#define INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(ReturnValueConstness, GetterConstness, NamePredicate, ValidationStatement, ReturnStatement) \
+#define INTERNAL_DEFINE_TYPED_GETTER_RETURN_STATEMENT(GetterConstness, NamePredicate, ValidationStatement, ReturnStatement) \
 	template<typename T> \
-	ReturnValueConstness auto Get##NamePredicate() GetterConstness \
+	decltype(auto) Get##NamePredicate() GetterConstness \
 	{ \
+		using ThisType = std::remove_pointer_t<decltype(this)>; \
 		{ \
 			ValidationStatement; \
 		} \

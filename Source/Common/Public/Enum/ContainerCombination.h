@@ -4,7 +4,7 @@
 
 #include "Templates/EnumClassBitOperation.h"
 
-namespace Common
+namespace Common::Enum
 {
 	COMMON_API enum class EContainerCombination : uint8
 	{

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Macro/CoreMiscDefines.h"
 #include "CommonLog.h"
