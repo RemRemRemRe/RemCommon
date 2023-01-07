@@ -42,8 +42,5 @@ namespace Common::Enum
 	};
 	
 	template<>
-	struct BitOperation::TEnumClassBitOperationTraits<EContainerCombination> : TEnumClassBitOperationTraitsBase<EContainerCombination>
-	{
-		using Result = std::true_type;
-	};
+	struct BitOperation::TEnumClassBitOperationTraits<EContainerCombination> { using type = std::true_type;	};
 }

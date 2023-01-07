@@ -4,7 +4,8 @@
 
 namespace Common::Math
 {
-	template<typename T, typename TEnableIf<!TIsSigned<T>::Value && sizeof(T) <= 4U, uint32>::Type X = 1U>
+	template<typename T>
+	requires !std::is_signed_v<T> && (sizeof(T) <= 4U)
 	uint32 GetBitsNeeded(const T Value)
 	{
 		return 32U - FPlatformMath::CountLeadingZeros(static_cast<uint32>(Value));

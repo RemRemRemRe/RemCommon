@@ -44,19 +44,17 @@ namespace Common::ObjectStatics
 
 	/** Templated version of FindComponentByClass that handles casting for you */
 	template<class T>
+	requires std::is_base_of_v<UActorComponent, T>
 	static T* FindComponentByClass(const AActor* Actor)
 	{
-		static_assert(TIsDerivedFrom<T, UActorComponent>::Value, "T must be an UActorComponent");
-		
 		EnsurePointer(Actor, return {});
 		return Actor->FindComponentByClass<T>();
 	}
 
 	template<typename T = APlayerState>
+	requires std::is_base_of_v<APlayerState, T>
 	T* GetPlayerStateFromPawnOwner(const UActorComponent* Component)
 	{
-		static_assert(TIsDerivedFrom<T, APlayerState>::Value, "T must be an APlayerState");
-
 		EnsurePointer(Component, return {});
 
 		APawn* Pawn = Component->GetOwner<APawn>();
@@ -67,10 +65,9 @@ namespace Common::ObjectStatics
 	}
 
 	template<typename T = APlayerController>
+	requires std::is_base_of_v<APlayerController, T>
 	T* GetControllerFromPawnOwner(const UActorComponent* Component)
 	{
-		static_assert(TIsDerivedFrom<T, APlayerController>::Value, "T must be an APlayerController");
-
 		EnsurePointer(Component, return {});
 
 		APawn* Pawn = Component->GetOwner<APawn>();

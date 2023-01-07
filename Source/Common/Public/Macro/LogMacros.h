@@ -25,9 +25,9 @@
 
 #define DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
 	FString Prefix; \
-	if (ActorOrComponent != nullptr) \
+	if (Common::IsValid(ActorOrComponent)) \
 	{ \
-		if (IS_NET_MODE(ActorOrComponent, NM_DedicatedServer) || IS_NET_MODE(ActorOrComponent, NM_ListenServer)) \
+		if (Common::IsNetMode(ActorOrComponent, NM_DedicatedServer) || Common::IsNetMode(ActorOrComponent, NM_ListenServer)) \
 		{ \
 			Prefix = FString::Printf(TEXT("Server   ")); \
 		} \

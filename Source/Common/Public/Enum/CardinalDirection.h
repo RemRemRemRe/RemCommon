@@ -18,11 +18,10 @@ enum class ECardinalDirection : uint8
 namespace Common::Enum
 {
 	template<typename EnumType>
+	requires std::is_enum_v<EnumType>
 	constexpr EnumType GetAdjacentEnumForPairedEnum(const EnumType Enum)
 	{
-		static_assert(std::is_enum_v<EnumType>, "The type passed in is not a enum type");
-		
-		using Underlying = std::underlying_type_t<ECardinalDirection>;
+		using Underlying = std::underlying_type_t<EnumType>;
 
 		const Underlying Value = static_cast<Underlying>(Enum);
 

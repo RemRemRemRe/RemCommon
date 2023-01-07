@@ -2,12 +2,7 @@
 
 #pragma once
 
-// 1.Consider ValidatePointer ? no upper case?
-// 2.Why define these macros? @see comment of TIdentity, SFINAE template parameter can not be deduced
-
-#define VALIDATE_POINTER(Pointer) Common::IsValidPtr<decltype(Pointer)>(Pointer)
-#define GET_NET_MODE(Object, NetMode) Common::GetNetMode<decltype(Object)>(Object, NetMode)
-#define IS_NET_MODE(Object, NetMode) Common::IsNetMode<decltype(Object)>(Object, NetMode)
+#include "Concepts.h"
 
 #if WITH_EDITOR
 
@@ -25,143 +20,94 @@
 
 namespace Common
 {
-	// Validator for NONE UObject pointers
 	template<typename T>
-	bool IsValidPtr(
-		typename TEnableIf<
-			TAnd<
-				TIsPointer<T>,
-				TNot<TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UObject>>
-			>::Value,
-			const T
-		>::Type Object)
+	bool IsValid(const T Object)
 	{
-		return Object != nullptr;
+		if constexpr (std::is_pointer_v<T>)
+		{
+			using RawType = std::remove_pointer_t<T>;
+			
+			if constexpr (std::is_base_of_v<UObject, RawType>)
+			{
+				return ::IsValid(Object);
+			}
+			else
+			{
+				return Object != nullptr;
+			}
+		}
+		
+		else if constexpr (TIsTObjectPtr<T>::Value)
+		{
+			return IsValid(Object.Get());
+		}
+		else
+		{
+			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
+			return false;
+		}
 	}
 
-	// Validator for UObject pointers and TObjectPtr
 	template<typename T>
-	bool IsValidPtr(
-		typename TEnableIf<
-			TOr<
-				TAnd<
-					TIsPointer<T>,
-					TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UObject>
-				>,
-				TIsTObjectPtr<T>
-			>::Value,
-			const T
-		>::Type Object)
+	ENetMode GetNetMode(const T Object)
 	{
-		return IsValid(Object);
+		if constexpr (std::is_pointer_v<T>)
+		{
+			using RawType = std::remove_pointer_t<T>;
+			
+			if constexpr (Concepts::has_get_net_mode<RawType>)
+			{
+				return Object->GetNetMode();
+			}
+			else
+			{
+				static_assert(std::_Always_false<T>, "T should have member GetNetMode");
+				return {};
+			}
+		}
+
+		else if constexpr (TIsTObjectPtr<T>::Value)
+		{
+			return GetNetMode(Object.Get());
+		}
+		else
+		{
+			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
+			return {};
+		}
 	}
 
-	// Handle nullptr case, parameter name is emitted
 	template<typename T>
-	bool IsValidPtr(std::nullptr_t)
+	bool IsNetMode(const T Object, const ENetMode NetMode)
 	{
-		return false;
-	}
-
-	// GetNetMode for UObjects
-	template<typename T>
-	ENetMode GetNetMode(
-		typename TEnableIf<
-			TAnd<
-				TIsPointer<T>,
-				TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UObject>
-			>::Value,
-			const T
-		>::Type Object)
-	{
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, AActor>::Value)
+		if constexpr (std::is_pointer_v<T>)
 		{
-			const AActor* Actor = Cast<AActor>(Object);
-			return Actor->GetNetMode();
+			using RawType = std::remove_pointer_t<T>;
+			
+			if constexpr (Concepts::has_is_net_mode<RawType>)
+			{
+				return Object->IsNetMode(NetMode);
+			}
+			else if constexpr (Concepts::has_get_net_mode<RawType>)
+			{
+				return Object->GetNetMode() == NetMode;
+			}
+			else
+			{
+				static_assert(std::_Always_false<T>, "T should have member IsNetMode or GetNetMode");
+				return {};
+			}
 		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UActorComponent>::Value)
+		
+		else if constexpr (TIsTObjectPtr<T>::Value)
 		{
-			const UActorComponent* ActorComponent = Cast<UActorComponent>(Object);
-			return ActorComponent->GetNetMode();
+			return IsNetMode(Object.Get(), NetMode);
 		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UWorld>::Value)
+		else
 		{
-			const UWorld* World = Cast<UWorld>(Object);
-			return World->GetNetMode();
+			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
+			return {};
 		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UNetDriver>::Value)
-		{
-			const UNetDriver* NetDriver = Cast<UNetDriver>(Object);
-			return NetDriver->GetNetMode();
-		}
-
-		return NM_MAX;
-	}
-
-
-	// GetNetMode for TObjectPtr
-	template<typename T>
-	ENetMode GetNetMode(
-		typename TEnableIf<
-			TIsTObjectPtr<T>::Value,
-			const T
-		>::Type ObjectPtr)
-	{
-		using ElementType = typename T::ElementType;
-		return GetNetMode<ElementType*>(ObjectPtr);
-	}
-
-	// IsNetMode for UObjects
-	template<typename T>
-	bool IsNetMode(
-		typename TEnableIf<
-			TAnd<
-				TIsPointer<T>,
-				TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UObject>
-			>::Value,
-			const T
-		>::Type Object, const ENetMode NetMode)
-	{
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, AActor>::Value)
-		{
-			const AActor* Actor = Cast<AActor>(Object);
-			return Actor->IsNetMode(NetMode);
-		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UActorComponent>::Value)
-		{
-			const UActorComponent* ActorComponent = Cast<UActorComponent>(Object);
-			return ActorComponent->IsNetMode(NetMode);
-		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UWorld>::Value)
-		{
-			const UWorld* World = Cast<UWorld>(Object);
-			return World->IsNetMode(NetMode);
-		}
-
-		if constexpr (TIsDerivedFrom<typename TDecay<std::remove_pointer_t<T>>::Type, UNetDriver>::Value)
-		{
-			const UNetDriver* NetDriver = Cast<UNetDriver>(Object);
-			return NetDriver->GetNetMode() == NetMode;
-		}
-
-		return {};
-	}
-
-	// IsNetMode for TObjectPtr
-	template<typename T>
-	bool IsNetMode(
-		typename TEnableIf<
-			TIsTObjectPtr<T>::Value,
-			const T
-		>::Type ObjectPtr, const ENetMode NetMode)
-	{
-		using ElementType = typename T::ElementType;
-		return IsNetMode<ElementType*>(ObjectPtr, NetMode);
 	}
 
 	COMMON_API bool IsClassDefaultObject(const UObject* Object);
@@ -169,60 +115,59 @@ namespace Common
 	COMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
 	template<typename T>
-	typename TEnableIf<
-		TModels<CStaticStructProvider, T>::Value,
-		FString
-	>::Type ToString(const T& Struct)
+	FString ToString(const T& Data)
 	{
-		FString HumanReadableMessage;
-
-		T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Struct,
-			/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-		return HumanReadableMessage;
-	}
-	
-	namespace Impl
-	{
-		struct CHasGetLocalRole
+		if constexpr (Concepts::has_to_string<T>)
 		{
-			template <typename T>
-			auto Requires(ENetRole Role, const T* Object) -> decltype(
-				Role = Object->GetLocalRole()
-			);
-		};
-
-		struct CHasGetOwnerRole
+			return Data.ToString();
+		}
+		else if constexpr (Concepts::unreal_struct_provider<T>)
 		{
-			template <typename T>
-			auto Requires(ENetRole Role, const T* Object) -> decltype(
-				Role = Object->GetOwnerRole()
-			);
-		};
+			FString HumanReadableMessage;
+			T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
+				/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+			return HumanReadableMessage;
+		}
+		else
+		{
+			static_assert(std::_Always_false<T>, "T should have member ToString or static member StaticStruct");
+			return {};
+		}
 	}
 	
 	template<typename T>
-	typename TEnableIf<TModels<Impl::CHasGetLocalRole, T>::Value, ENetRole
-	>::Type GetNetRole(const T* Object)
+	ENetRole GetNetRole(const T* Object)
 	{
-		return Object->GetLocalRole();
-	}
-
-	template<typename T>
-	typename TEnableIf<TModels<Impl::CHasGetOwnerRole, T>::Value, ENetRole
-	>::Type GetNetRole(const T* Object)
-	{
-		return Object->GetOwnerRole();
+		if constexpr (Concepts::has_get_local_role<T>)
+		{
+			return Object->GetLocalRole();
+		}
+		else if constexpr (Concepts::has_get_owner_role<T>)
+		{
+			return Object->GetOwnerRole();
+		}
+		else
+		{
+			static_assert(std::_Always_false<T>, "T should have member GetLocalRole or GetOwnerRole that returns ENetRole");
+			return {};
+		}
 	}
 
 	template<typename T>
 	FString GetNetRoleString(const T* Object)
 	{
-		if constexpr (TModels<Impl::CHasGetLocalRole, T>::Value || TModels<Impl::CHasGetOwnerRole, T>::Value)
-		{
-			return StaticEnum<ENetRole>()->GetValueAsString(GetNetRole(Object));
-		}
-		return {};
+		return StaticEnum<ENetRole>()->GetValueAsString(GetNetRole(Object));
 	}
-	
 
+	template<typename T>
+	FName GetNetRoleName(const T* Object)
+	{
+		return StaticEnum<ENetRole>()->GetValueAsName(GetNetRole(Object));
+	}
+
+	template<typename T>
+	FText GetNetRoleText(const T* Object)
+	{
+		return StaticEnum<ENetRole>()->GetDisplayValueAsText(GetNetRole(Object));
+	}
 }

@@ -2,7 +2,7 @@
 
 namespace Common
 {
-	namespace Impl
+	namespace Private
 	{
 		template <typename, template <typename...> typename>
 		struct TIsInstanceImpl : std::false_type {};
@@ -14,6 +14,6 @@ namespace Common
 	// check if type T is an instantiation of template U
 	// @see https://stackoverflow.com/a/61040973
 	template <typename T, template <typename ...> typename U>
-	using TIsInstance = Impl::TIsInstanceImpl<std::decay_t<T>, U>;
+	using TIsInstance = Private::TIsInstanceImpl<std::remove_cvref_t<T>, U>;
 	
 }

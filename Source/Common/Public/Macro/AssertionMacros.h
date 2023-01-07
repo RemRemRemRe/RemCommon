@@ -106,22 +106,22 @@
 #pragma region Ensure Pointer
 
 #define ENSURE_POINTER_6(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
-    ENSURE_CONDITION_6(VALIDATE_POINTER(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
+    ENSURE_CONDITION_6(Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
 
 #define ENSURE_POINTER_5(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    ENSURE_CONDITION_5(VALIDATE_POINTER(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
+    ENSURE_CONDITION_5(Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
 #define ENSURE_POINTER_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
-    ENSURE_CONDITION_4(VALIDATE_POINTER(Pointer), InvalidHandlingStatement, CategoryName, Log)
+    ENSURE_CONDITION_4(Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
 
 #define ENSURE_POINTER_3(Pointer, InvalidHandlingStatement, CategoryName) \
-    ENSURE_CONDITION_3(VALIDATE_POINTER(Pointer), InvalidHandlingStatement, LogTemp)
+    ENSURE_CONDITION_3(Common::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
 
 #define ENSURE_POINTER_2(Pointer, InvalidHandlingStatement) \
-    ENSURE_CONDITION_2(VALIDATE_POINTER(Pointer), InvalidHandlingStatement)
+    ENSURE_CONDITION_2(Common::IsValid(Pointer), InvalidHandlingStatement)
 
 #define ENSURE_POINTER_1(Pointer) \
-    ENSURE_CONDITION_1(VALIDATE_POINTER(Pointer))
+    ENSURE_CONDITION_1(Common::IsValid(Pointer))
 
 /**
  * Use this to validate a pointer.
