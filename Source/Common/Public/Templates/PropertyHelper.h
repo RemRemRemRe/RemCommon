@@ -7,8 +7,8 @@ namespace Common::PropertyHelper
 			const FString& TypeString, const FString& KeyString, const FString& SizeString, int32 Id, int32 ParentId)>;
 	
 	template<typename PropertyType>
-	typename TEnableIf<TIsDerivedFrom<PropertyType, FProperty>::Value, void>::
-	Type IteratePropertiesOfTypeRecursive(FProperty* InProperty, const void* InContainer, const FString& InKey, FIteratePropertiesFunction InFunction, int32& InId, int32 InParentId)
+	requires std::is_base_of_v<FProperty, PropertyType>
+	void IteratePropertiesOfTypeRecursive(FProperty* InProperty, const void* InContainer, const FString& InKey, FIteratePropertiesFunction InFunction, int32& InId, int32 InParentId)
 	{
 		// Handle container properties
 		if (const FArrayProperty* ArrayProperty = CastField<FArrayProperty>(InProperty))
@@ -142,8 +142,8 @@ namespace Common::PropertyHelper
 	}
 	
 	template<typename PropertyType>
-	typename TEnableIf<TIsDerivedFrom<PropertyType, FProperty>::Value, void>::
-	Type IteratePropertiesOfType(const UStruct* InStruct, const void* InContainer, const FIteratePropertiesFunction InFunction)
+	requires std::is_base_of_v<FProperty, PropertyType>
+	void IteratePropertiesOfType(const UStruct* InStruct, const void* InContainer, const FIteratePropertiesFunction InFunction)
 	{
 		int32 Id = INDEX_NONE;
 		for(TFieldIterator<FProperty> It(InStruct); It; ++It)

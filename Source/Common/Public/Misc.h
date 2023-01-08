@@ -120,22 +120,40 @@ namespace Common
 	COMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
 	template<typename T>
-	FString ToString(const T& Data)
+	FString ToString(T&& Data)
 	{
-		if constexpr (Concepts::has_to_string<T>)
-		{
-			return Data.ToString();
-		}
-		else if constexpr (Concepts::unreal_struct_provider<T>)
+		using RawType = std::remove_cvref_t<T>;
+
+		if constexpr (Concepts::unreal_struct_provider<T>)
 		{
 			FString HumanReadableMessage;
 			T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
 				/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
 			return HumanReadableMessage;
 		}
+		else if constexpr (std::is_enum_v<RawType>)
+		{
+			return UEnum::GetValueAsString(std::forward<T>(Data));
+		}
+		else if constexpr (std::is_same_v<bool, RawType>)
+		{
+			return Common::BoolToString(std::forward<T>(Data));
+		}
+		else if constexpr (Concepts::has_to_string<T>)
+		{
+			return Data.ToString();
+		}
+		else if constexpr (Concepts::has_get_name<T>)
+		{
+			return Data.GetName();
+		}
+		else if constexpr (Concepts::lex_to_string<T>)
+		{
+			return LexToString(std::forward<T>(Data));
+		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T should have member ToString or static member StaticStruct");
+			static_assert(std::_Always_false<T>, "T is not supported for ToString");
 			return {};
 		}
 	}
@@ -253,36 +271,20 @@ namespace Common
 		{
 			using RawType = std::remove_cvref_t<F>;
 
-			if constexpr (std::is_enum_v<RawType>)
+			if constexpr (Concepts::is_stringable<RawType>)
 			{
-				Args.Add(UEnum::GetValueAsString(First));
-			}
-			else if constexpr (std::is_same_v<bool, RawType>)
-			{
-				Args.Add(BoolToString(First));
+				Args.Add(Common::ToString(std::forward<F>(First)));
 			}
 			else if constexpr (std::is_constructible_v<FStringFormatArg, F>)
 			{
-				Args.Add(Forward<F>(First));
-			}
-			else if constexpr (Concepts::has_to_string<F> )
-			{
-				Args.Add(First.ToString());
-			}
-			else if constexpr (requires (FString String) { String = First->GetName(); })
-			{
-				Args.Add(First->GetName());
-			}
-			else if constexpr (requires (FString String) { String = LexToString(Forward<F>(First)); })
-			{
-				Args.Add(LexToString(Forward<F>(First)));
+				Args.Add(std::forward<F>(First));
 			}
 			else
 			{
 				static_assert(std::_Always_false<F>, "Found invalid type when FillArgs");
 			}
 
-			Private::FillStringFormatArgs(Args, Forward<R>(Rest)...);
+			Private::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
 		}
 	}
 

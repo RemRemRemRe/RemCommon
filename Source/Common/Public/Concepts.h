@@ -34,10 +34,30 @@ namespace Common::Concepts
 	};
 
 	template<class T>
+	concept has_get_name = requires (FString String, const T Object)
+	{
+		String = Object.GetName();
+	};
+
+	template<class T>
+	concept lex_to_string = requires (FString String, const T Object)
+	{
+		String = LexToString(Object);
+	};
+
+	template<class T>
 	concept unreal_struct_provider = requires (UScriptStruct*& StructRef)
 	{
 		StructRef = T::StaticStruct();
 	};
+	
+	template<class T>
+	concept is_stringable = unreal_struct_provider<T>
+		|| std::is_enum_v<T>
+		|| std::is_same_v<bool, T>
+		|| has_to_string<T>
+		|| has_get_name<T>
+		|| lex_to_string<T>;
 
 	template<class T>
 	concept unreal_class_provider = requires (UClass*& StructRef)
