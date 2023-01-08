@@ -48,6 +48,14 @@ APlayerState* UObjectStatics::GetPlayerState(const AActor* Actor)
 	return {};
 }
 
+void UObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
+{
+	if (bTriggerBreakpointInCpp)
+	{
+		CheckCondition(false);
+	}
+}
+
 namespace Common::ObjectStatics
 {
 	

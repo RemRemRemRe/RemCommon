@@ -2,56 +2,35 @@
 
 #pragma once
 
-#include "Misc.h"
+#include "MacroUtilities.h"
 
 // Extended log macro
 
 #if NO_LOGGING
 
-#define UE_LOG_ROLE(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+#define UE_LOG_ROLE(Object, CategoryName, Verbosity, Format, ...) \
 	UE_LOG(CategoryName, Verbosity, Format, __VA_ARGS__)
 
-#define UE_LOG_ROLE_FUNCTION(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+#define UE_LOG_ROLE(Object, CategoryName, Verbosity, Format, ...) \
+	UE_LOG(CategoryName, Verbosity, Format, __VA_ARGS__)
+
+#define UE_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ...) \
 	UE_LOG(CategoryName, Verbosity, Format, __VA_ARGS__)
 
 #else
 
-#define LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, Format, ...) \
+#define LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
-		const FString OriginalStr = FString::Printf(Format, __VA_ARGS__); \
-		const FString FinalStr = Prefix + OriginalStr + TEXT(" ") + Suffix; \
+		const FString OriginalStr = Common::StringFormat(FormatString, __VA_ARGS__); \
+		const FString FinalStr = FString::Format(TEXT("{0} {1} {2}"), {Prefix, OriginalStr, Suffix}); \
 		UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FinalStr); \
 	}
 
-#define DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
-	FString Prefix; \
-	if (Common::IsValid(ActorOrComponent)) \
-	{ \
-		if (Common::IsNetMode(ActorOrComponent, NM_DedicatedServer) || Common::IsNetMode(ActorOrComponent, NM_ListenServer)) \
-		{ \
-			Prefix = FString::Printf(TEXT("Server   ")); \
-		} \
-		else \
-		{ \
-			Prefix = FString::Printf(TEXT("Client %d "), GPlayInEditorID); \
-		} \
-		\
-		if (const FString RoleString = Common::GetNetRoleString(ActorOrComponent); \
-			!RoleString.IsEmpty()) \
-		{ \
-			Prefix += FString::Printf(TEXT("%s : "), *RoleString); \
-		} \
-		else \
-		{ \
-			Prefix += TEXT(": "); \
-		}\
-	}
-
 // Log message with optional role name prefix
-#define UE_LOG_ROLE(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+#define UE_LOG_ROLE(Object, CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
+		INITIALIZE_NET_DEBUG_STRING(Object, Prefix) \
 		\
 		LOGGER_INTERNAL(Prefix, TEXT(""), CategoryName, Verbosity, Format, __VA_ARGS__) \
 	} while (false)
@@ -60,19 +39,20 @@
 #define UE_LOG_FUNCTION(CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		FString Prefix; \
-		LOGGER_INTERNAL(Prefix, FString(__FUNCTION__), CategoryName, Verbosity, Format, __VA_ARGS__) \
+		INITIALIZE_SOURCE_LOCATION_STRING(Suffix) \
+		\
+		LOGGER_INTERNAL(TEXT(""), Suffix, CategoryName, Verbosity, Format, __VA_ARGS__) \
 	} while (false)
 
 // Log message with optional role name prefix, __FUNCTION__ suffix
-#define UE_LOG_ROLE_FUNCTION(ActorOrComponent, CategoryName, Verbosity, Format, ...) \
+#define UE_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		DECLARE_NET_MODE_AND_ROLE_PREFIX(ActorOrComponent) \
+		INITIALIZE_NET_DEBUG_STRING(Object, Prefix) \
 		\
-		LOGGER_INTERNAL(Prefix, FString(__FUNCTION__), CategoryName, Verbosity, Format, __VA_ARGS__) \
+		INITIALIZE_SOURCE_LOCATION_STRING(Suffix) \
+		\
+		LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, Format, __VA_ARGS__) \
 	} while (false)
-
-#define BOOL_TO_STRING(Condition) ( (Condition) ? TEXT("True") : TEXT("False") )
 
 #endif

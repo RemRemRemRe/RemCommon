@@ -32,7 +32,19 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "PlayerState")
 	static APlayerState* GetPlayerState(const AActor* Actor);
-	
+
+	/**
+	 * @brief Being explicit about nothing
+	 * @see https://landelare.github.io/2022/04/30/uses-of-a-useless-node.html
+	 */
+	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Do Nothing"))
+	static void DoNothing()	{}
+
+	/**
+	 * @brief Being explicit about something should not happen
+	 */
+	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Should Not Happen"))
+	static void ShouldNotHappen(const bool bTriggerBreakpointInCpp = true);
 };
 
 namespace Common::ObjectStatics
@@ -76,6 +88,5 @@ namespace Common::ObjectStatics
 
 		return Pawn->GetController<T>();
 	}
-
 	
 }

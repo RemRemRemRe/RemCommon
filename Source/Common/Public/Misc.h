@@ -39,7 +39,7 @@ namespace Common
 		
 		else if constexpr (TIsTObjectPtr<T>::Value)
 		{
-			return IsValid(Object.Get());
+			return Common::IsValid(Object.Get());
 		}
 		else
 		{
@@ -68,7 +68,7 @@ namespace Common
 
 		else if constexpr (TIsTObjectPtr<T>::Value)
 		{
-			return GetNetMode(Object.Get());
+			return Common::GetNetMode(Object.Get());
 		}
 		else
 		{
@@ -101,7 +101,7 @@ namespace Common
 		
 		else if constexpr (TIsTObjectPtr<T>::Value)
 		{
-			return IsNetMode(Object.Get(), NetMode);
+			return Common::IsNetMode(Object.Get(), NetMode);
 		}
 		else
 		{
@@ -112,6 +112,11 @@ namespace Common
 
 	COMMON_API bool IsClassDefaultObject(const UObject* Object);
 
+	constexpr TCHAR* BoolToString(const bool bValue)
+	{
+		return bValue ? ANSI_TO_TCHAR("True") : ANSI_TO_TCHAR("False");
+	}
+	
 	COMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
 	template<typename T>
@@ -153,21 +158,140 @@ namespace Common
 		}
 	}
 
-	template<typename T>
+	template<typename T, bool bConstantStringLength = false>
+	FString GetNetModeString(const T* Object)
+	{
+		if (Common::IsNetMode(Object, NM_DedicatedServer) || Common::IsNetMode(Object, NM_ListenServer))
+		{
+			if constexpr (bConstantStringLength)
+			{
+				return FString(TEXT("Server  "));
+			}
+			else
+			{
+				return FString(TEXT("Server"));
+			}
+		}
+		
+		return FString::Format(TEXT("Client {0}"), {GPlayInEditorID - 1});
+	}
+
+	/**
+	 * @brief Append spaces to the string
+	 * @note better to make sure String has enough capacity using FString::Reserve
+	 */
+	inline void AppendSpaces(FString& String, const int32 NumSpaceToAdd)
+	{
+		for (int32 Count = 0; Count < NumSpaceToAdd; ++Count)
+		{
+			String.AppendChar(' ');
+		}
+	}
+	
+	template<typename T, bool bConstantStringLength = false>
 	FString GetNetRoleString(const T* Object)
 	{
-		return StaticEnum<ENetRole>()->GetValueAsString(GetNetRole(Object));
+		if constexpr (bConstantStringLength)
+		{
+			constexpr int32 MaxLength = std::string_view("ROLE_AutonomousProxy").length();
+			
+			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Common::GetNetRole(Object));
+			
+			NetRoleString.Reserve(MaxLength);
+			AppendSpaces(NetRoleString, MaxLength - NetRoleString.Len());
+			
+			return NetRoleString;
+		}
+		else
+		{
+			return StaticEnum<ENetRole>()->GetValueAsString(Common::GetNetRole(Object));
+		}
 	}
 
 	template<typename T>
 	FName GetNetRoleName(const T* Object)
 	{
-		return StaticEnum<ENetRole>()->GetValueAsName(GetNetRole(Object));
+		return StaticEnum<ENetRole>()->GetValueAsName(Common::GetNetRole(Object));
 	}
 
 	template<typename T>
 	FText GetNetRoleText(const T* Object)
 	{
-		return StaticEnum<ENetRole>()->GetDisplayValueAsText(GetNetRole(Object));
+		return StaticEnum<ENetRole>()->GetDisplayValueAsText(Common::GetNetRole(Object));
+	}
+
+	template<typename  T>
+	FString GetNetDebugString(T* Object)
+	{
+		if (Common::IsValid(Object))
+		{
+			const FString NetModeString = Common::GetNetModeString<T, true>(Object);
+
+			if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
+			{
+				const FString NetRoleString = Common::GetNetRoleString<T, true>(Object);
+								
+				return FString::Format(TEXT("{0} {1}"), { NetModeString, NetRoleString });
+			}
+			else
+			{
+				return FString::Format(TEXT("{0}"), { NetModeString });
+			}
+		}
+		return {};
+	}
+
+	namespace Private
+	{
+		// recursion ends with this empty implementation:
+		inline void FillStringFormatArgs(FStringFormatOrderedArguments&)
+		{
+		}
+
+		template<typename F, typename... R>
+		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
+		{
+			using RawType = std::remove_cvref_t<F>;
+
+			if constexpr (std::is_enum_v<RawType>)
+			{
+				Args.Add(UEnum::GetValueAsString(First));
+			}
+			else if constexpr (std::is_same_v<bool, RawType>)
+			{
+				Args.Add(BoolToString(First));
+			}
+			else if constexpr (std::is_constructible_v<FStringFormatArg, F>)
+			{
+				Args.Add(Forward<F>(First));
+			}
+			else if constexpr (Concepts::has_to_string<F> )
+			{
+				Args.Add(First.ToString());
+			}
+			else if constexpr (requires (FString String) { String = First->GetName(); })
+			{
+				Args.Add(First->GetName());
+			}
+			else if constexpr (requires (FString String) { String = LexToString(Forward<F>(First)); })
+			{
+				Args.Add(LexToString(Forward<F>(First)));
+			}
+			else
+			{
+				static_assert(std::_Always_false<F>, "Found invalid type when FillArgs");
+			}
+
+			Private::FillStringFormatArgs(Args, Forward<R>(Rest)...);
+		}
+	}
+
+	template<typename... T>
+	FString StringFormat(const TCHAR* Format, T&&... Args)
+	{
+		FStringFormatOrderedArguments OrderedArgs;
+		Private::FillStringFormatArgs(OrderedArgs, std::forward<T>(Args)...);
+
+		return FString::Format(Format, std::move(OrderedArgs));
 	}
 }
