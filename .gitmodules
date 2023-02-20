@@ -1,0 +1,3 @@
+[submodule "Source/Common/Public/Range"]
+	path = Source/Common/Public/Range
+	url = https://github.com/landelare/trange.git

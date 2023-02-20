@@ -57,6 +57,14 @@
 
 #endif // DISABLE_ASSERTION
 
+#pragma region Dummy Macro For Readability
+
+#define ASSERT_MACRO_NONE
+
+#define LOG_NONE
+
+#pragma endregion Dummy Macro For Readability
+
 #pragma endregion Config Macro
 
 #pragma region Ensure Condition
@@ -156,7 +164,7 @@
  * @param Message                   formatted log message when condition is false
  * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
  */
-    #define CheckCondition(...) EnsureCondition(__VA_ARGS__)
+#define CheckCondition(...) EnsureCondition(__VA_ARGS__)
 
 /**
  * Use this to validate a pointer.
@@ -169,7 +177,7 @@
  * @param Message                   formatted log message when pointer is invalid
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  */
-    #define CheckPointer(...) EnsurePointer(__VA_ARGS__)
+#define CheckPointer(...) EnsurePointer(__VA_ARGS__)
 
 #endif // DISABLE_CHECK_MACRO
 
