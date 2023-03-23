@@ -124,37 +124,58 @@ namespace Common
 	{
 		using RawType = std::remove_cvref_t<T>;
 
-		if constexpr (Concepts::unreal_struct_provider<T>)
+		if constexpr (std::is_pointer_v<RawType>)
 		{
-			FString HumanReadableMessage;
-			T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
-				/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-			return HumanReadableMessage;
+			using NoPointerRawType = std::remove_pointer_t<RawType>;
+			
+			if constexpr (Concepts::unreal_struct_provider<NoPointerRawType>)
+			{
+				FString HumanReadableMessage;
+				T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
+					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+				return HumanReadableMessage;
+			}
+			else if constexpr (Concepts::has_to_string<NoPointerRawType>)
+			{
+				return Data->ToString();
+			}
+			else if constexpr (Concepts::has_get_name<NoPointerRawType>)
+			{
+				return Data->GetName();
+			}
+			else
+			{
+				static_assert(std::_Always_false<T>, "T is not supported for ToString");
+				return {};
+			}
 		}
-		else if constexpr (std::is_enum_v<RawType>)
+		else // value
 		{
-			return UEnum::GetValueAsString(std::forward<T>(Data));
-		}
-		else if constexpr (std::is_same_v<bool, RawType>)
-		{
-			return Common::BoolToString(std::forward<T>(Data));
-		}
-		else if constexpr (Concepts::has_to_string<T>)
-		{
-			return Data.ToString();
-		}
-		else if constexpr (Concepts::has_get_name<T>)
-		{
-			return Data.GetName();
-		}
-		else if constexpr (Concepts::lex_to_string<T>)
-		{
-			return LexToString(std::forward<T>(Data));
-		}
-		else
-		{
-			static_assert(std::_Always_false<T>, "T is not supported for ToString");
-			return {};
+			if constexpr (std::is_enum_v<RawType>)
+			{
+				return UEnum::GetValueAsString(std::forward<T>(Data));
+			}
+			else if constexpr (std::is_same_v<bool, RawType>)
+			{
+				return Common::BoolToString(std::forward<T>(Data));
+			}
+			else if constexpr (Concepts::lex_to_string<RawType>)
+            {
+            	return LexToString(std::forward<T>(Data));
+            }
+			else if constexpr (Concepts::has_to_string<RawType>)
+			{
+				return Data.ToString();
+			}
+			else if constexpr (Concepts::has_get_name<RawType>)
+			{
+				return Data.GetName();
+			}
+			else
+			{
+				static_assert(std::_Always_false<T>, "T is not supported for ToString");
+				return {};
+			}
 		}
 	}
 	
