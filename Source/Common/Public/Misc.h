@@ -292,13 +292,13 @@ namespace Common
 		{
 			using RawType = std::remove_cvref_t<F>;
 
-			if constexpr (Concepts::is_stringable<RawType>)
-			{
-				Args.Add(Common::ToString(std::forward<F>(First)));
-			}
-			else if constexpr (std::is_constructible_v<FStringFormatArg, F>)
+			if constexpr (std::is_constructible_v<FStringFormatArg, F>)
 			{
 				Args.Add(std::forward<F>(First));
+			}
+			else if constexpr (Concepts::is_stringable<RawType>)
+			{
+				Args.Add(Common::ToString(std::forward<F>(First)));
 			}
 			else
 			{
