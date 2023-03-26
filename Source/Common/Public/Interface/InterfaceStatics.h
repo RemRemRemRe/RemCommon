@@ -13,6 +13,7 @@ class COMMON_API UInterfaceStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+public:
 	UFUNCTION(BlueprintPure, Category = "Utilities|Interface")
 	static bool IsValidInterface(const FScriptInterface Interface);
 };

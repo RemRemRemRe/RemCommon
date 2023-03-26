@@ -5,5 +5,5 @@
 
 bool UInterfaceStatics::IsValidInterface(const FScriptInterface Interface)
 {
-	return Interface.GetInterface() != nullptr;
+	return IsValid(Interface.GetObject());
 }

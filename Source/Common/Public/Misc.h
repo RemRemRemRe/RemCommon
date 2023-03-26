@@ -124,24 +124,25 @@ namespace Common
 	{
 		using RawType = std::remove_cvref_t<T>;
 
+		// pointer
 		if constexpr (std::is_pointer_v<RawType>)
 		{
 			using NoPointerRawType = std::remove_pointer_t<RawType>;
 			
-			if constexpr (Concepts::unreal_struct_provider<NoPointerRawType>)
-			{
-				FString HumanReadableMessage;
-				T::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
-					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-				return HumanReadableMessage;
-			}
-			else if constexpr (Concepts::has_to_string<NoPointerRawType>)
+			if constexpr (Concepts::has_to_string<NoPointerRawType>)
 			{
 				return Data->ToString();
 			}
 			else if constexpr (Concepts::has_get_name<NoPointerRawType>)
 			{
 				return Data->GetName();
+			}
+			else if constexpr (Concepts::unreal_struct_provider<NoPointerRawType>)
+			{
+				FString HumanReadableMessage;
+				NoPointerRawType::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
+					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+				return HumanReadableMessage;
 			}
 			else
 			{
@@ -159,10 +160,6 @@ namespace Common
 			{
 				return Common::BoolToString(std::forward<T>(Data));
 			}
-			else if constexpr (Concepts::lex_to_string<RawType>)
-            {
-            	return LexToString(std::forward<T>(Data));
-            }
 			else if constexpr (Concepts::has_to_string<RawType>)
 			{
 				return Data.ToString();
@@ -170,6 +167,10 @@ namespace Common
 			else if constexpr (Concepts::has_get_name<RawType>)
 			{
 				return Data.GetName();
+			}
+			else if constexpr (Concepts::lex_to_string<RawType>)
+			{
+				return LexToString(std::forward<T>(Data));
 			}
 			else
 			{
@@ -290,19 +291,13 @@ namespace Common
 		template<typename F, typename... R>
 		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
 		{
-			using RawType = std::remove_cvref_t<F>;
-
 			if constexpr (std::is_constructible_v<FStringFormatArg, F>)
 			{
 				Args.Add(std::forward<F>(First));
 			}
-			else if constexpr (Concepts::is_stringable<RawType>)
-			{
-				Args.Add(Common::ToString(std::forward<F>(First)));
-			}
 			else
 			{
-				static_assert(std::_Always_false<F>, "Found invalid type when FillArgs");
+				Args.Add(Common::ToString(std::forward<F>(First)));
 			}
 
 			Private::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
