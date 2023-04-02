@@ -4,6 +4,9 @@
 #include "Object/ObjectStatics.h"
 
 #include "GameFramework/PlayerState.h"
+
+#include "Kismet/GameplayStatics.h"
+
 #include "Macro/AssertionMacros.h"
 
 UObject* UObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
@@ -54,6 +57,28 @@ void UObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 	{
 		CheckCondition(false);
 	}
+}
+
+void UObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
+{
+	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	CheckPointer(PlayerController, return;);
+
+	// player index 0 on Dedicated server is invalid here
+	CheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
+
+	PlayerController->ServerViewPrevPlayer();
+}
+
+void UObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
+{
+	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	CheckPointer(PlayerController, return;);
+
+	// player index 0 on Dedicated server is invalid here
+    CheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
+	
+	PlayerController->ServerViewNextPlayer();
 }
 
 namespace Common::ObjectStatics

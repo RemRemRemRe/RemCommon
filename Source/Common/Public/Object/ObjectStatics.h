@@ -45,6 +45,12 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Should Not Happen"))
 	static void ShouldNotHappen(const bool bTriggerBreakpointInCpp = true);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static void ServerViewPreviousPlayer(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static void ServerViewNextPlayer(const UObject* WorldContextObject);
 };
 
 namespace Common::ObjectStatics
@@ -57,7 +63,7 @@ namespace Common::ObjectStatics
 	/** Templated version of FindComponentByClass that handles casting for you */
 	template<class T>
 	requires std::is_base_of_v<UActorComponent, T>
-	static T* FindComponentByClass(const AActor* Actor)
+	T* FindComponentByClass(const AActor* Actor)
 	{
 		EnsurePointer(Actor, return {});
 		return Actor->FindComponentByClass<T>();
