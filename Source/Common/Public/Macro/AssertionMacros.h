@@ -144,6 +144,19 @@
  */
 #define EnsurePointer(...) MULTI_MACRO(ENSURE_POINTER, __VA_ARGS__)
 
+/**
+ * Use this to validate a pointer.
+ *  - Pointer is necessary, other parameters are optional.
+ *
+ * @param Condition                 the condition to assert
+ * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
+ * @param CategoryName              name of the logging category. default to LogTemp
+ * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
+ * @param Message                   formatted log message when pointer is invalid
+ * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
+ */
+#define EnsureVariable(...) EnsurePointer(__VA_ARGS__)
+
 #pragma endregion Ensure Pointer
 
 #pragma region Check Condition
@@ -170,7 +183,7 @@
  * Use this to validate a pointer.
  *  - Pointer is necessary, other parameters are optional.
  *
- * @param Condition                 the condition to assert
+ * @param Pointer					the pointer to assert
  * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
@@ -178,6 +191,19 @@
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  */
 #define CheckPointer(...) EnsurePointer(__VA_ARGS__)
+
+/**
+ * Use this to validate a variable.
+ *  - Variable is necessary, other parameters are optional.
+ *
+ * @param Variable					the variable to assert
+ * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
+ * @param CategoryName              name of the logging category. default to LogTemp
+ * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
+ * @param Message                   formatted log message when pointer is invalid
+ * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
+ */
+#define CheckVariable(...) EnsureVariable(__VA_ARGS__)
 
 #endif // DISABLE_CHECK_MACRO
 

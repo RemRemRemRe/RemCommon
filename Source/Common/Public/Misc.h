@@ -31,20 +31,30 @@ namespace Common
 			{
 				return ::IsValid(Object);
 			}
+			else if constexpr (Concepts::has_is_valid<RawType>)
+			{
+				return Object->IsValid();
+			}
 			else
 			{
 				return Object != nullptr;
 			}
 		}
-		
-		else if constexpr (TIsTObjectPtr<T>::Value)
-		{
-			return Common::IsValid(Object.Get());
-		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
-			return false;
+			if constexpr (TIsTObjectPtr<T>::Value)
+			{
+				return Common::IsValid(Object.Get());
+			}
+			else if constexpr (Concepts::has_is_valid<T>)
+			{
+				return Object.IsValid();
+			}
+			else
+			{
+				static_assert(std::_Always_false<T>, "T is either a TObjectPtr nor having 'IsValid' member");
+				return false;
+			}
 		}
 	}
 

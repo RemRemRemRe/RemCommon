@@ -64,4 +64,10 @@ namespace Common::Concepts
 	{
 		StructRef = T::StaticClass();
 	};
+
+	template<class T>
+	concept has_is_valid = requires (bool Result, const T Object)
+	{
+		Result = Object.IsValid();
+	};
 }
