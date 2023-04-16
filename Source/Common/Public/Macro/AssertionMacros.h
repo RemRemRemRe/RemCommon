@@ -59,6 +59,8 @@
 
 #pragma region Dummy Macro For Readability
 
+#define HANDLING_NONE
+
 #define ASSERT_MACRO_NONE
 
 #define LOG_NONE

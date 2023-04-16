@@ -1,21 +1,24 @@
 //
 
-using UnrealBuildTool;
 
-public class Common : ModuleRules
+namespace UnrealBuildTool.Rules
 {
-	public Common(ReadOnlyTargetRules Target) : base(Target)
+	public class Common : ModuleRules
 	{
-		PCHUsage					= PCHUsageMode.UseExplicitOrSharedPCHs;
-		bLegacyPublicIncludePaths	= false;
-		ShadowVariableWarningLevel	= WarningLevel.Error;
+		public Common(ReadOnlyTargetRules target) : base(target)
+		{
+			PCHUsage					= PCHUsageMode.UseExplicitOrSharedPCHs;
+			bLegacyPublicIncludePaths	= false;
+			ShadowVariableWarningLevel	= WarningLevel.Error;
+			CppStandard 				= CppStandardVersion.Cpp20;
 
-		PrivateDependencyModuleNames.AddRange(
-			new [] {
-				"Core",
-				"CoreUObject",
-				"Engine",
-			}
-		);
+			PrivateDependencyModuleNames.AddRange(
+				new [] {
+					"Core",
+					"CoreUObject",
+					"Engine",
+				}
+			);
+		}
 	}
 }
