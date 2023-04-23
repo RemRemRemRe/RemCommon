@@ -5,7 +5,7 @@
 #include "RemCardinalDirection.generated.h"
 
 UENUM(BlueprintType)
-enum class ECardinalDirection : uint8
+enum class ERemCardinalDirection : uint8
 {
 	Forward,
 	Backward,
@@ -33,14 +33,14 @@ namespace Rem::Common::Enum
 		return static_cast<EnumType>(Value - 1);
 	}
 
-	constexpr ECardinalDirection GetOppositeCardinalDirection(const ECardinalDirection Direction)
+	constexpr ERemCardinalDirection GetOppositeCardinalDirection(const ERemCardinalDirection Direction)
 	{
 		return GetAdjacentEnumForPairedEnum(Direction);
 	}
 
-	constexpr bool IsDirectionPerpendicular(const ECardinalDirection First, const ECardinalDirection Second)
+	constexpr bool IsDirectionPerpendicular(const ERemCardinalDirection First, const ERemCardinalDirection Second)
 	{
-		using Underlying = std::underlying_type_t<ECardinalDirection>;
+		using Underlying = std::underlying_type_t<ERemCardinalDirection>;
 
 		const Underlying ValueFirst = static_cast<Underlying>(First);
 		const Underlying ValueSecond = static_cast<Underlying>(Second);

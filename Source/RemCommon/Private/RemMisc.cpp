@@ -7,7 +7,7 @@ namespace Rem::Common
 {
 	bool IsClassDefaultObject(const UObject* Object)
 	{
-		CheckPointer(Object, {});
+		RemCheckVariable(Object, {});
 		
 		const UClass* Class = Object->GetClass();
 		return Class->GetDefaultObject(false) == Object;

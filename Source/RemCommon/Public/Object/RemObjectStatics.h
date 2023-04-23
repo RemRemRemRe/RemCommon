@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class REMCOMMON_API UObjectStatics : public UBlueprintFunctionLibrary
+class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -21,16 +21,16 @@ public:
 	/**
 	 * @brief Is Object a blueprint object
 	 */
-	UFUNCTION(BlueprintPure, Category = "Object")
+	UFUNCTION(BlueprintPure, Category = "Rem|Object")
 	static bool IsBlueprintObject(const UObject* Object);
 
 	/**
 	 * @brief Dose the class of the object is blueprint class
 	 */
-	UFUNCTION(BlueprintPure, Category = "Object")
+	UFUNCTION(BlueprintPure, Category = "Rem|Object")
 	static bool IsObjectValidForBlueprint(const UObject* Object);
 
-	UFUNCTION(BlueprintPure, Category = "PlayerState")
+	UFUNCTION(BlueprintPure, Category = "Rem|PlayerState")
 	static APlayerState* GetPlayerState(const AActor* Actor);
 
 	/**
@@ -46,10 +46,10 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Should Not Happen"))
 	static void ShouldNotHappen(const bool bTriggerBreakpointInCpp = true);
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerController", meta = (WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
 	static void ServerViewPreviousPlayer(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerController", meta = (WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
 	static void ServerViewNextPlayer(const UObject* WorldContextObject);
 };
 
@@ -65,7 +65,7 @@ namespace Rem::Common::Object
 	requires std::is_base_of_v<UActorComponent, T>
 	T* FindComponentByClass(const AActor* Actor)
 	{
-		EnsurePointer(Actor, return {});
+		RemEnsureVariable(Actor, return {});
 		return Actor->FindComponentByClass<T>();
 	}
 
@@ -73,11 +73,11 @@ namespace Rem::Common::Object
 	requires std::is_base_of_v<APlayerState, T>
 	T* GetPlayerStateFromPawnOwner(const UActorComponent* Component)
 	{
-		EnsurePointer(Component, return {});
+		RemEnsureVariable(Component, return {});
 
 		APawn* Pawn = Component->GetOwner<APawn>();
 		
-		EnsurePointer(Pawn, return {});
+		RemEnsureVariable(Pawn, return {});
 
 		return Pawn->GetPlayerState<T>();
 	}
@@ -86,11 +86,11 @@ namespace Rem::Common::Object
 	requires std::is_base_of_v<APlayerController, T>
 	T* GetControllerFromPawnOwner(const UActorComponent* Component)
 	{
-		EnsurePointer(Component, return {});
+		RemEnsureVariable(Component, return {});
 
 		APawn* Pawn = Component->GetOwner<APawn>();
 		
-		EnsurePointer(Pawn, return {});
+		RemEnsureVariable(Pawn, return {});
 
 		return Pawn->GetController<T>();
 	}

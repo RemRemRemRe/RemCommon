@@ -9,29 +9,29 @@
 
 #include "Macro/RemAssertionMacros.h"
 
-UObject* UObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
+UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
 {
 	return SoftObjectPtr.Get();
 }
 
-bool UObjectStatics::IsBlueprintObject(const UObject* Object)
+bool URemObjectStatics::IsBlueprintObject(const UObject* Object)
 {
-	CheckPointer(Object, false);
+	RemCheckVariable(Object, false);
 	
 	return Object->GetClass()->HasAnyClassFlags(CLASS_CompiledFromBlueprint)
 		|| !Object->GetClass()->HasAnyClassFlags(CLASS_Native);
 }
 
-bool UObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
+bool URemObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
 {
-	CheckPointer(Object, false);
+	RemCheckVariable(Object, false);
 	
 	return !Object->HasAnyFlags(RF_BeginDestroyed) && !Object->IsUnreachable();
 }
 
-APlayerState* UObjectStatics::GetPlayerState(const AActor* Actor)
+APlayerState* URemObjectStatics::GetPlayerState(const AActor* Actor)
 {
-	EnsurePointer(Actor, return {});
+	RemEnsureVariable(Actor, return {});
 	
 	if (const APawn* Pawn = Cast<APawn>(Actor))
 	{
@@ -51,32 +51,32 @@ APlayerState* UObjectStatics::GetPlayerState(const AActor* Actor)
 	return {};
 }
 
-void UObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
+void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 {
 	if (bTriggerBreakpointInCpp)
 	{
-		CheckCondition(false);
+		RemCheckCondition(false);
 	}
 }
 
-void UObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
+void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
-	CheckPointer(PlayerController, return;);
+	RemCheckVariable(PlayerController, return;);
 
 	// player index 0 on Dedicated server is invalid here
-	CheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
+	RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 
 	PlayerController->ServerViewPrevPlayer();
 }
 
-void UObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
+void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
-	CheckPointer(PlayerController, return;);
+	RemCheckVariable(PlayerController, return;);
 
 	// player index 0 on Dedicated server is invalid here
-    CheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
+    RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 	
 	PlayerController->ServerViewNextPlayer();
 }
@@ -88,7 +88,7 @@ void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* In
 	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate)
 {
 	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(ArrayProperty->Inner);
-	CheckPointer(ObjectProperty, return;);
+	RemCheckVariable(ObjectProperty, return;);
 	
 	FScriptArrayHelper_InContainer Helper(ArrayProperty, InContainer);
 	

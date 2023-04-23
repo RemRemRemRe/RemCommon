@@ -3,7 +3,7 @@
 
 #include "Interface/RemInterfaceStatics.h"
 
-bool UInterfaceStatics::IsValidInterface(const FScriptInterface Interface)
+bool URemInterfaceStatics::IsValidInterface(const FScriptInterface Interface)
 {
 	return IsValid(Interface.GetObject());
 }

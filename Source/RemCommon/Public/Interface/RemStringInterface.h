@@ -23,6 +23,6 @@ public:
 
 protected:
 	virtual FString ToStringInternal() const
-		VIRTUAL_WARN(LogRemCommon, return {};);
+		REM_VIRTUAL_WARN(LogRemCommon, return {};);
 	
 };

@@ -9,11 +9,11 @@
  * 
  */
 UCLASS()
-class REMCOMMON_API UInterfaceStatics : public UBlueprintFunctionLibrary
+class REMCOMMON_API URemInterfaceStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Utilities|Interface")
+	UFUNCTION(BlueprintPure, Category = "Rem|Utilities|Interface")
 	static bool IsValidInterface(const FScriptInterface Interface);
 };

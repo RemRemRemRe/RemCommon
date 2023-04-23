@@ -7,22 +7,22 @@
 
 #pragma region Config Macro
 
-// #define LET_IT_CRASH
-// #define DISABLE_LOG
-// #define DISABLE_ASSERTION
+// #define REM_LET_IT_CRASH
+// #define REM_DISABLE_LOG
+// #define REM_DISABLE_ASSERTION
 #define DISABLE_CHECK_MACRO UE_BUILD_SHIPPING || UE_BUILD_TEST 
 
-#ifdef LET_IT_CRASH
-    #define INVALID_HANDLING_STATEMENT(...)
+#ifdef REM_LET_IT_CRASH
+    #define REM_INVALID_HANDLING_STATEMENT(...)
 #else
-    #define INVALID_HANDLING_STATEMENT(...) __VA_ARGS__
-#endif // LET_IT_CRASH
+    #define REM_INVALID_HANDLING_STATEMENT(...) __VA_ARGS__
+#endif // REM_LET_IT_CRASH
 
 
-#ifdef DISABLE_LOG
-    #define LOG_HELPER(CategoryName, Verbosity, Message)
+#ifdef REM_DISABLE_LOG
+    #define REM_LOG_HELPER(CategoryName, Verbosity, Message)
 #else
-    #define LOG_HELPER(CategoryName, Verbosity, Message) \
+    #define REM_LOG_HELPER(CategoryName, Verbosity, Message) \
         do \
         { \
             if constexpr ( constexpr std::string_view StringView = #Message; \
@@ -31,14 +31,14 @@
                 UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FString(Message) ) \
             } \
         } while (false)
-#endif // DISABLE_LOG
+#endif // REM_DISABLE_LOG
 
 
-#ifdef DISABLE_ASSERTION
-    #define ASSER_CONDITION(AssertionMacro, Condition)
-    #define ASSER_CONDITION_EVALUATED(AssertionMacro, Condition)
+#ifdef REM_DISABLE_ASSERTION
+    #define REM_ASSER_CONDITION(AssertionMacro, Condition)
+    #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition)
 #else
-    #define ASSER_CONDITION(AssertionMacro, Condition) \
+    #define REM_ASSER_CONDITION(AssertionMacro, Condition) \
         do \
         { \
             if constexpr ( constexpr std::string_view StringView = #AssertionMacro; \
@@ -48,22 +48,22 @@
             } \
         } while (false)
 
-    #define ASSER_CONDITION_EVALUATED(AssertionMacro, Condition) \
+    #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition) \
         do \
         { \
             constexpr bool RightConditionIsFalse = false; \
-            ASSER_CONDITION(AssertionMacro, RightConditionIsFalse && ( Condition )); \
+            REM_ASSER_CONDITION(AssertionMacro, RightConditionIsFalse && ( Condition )); \
         } while (false)
 
-#endif // DISABLE_ASSERTION
+#endif // REM_DISABLE_ASSERTION
 
 #pragma region Dummy Macro For Readability
 
-#define HANDLING_NONE
+#define REM_NO_HANDLING
 
-#define ASSERT_MACRO_NONE
+#define REM_NO_ASSERTION
 
-#define LOG_NONE
+#define REM_NO_LOG
 
 #pragma endregion Dummy Macro For Readability
 
@@ -71,32 +71,32 @@
 
 #pragma region Ensure Condition
 
-#define ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
+#define REM_ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
     { \
         if ( UNLIKELY( !(Condition) ) ) \
         { \
-            LOG_HELPER(CategoryName, Verbosity, Message); \
+            REM_LOG_HELPER(CategoryName, Verbosity, Message); \
             { \
-                ASSER_CONDITION_EVALUATED(AssertionMacro, Condition ); \
+                REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition ); \
             } \
-            INVALID_HANDLING_STATEMENT(InvalidHandlingStatement); \
+            REM_INVALID_HANDLING_STATEMENT(InvalidHandlingStatement); \
         } \
     }
 
-#define ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, ensureAlways)
+#define REM_ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
+    REM_ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, ensureAlways)
 
-#define ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Verbosity) \
-    ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
+#define REM_ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Verbosity) \
+    REM_ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
-#define ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, CategoryName) \
-    ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Log)
+#define REM_ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, CategoryName) \
+    REM_ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Log)
 
-#define ENSURE_CONDITION_2(Condition, InvalidHandlingStatement) \
-    ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, LogTemp)
+#define REM_ENSURE_CONDITION_2(Condition, InvalidHandlingStatement) \
+    REM_ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, LogTemp)
 
-#define ENSURE_CONDITION_1(Condition) \
-    ENSURE_CONDITION_2(Condition, /*InvalidHandlingStatement*/)
+#define REM_ENSURE_CONDITION_1(Condition) \
+    REM_ENSURE_CONDITION_2(Condition, /*InvalidHandlingStatement*/)
 
 /**
  * Use this to validate a condition.
@@ -109,63 +109,50 @@
  * @param Message                   formatted log message when condition is false
  * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
  */
-#define EnsureCondition(...) MULTI_MACRO(ENSURE_CONDITION, __VA_ARGS__)
+#define RemEnsureCondition(...) REM_MULTI_MACRO(REM_ENSURE_CONDITION, __VA_ARGS__)
 
 #pragma endregion Ensure Condition
 
-#pragma region Ensure Pointer
+#pragma region Ensure Variable
 
-#define ENSURE_POINTER_6(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
-    ENSURE_CONDITION_6(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
+#define REM_ENSURE_VARIABLE_6(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
+    REM_ENSURE_CONDITION_6(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
 
-#define ENSURE_POINTER_5(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    ENSURE_CONDITION_5(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
+#define REM_ENSURE_VARIABLE_5(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
+    REM_ENSURE_CONDITION_5(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
-#define ENSURE_POINTER_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
-    ENSURE_CONDITION_4(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
+#define REM_ENSURE_VARIABLE_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
+    REM_ENSURE_CONDITION_4(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
 
-#define ENSURE_POINTER_3(Pointer, InvalidHandlingStatement, CategoryName) \
-    ENSURE_CONDITION_3(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
+#define REM_ENSURE_VARIABLE_3(Pointer, InvalidHandlingStatement, CategoryName) \
+    REM_ENSURE_CONDITION_3(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
 
-#define ENSURE_POINTER_2(Pointer, InvalidHandlingStatement) \
-    ENSURE_CONDITION_2(Rem::Common::IsValid(Pointer), InvalidHandlingStatement)
+#define REM_ENSURE_VARIABLE_2(Pointer, InvalidHandlingStatement) \
+    REM_ENSURE_CONDITION_2(Rem::Common::IsValid(Pointer), InvalidHandlingStatement)
 
-#define ENSURE_POINTER_1(Pointer) \
-    ENSURE_CONDITION_1(Rem::Common::IsValid(Pointer))
+#define REM_ENSURE_VARIABLE_1(Pointer) \
+    REM_ENSURE_CONDITION_1(Rem::Common::IsValid(Pointer))
 
 /**
- * Use this to validate a pointer.
- *  - Pointer is necessary, other parameters are optional.
+ * Use this to validate a variable.
+ *  - variable is necessary, other parameters are optional.
  *
- * @param Condition                 the condition to assert
+ * @param Variable					the variable to assert
  * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
  * @param Message                   formatted log message when pointer is invalid
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  */
-#define EnsurePointer(...) MULTI_MACRO(ENSURE_POINTER, __VA_ARGS__)
+#define RemEnsureVariable(...) REM_MULTI_MACRO(REM_ENSURE_VARIABLE, __VA_ARGS__)
 
-/**
- * Use this to validate a pointer.
- *  - Pointer is necessary, other parameters are optional.
- *
- * @param Condition                 the condition to assert
- * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
- * @param CategoryName              name of the logging category. default to LogTemp
- * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
- * @param Message                   formatted log message when pointer is invalid
- * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
- */
-#define EnsureVariable(...) EnsurePointer(__VA_ARGS__)
+#pragma endregion Ensure Variable
 
-#pragma endregion Ensure Pointer
-
-#pragma region Check Condition
+#pragma region Check Condition & Check Variable
 
 #if defined(DISABLE_CHECK_MACRO) && !DO_CHECK
-    #define CheckCondition(...)
-    #define CheckPointer(...)
+    #define RemCheckCondition(...)
+    #define RemCheckVariable(...)
 #else
 
 /**
@@ -179,20 +166,7 @@
  * @param Message                   formatted log message when condition is false
  * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
  */
-#define CheckCondition(...) EnsureCondition(__VA_ARGS__)
-
-/**
- * Use this to validate a pointer.
- *  - Pointer is necessary, other parameters are optional.
- *
- * @param Pointer					the pointer to assert
- * @param InvalidHandlingStatement  statements to execute when pointer is invalid. can be any number of statements as you want (surround them with '{}' if ',' is used)
- * @param CategoryName              name of the logging category. default to LogTemp
- * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
- * @param Message                   formatted log message when pointer is invalid
- * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
- */
-#define CheckPointer(...) EnsurePointer(__VA_ARGS__)
+#define RemCheckCondition(...) RemEnsureCondition(__VA_ARGS__)
 
 /**
  * Use this to validate a variable.
@@ -205,8 +179,8 @@
  * @param Message                   formatted log message when pointer is invalid
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  */
-#define CheckVariable(...) EnsureVariable(__VA_ARGS__)
+#define RemCheckVariable(...) RemEnsureVariable(__VA_ARGS__)
 
 #endif // DISABLE_CHECK_MACRO
 
-#pragma endregion Check Condition
+#pragma endregion Check Condition & Check Variable
