@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RemConcepts.h"
+#include <string_view>
 
 #if WITH_EDITOR
 
@@ -122,9 +123,9 @@ namespace Rem::Common
 
 	REMCOMMON_API bool IsClassDefaultObject(const UObject* Object);
 
-	constexpr TCHAR* BoolToString(const bool bValue)
+	constexpr FStringView BoolToString(const bool bValue)
 	{
-		return bValue ? ANSI_TO_TCHAR("True") : ANSI_TO_TCHAR("False");
+		return bValue ? TEXTVIEW("True") : TEXTVIEW("False");
 	}
 	
 	REMCOMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);

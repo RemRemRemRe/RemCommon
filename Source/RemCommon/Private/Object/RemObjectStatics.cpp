@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Object/RemObjectStatics.h"
@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Macro/RemAssertionMacros.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
 
 UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
 {
@@ -59,12 +61,55 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 	}
 }
 
+APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
+{
+	// ReSharper disable once CommentTypo
+	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
+	
+	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	RemCheckVariable(GameInstance, return nullptr;);
+
+	return GameInstance->GetFirstLocalPlayerController();
+}
+
+ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
+{
+	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	RemCheckVariable(GameInstance, return nullptr;);
+
+	return GameInstance->GetFirstGamePlayer();
+}
+
+APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
+{
+	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
+	RemCheckVariable(PlayerController, return nullptr;);
+
+	return PlayerController->GetPawn();
+}
+
+APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
+{
+	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
+	RemCheckVariable(PlayerController, return nullptr;);
+
+	return PlayerController->GetPlayerState<APlayerState>();
+}
+
+APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
+{
+	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
+	RemCheckVariable(PlayerController, return nullptr;);
+
+	return PlayerController->PlayerCameraManager;
+}
+
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
-	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
 	RemCheckVariable(PlayerController, return;);
 
-	// player index 0 on Dedicated server is invalid here
+	// Dedicated server dose not have "local" player controller
 	RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 
 	PlayerController->ServerViewPrevPlayer();
@@ -72,10 +117,10 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 
 void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
-	auto* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
 	RemCheckVariable(PlayerController, return;);
 
-	// player index 0 on Dedicated server is invalid here
+	// Dedicated server dose not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 	
 	PlayerController->ServerViewNextPlayer();

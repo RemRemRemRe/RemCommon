@@ -73,7 +73,7 @@
 
 #define REM_ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
     { \
-        if ( UNLIKELY( !(Condition) ) ) \
+        if (!LIKELY(Condition)) \
         { \
             REM_LOG_HELPER(CategoryName, Verbosity, Message); \
             { \

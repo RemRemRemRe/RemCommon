@@ -47,6 +47,21 @@ public:
 	static void ShouldNotHappen(const bool bTriggerBreakpointInCpp = true);
 
 	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static APlayerController* GetFirstLocalPlayerController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static ULocalPlayer* GetFirstLocalPlayer(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static APawn* GetFirstLocalPlayerPawn(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static APlayerState* GetFirstLocalPlayerState(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
+	static APlayerCameraManager* GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
 	static void ServerViewPreviousPlayer(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))

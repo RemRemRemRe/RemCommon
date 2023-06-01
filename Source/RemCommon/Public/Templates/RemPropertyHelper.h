@@ -17,8 +17,8 @@ namespace Rem::Common::PropertyHelper
 
 			int32 ArrayRootId = ++InId;
 			
-			if constexpr (TOr<	TIsSame<PropertyType, FArrayProperty>,
-								TIsSame<PropertyType, FProperty>>::Value)
+			if constexpr (std::disjunction_v<
+				std::is_same<PropertyType, FArrayProperty>, std::is_same<PropertyType, FProperty>>)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, ArrayRootId, InParentId);
@@ -38,8 +38,8 @@ namespace Rem::Common::PropertyHelper
 
 			int32 MapRootId = ++InId;
 
-			if constexpr (TOr<	TIsSame<PropertyType, FMapProperty>,
-								TIsSame<PropertyType, FProperty>>::Value)
+			if constexpr (std::disjunction_v<
+				std::is_same<PropertyType, FMapProperty>, std::is_same<PropertyType, FProperty>>)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, MapRootId, InParentId);
@@ -53,8 +53,8 @@ namespace Rem::Common::PropertyHelper
 				{
 					int32 MapEntryId = ++InId;
 					
-					if constexpr (TOr<	TIsSame<PropertyType, FMapProperty>,
-										TIsSame<PropertyType, FProperty>>::Value)
+					if constexpr (std::disjunction_v<
+						std::is_same<PropertyType, FMapProperty>, std::is_same<PropertyType, FProperty>>)
 					{
 						FString KeyString = FString::Printf(TEXT("[%d]"), MapIndex++);
 						FString TypeString = FString::Printf(TEXT("{%s, %s}"), *MapProperty->KeyProp->GetCPPType(), *MapProperty->ValueProp->GetCPPType());
@@ -77,8 +77,8 @@ namespace Rem::Common::PropertyHelper
 
 			int32 SetRootId = ++InId;
 
-			if constexpr (TOr<	TIsSame<PropertyType, FSetProperty>,
-								TIsSame<PropertyType, FProperty>>::Value)
+			if constexpr (std::disjunction_v<
+				std::is_same<PropertyType, FSetProperty>, std::is_same<PropertyType, FProperty>>)
 			{
 				FString SizeString = FString::Printf(TEXT("{Num = %d}"), Helper.Num());
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, SizeString, SetRootId, InParentId);
@@ -103,8 +103,8 @@ namespace Rem::Common::PropertyHelper
 		{
 			int32 StructRootId = ++InId;
 
-			if constexpr (TOr<	TIsSame<PropertyType, FStructProperty>,
-								TIsSame<PropertyType, FProperty>>::Value)
+			if constexpr (std::disjunction_v<
+				std::is_same<PropertyType, FStructProperty>, std::is_same<PropertyType, FProperty>>)
 			{
 				InFunction(InProperty, InContainer, 0, InProperty->GetCPPType(), InKey, TEXT("{...}"), StructRootId, InParentId);
 			}
