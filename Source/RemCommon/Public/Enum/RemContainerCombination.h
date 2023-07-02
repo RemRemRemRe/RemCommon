@@ -22,6 +22,8 @@ namespace Rem::Common::Enum
 		MapValue			= 1 << 4,
 		Map					= MapKey	| MapValue,
 
+		Struct				= 1 << 5,
+
 		//// Double
 		///
 		ArrayAndSet 		= Array		| Set,

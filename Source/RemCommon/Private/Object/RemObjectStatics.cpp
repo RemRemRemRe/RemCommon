@@ -11,7 +11,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
 
-UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<> SoftObjectPtr, UClass* ObjectClass)
+UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<>& SoftObjectPtr, UClass* ObjectClass)
 {
 	return SoftObjectPtr.Get();
 }
@@ -62,7 +62,7 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 }
 
 APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
-{
+{	
 	// ReSharper disable once CommentTypo
 	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
 	

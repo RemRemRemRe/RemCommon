@@ -16,7 +16,7 @@ class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintPure, meta = (DeterminesOutputType = ObjectClass))
-	static UObject* GetObject(TSoftObjectPtr<UObject> SoftObjectPtr, UClass* ObjectClass);
+	static UObject* GetObject(const TSoftObjectPtr<UObject>& SoftObjectPtr, UClass* ObjectClass);
 	
 	/**
 	 * @brief Is Object a blueprint object
@@ -109,5 +109,9 @@ namespace Rem::Common::Object
 
 		return Pawn->GetController<T>();
 	}
-	
+
+	inline bool IsClassDefaultObject(const UObject& Object)
+	{
+		return static_cast<bool>(Object.GetFlags() & EObjectFlags::RF_ClassDefaultObject);
+	}
 }

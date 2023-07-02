@@ -5,20 +5,6 @@
 #include "RemConcepts.h"
 #include <string_view>
 
-#if WITH_EDITOR
-
-#define RETURN_IF_NOT_GAME_WORLD \
-	if (!GetWorld() || !GetWorld()->IsGameWorld()) \
-	{ \
-		return; \
-	}
-
-#else
-
-#define RETURN_IF_NOT_GAME_WORLD
-
-#endif
-
 namespace Rem::Common
 {
 	template<typename T>
@@ -179,6 +165,13 @@ namespace Rem::Common
 			{
 				return Data.GetName();
 			}
+			else if constexpr (Concepts::unreal_struct_provider<RawType>)
+			{
+				FString HumanReadableMessage;
+				RawType::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, &Data,
+					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+				return HumanReadableMessage;
+			}
 			else if constexpr (Concepts::lex_to_string<RawType>)
 			{
 				return LexToString(std::forward<T>(Data));
@@ -322,5 +315,19 @@ namespace Rem::Common
 		Private::FillStringFormatArgs(OrderedArgs, std::forward<T>(Args)...);
 
 		return FString::Format(Format, std::move(OrderedArgs));
+	}
+
+	template<typename T>
+	requires std::is_base_of_v<UObject, T>
+	decltype(auto) GetDefaultRef()
+	{
+		 return *::GetDefault<T>();
+	}
+
+	template<typename T>
+	requires std::is_base_of_v<UObject, T>
+	decltype(auto) GetMutableDefaultRef()
+	{
+		 return *::GetMutableDefault<T>();
 	}
 }
