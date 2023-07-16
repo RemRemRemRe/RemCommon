@@ -67,7 +67,7 @@ APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObjec
 	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
 	
 	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;);
+	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_AND_ASSERTION);
 
 	return GameInstance->GetFirstLocalPlayerController();
 }
@@ -75,7 +75,7 @@ APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObjec
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
 	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;);
+	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_AND_ASSERTION);
 
 	return GameInstance->GetFirstGamePlayer();
 }
@@ -83,7 +83,7 @@ ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContext
 APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_AND_ASSERTION);
 
 	return PlayerController->GetPawn();
 }
@@ -91,7 +91,7 @@ APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObj
 APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_AND_ASSERTION);
 
 	return PlayerController->GetPlayerState<APlayerState>();
 }
@@ -99,7 +99,7 @@ APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldCo
 APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_AND_ASSERTION);
 
 	return PlayerController->PlayerCameraManager;
 }
@@ -107,7 +107,7 @@ APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return;);
+	RemCheckVariable(PlayerController, return;, REM_NO_LOG_AND_ASSERTION);
 
 	// Dedicated server dose not have "local" player controller
 	RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -118,7 +118,7 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return;);
+	RemCheckVariable(PlayerController, return;, REM_NO_LOG_AND_ASSERTION);
 
 	// Dedicated server dose not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);

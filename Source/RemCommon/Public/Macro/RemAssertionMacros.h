@@ -61,9 +61,11 @@
 
 #define REM_NO_HANDLING
 
+#define REM_NO_LOG
+
 #define REM_NO_ASSERTION
 
-#define REM_NO_LOG
+#define REM_NO_LOG_AND_ASSERTION LogTemp, Log, REM_NO_LOG, REM_NO_ASSERTION
 
 #pragma endregion Dummy Macro For Readability
 
