@@ -11,7 +11,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
 
-UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<>& SoftObjectPtr, UClass* ObjectClass)
+UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<>& SoftObjectPtr, UClass*)
 {
 	return SoftObjectPtr.Get();
 }
@@ -67,7 +67,7 @@ APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObjec
 	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
 	
 	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_AND_ASSERTION);
+	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return GameInstance->GetFirstLocalPlayerController();
 }
@@ -75,7 +75,7 @@ APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObjec
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
 	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_AND_ASSERTION);
+	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return GameInstance->GetFirstGamePlayer();
 }

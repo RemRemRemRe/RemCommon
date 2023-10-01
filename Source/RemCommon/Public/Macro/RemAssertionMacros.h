@@ -67,6 +67,8 @@
 
 #define REM_NO_LOG_AND_ASSERTION LogTemp, Log, REM_NO_LOG, REM_NO_ASSERTION
 
+#define REM_NO_LOG_BUT_ENSURE LogTemp, Log, REM_NO_LOG, ensure
+
 #pragma endregion Dummy Macro For Readability
 
 #pragma endregion Config Macro
@@ -111,7 +113,7 @@
  * @param Message                   formatted log message when condition is false
  * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
  */
-#define RemEnsureCondition(...) REM_MULTI_MACRO(REM_ENSURE_CONDITION, __VA_ARGS__)
+#define RemEnsureCondition(...) REM_MULTI_MACRO(REM_ENSURE_CONDITION, ##__VA_ARGS__)
 
 #pragma endregion Ensure Condition
 
@@ -146,7 +148,7 @@
  * @param Message                   formatted log message when pointer is invalid
  * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
  */
-#define RemEnsureVariable(...) REM_MULTI_MACRO(REM_ENSURE_VARIABLE, __VA_ARGS__)
+#define RemEnsureVariable(...) REM_MULTI_MACRO(REM_ENSURE_VARIABLE, ##__VA_ARGS__)
 
 #pragma endregion Ensure Variable
 

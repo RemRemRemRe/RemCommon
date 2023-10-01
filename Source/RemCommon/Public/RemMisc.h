@@ -3,7 +3,6 @@
 #pragma once
 
 #include "RemConcepts.h"
-#include <string_view>
 
 namespace Rem::Common
 {

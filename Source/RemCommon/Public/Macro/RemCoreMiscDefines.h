@@ -16,6 +16,6 @@
 
 #else
 
-#define REM_VIRTUAL_WARN(CategoryName, ...) PURE_VIRTUAL(__FUNCTION__, __VA_ARGS__)
+#define REM_VIRTUAL_WARN(CategoryName, ...) PURE_VIRTUAL(__FUNCTION__, ##__VA_ARGS__)
 
 #endif
