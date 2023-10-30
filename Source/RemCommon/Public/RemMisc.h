@@ -1,4 +1,4 @@
-﻿// Copyright . All Rights Reserved.
+﻿// Copyright RemRemRemRe, All Rights Reserved.
 
 #pragma once
 
@@ -115,6 +115,8 @@ namespace Rem::Common
 	
 	REMCOMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
+	REMCOMMON_API FString ToString(const UScriptStruct& ScriptStruct, const void* Value);
+
 	template<typename T>
 	FString ToString(T&& Data)
 	{
@@ -135,10 +137,7 @@ namespace Rem::Common
 			}
 			else if constexpr (Concepts::unreal_struct_provider<NoPointerRawType>)
 			{
-				FString HumanReadableMessage;
-				NoPointerRawType::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, Data,
-					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-				return HumanReadableMessage;
+				return ToString(*NoPointerRawType::StaticStruct(), Data);
 			}
 			else
 			{
@@ -166,10 +165,7 @@ namespace Rem::Common
 			}
 			else if constexpr (Concepts::unreal_struct_provider<RawType>)
 			{
-				FString HumanReadableMessage;
-				RawType::StaticStruct()->ExportText(/*out*/ HumanReadableMessage, &Data,
-					/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-				return HumanReadableMessage;
+				return ToString(*RawType::StaticStruct(), &Data);
 			}
 			else if constexpr (Concepts::lex_to_string<RawType>)
 			{

@@ -1,4 +1,4 @@
-// Copyright . All Rights Reserved.
+// Copyright RemRemRemRe, All Rights Reserved.
 
 #include "RemCommonModule.h"
 

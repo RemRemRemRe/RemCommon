@@ -28,4 +28,12 @@ namespace Rem::Common
 		
 		return {};
 	}
+
+	FString ToString(const UScriptStruct& ScriptStruct, const void* Value)
+	{
+		FString HumanReadableMessage;
+		ScriptStruct.ExportText(/*out*/ HumanReadableMessage, Value,
+			/*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+		return HumanReadableMessage;
+	}
 }
