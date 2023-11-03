@@ -10,7 +10,7 @@
 // #define REM_LET_IT_CRASH
 // #define REM_DISABLE_LOG
 // #define REM_DISABLE_ASSERTION
-#define DISABLE_CHECK_MACRO UE_BUILD_SHIPPING || UE_BUILD_TEST 
+#define DISABLE_CHECK_MACRO !(DO_CHECK || REM_WITH_DEVELOPMENT_ONLY_CODE)
 
 #ifdef REM_LET_IT_CRASH
     #define REM_INVALID_HANDLING_STATEMENT(...)
@@ -154,7 +154,7 @@
 
 #pragma region Check Condition & Check Variable
 
-#if defined(DISABLE_CHECK_MACRO) && !DO_CHECK
+#if DISABLE_CHECK_MACRO
     #define RemCheckCondition(...)
     #define RemCheckVariable(...)
 #else

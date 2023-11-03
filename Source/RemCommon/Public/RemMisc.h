@@ -212,7 +212,7 @@ namespace Rem::Common
 			}
 		}
 		
-		return FString::Format(TEXT("Client {0}"), {GPlayInEditorID - 1});
+		return FString::Format(TEXT("Client {0}"), {int32{GPlayInEditorID}});
 	}
 
 	/**

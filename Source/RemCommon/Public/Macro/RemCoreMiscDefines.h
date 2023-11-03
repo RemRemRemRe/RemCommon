@@ -4,7 +4,7 @@
 
 #include "RemMacroUtilities.h"
 
-#if !UE_BUILD_TEST || !UE_BUILD_SHIPPING
+#if REM_WITH_DEVELOPMENT_ONLY_CODE
 
 // An alternative for PURE_VIRTUAL which will cause unwanted process terminated
 #define REM_VIRTUAL_WARN(CategoryName, ...) \
