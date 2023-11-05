@@ -7,101 +7,88 @@
 namespace Rem::Common
 {
 	template<typename T>
-	bool IsValid(const T Object)
+	bool IsValid(T&& Object)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		using RawType = std::remove_reference_t<T>;
+
+		if constexpr (std::is_base_of_v<UObject, RawType>)
 		{
-			using RawType = std::remove_pointer_t<T>;
-			
-			if constexpr (std::is_base_of_v<UObject, RawType>)
-			{
-				return ::IsValid(Object);
-			}
-			else if constexpr (Concepts::has_is_valid<RawType>)
-			{
-				return Object->IsValid();
-			}
-			else
-			{
-				return Object != nullptr;
-			}
+			return ::IsValidChecked(&Object);
+		}
+		else if constexpr (TIsTObjectPtr<RawType>::Value)
+		{
+			return ::IsValid(Object.Get());
+		}
+		else if constexpr (Concepts::has_is_valid<RawType>)
+		{
+			return Object.IsValid();
 		}
 		else
 		{
-			if constexpr (TIsTObjectPtr<T>::Value)
-			{
-				return Common::IsValid(Object.Get());
-			}
-			else if constexpr (Concepts::has_is_valid<T>)
-			{
-				return Object.IsValid();
-			}
-			else
-			{
-				static_assert(std::_Always_false<T>, "T is either a TObjectPtr nor having 'IsValid' member");
-				return false;
-			}
+			static_assert(std::_Always_false<T>, "T is either a TObjectPtr, UObject nor having 'IsValid' member");
+			return false;
 		}
 	}
 
 	template<typename T>
-	ENetMode GetNetMode(const T Object)
+	bool IsValid(T* Object)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		if (Object != nullptr)
 		{
-			using RawType = std::remove_pointer_t<T>;
+			using RawType = std::remove_reference_t<T>;
 			
-			if constexpr (Concepts::has_get_net_mode<RawType>)
+			if constexpr (std::is_base_of_v<UObject, RawType>)
 			{
-				return Object->GetNetMode();
+				return Common::IsValid(*Object);
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T should have member GetNetMode");
-				return {};
+				return true;
 			}
 		}
+		return {};
+	}
 
-		else if constexpr (TIsTObjectPtr<T>::Value)
+	template<typename T>
+	ENetMode GetNetMode(T&& Object)
+	{
+		using RawType = std::remove_reference_t<T>;
+		
+		if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::GetNetMode(Object.Get());
+			return Common::GetNetMode(*Object);
+		}
+		else if constexpr (Concepts::has_get_net_mode<RawType>)
+		{
+			return Object.GetNetMode();
 		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
+			static_assert(std::_Always_false<T>, "T should have member GetNetMode");
 			return {};
 		}
 	}
 
 	template<typename T>
-	bool IsNetMode(const T Object, const ENetMode NetMode)
+	bool IsNetMode(T&& Object, const ENetMode NetMode)
 	{
-		if constexpr (std::is_pointer_v<T>)
-		{
-			using RawType = std::remove_pointer_t<T>;
+		using RawType = std::remove_reference_t<T>;
 			
-			if constexpr (Concepts::has_is_net_mode<RawType>)
-			{
-				return Object->IsNetMode(NetMode);
-			}
-			else if constexpr (Concepts::has_get_net_mode<RawType>)
-			{
-				return Object->GetNetMode() == NetMode;
-			}
-			else
-			{
-				static_assert(std::_Always_false<T>, "T should have member IsNetMode or GetNetMode");
-				return {};
-			}
-		}
-		
-		else if constexpr (TIsTObjectPtr<T>::Value)
+		if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::IsNetMode(Object.Get(), NetMode);
+			return Common::IsNetMode(*Object, NetMode);
+		}
+		else if constexpr (Concepts::has_is_net_mode<RawType>)
+		{
+			return Object.IsNetMode(NetMode);
+		}
+		else if constexpr (Concepts::has_get_net_mode<RawType>)
+		{
+			return Object.GetNetMode() == NetMode;
 		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T should be pointer or TObjectPtr");
+			static_assert(std::_Always_false<T>, "T should have member IsNetMode or GetNetMode");
 			return {};
 		}
 	}
@@ -120,75 +107,69 @@ namespace Rem::Common
 	template<typename T>
 	FString ToString(T&& Data)
 	{
-		using RawType = std::_Remove_cvref_t<T>;
+		using RawType = std::remove_reference_t<T>;
+		
+		if constexpr (std::is_enum_v<RawType>)
+		{
+			return UEnum::GetValueAsString(Data);
+		}
+		else if constexpr (std::is_same_v<bool, RawType>)
+		{
+			return Common::BoolToString(std::forward<T>(Data));
+		}
+		else if constexpr (TIsTObjectPtr<RawType>::Value)
+		{
+			return Common::ToString(*Data);
+		}
+		else if constexpr (Concepts::has_to_string<RawType>)
+		{
+			return Data.ToString();
+		}
+		else if constexpr (Concepts::has_get_name<RawType>)
+		{
+			return Data.GetName();
+		}
+		else if constexpr (Concepts::unreal_struct_provider<RawType>)
+		{
+			return ToString(*RawType::StaticStruct(), &Data);
+		}
+		else if constexpr (Concepts::lex_to_string<RawType>)
+		{
+			return LexToString(std::forward<T>(Data));
+		}
+		else
+		{
+			static_assert(std::_Always_false<T>, "T is not supported for ToString");
+			return {};
+		}
+	}
 
-		// pointer
-		if constexpr (std::is_pointer_v<RawType>)
+	template<typename T>
+	FString ToString(T* Data)
+	{
+		if (Common::IsValid(Data))
 		{
-			using NoPointerRawType = std::remove_pointer_t<RawType>;
-			
-			if constexpr (Concepts::has_to_string<NoPointerRawType>)
-			{
-				return Data->ToString();
-			}
-			else if constexpr (Concepts::has_get_name<NoPointerRawType>)
-			{
-				return Data->GetName();
-			}
-			else if constexpr (Concepts::unreal_struct_provider<NoPointerRawType>)
-			{
-				return ToString(*NoPointerRawType::StaticStruct(), Data);
-			}
-			else
-			{
-				static_assert(std::_Always_false<T>, "T is not supported for ToString");
-				return {};
-			}
+			return ToString(*Data);
 		}
-		else // value
-		{
-			if constexpr (std::is_enum_v<RawType>)
-			{
-				return UEnum::GetValueAsString(std::forward<T>(Data));
-			}
-			else if constexpr (std::is_same_v<bool, RawType>)
-			{
-				return Common::BoolToString(std::forward<T>(Data));
-			}
-			else if constexpr (Concepts::has_to_string<RawType>)
-			{
-				return Data.ToString();
-			}
-			else if constexpr (Concepts::has_get_name<RawType>)
-			{
-				return Data.GetName();
-			}
-			else if constexpr (Concepts::unreal_struct_provider<RawType>)
-			{
-				return ToString(*RawType::StaticStruct(), &Data);
-			}
-			else if constexpr (Concepts::lex_to_string<RawType>)
-			{
-				return LexToString(std::forward<T>(Data));
-			}
-			else
-			{
-				static_assert(std::_Always_false<T>, "T is not supported for ToString");
-				return {};
-			}
-		}
+		return {};
 	}
 	
 	template<typename T>
-	ENetRole GetNetRole(const T* Object)
+	ENetRole GetNetRole(T&& Object)
 	{
+		using RawType = std::remove_reference_t<T>;
+		
+		if constexpr (TIsTObjectPtr<RawType>::Value)
+		{
+			return Common::GetNetRole(*Object);
+		}
 		if constexpr (Concepts::has_get_local_role<T>)
 		{
-			return Object->GetLocalRole();
+			return Object.GetLocalRole();
 		}
 		else if constexpr (Concepts::has_get_owner_role<T>)
 		{
-			return Object->GetOwnerRole();
+			return Object.GetOwnerRole();
 		}
 		else
 		{
@@ -198,7 +179,7 @@ namespace Rem::Common
 	}
 
 	template<typename T, bool bConstantStringLength = false>
-	FString GetNetModeString(const T* Object)
+	FString GetNetModeString(T&& Object)
 	{
 		if (Common::IsNetMode(Object, NM_DedicatedServer) || Common::IsNetMode(Object, NM_ListenServer))
 		{
@@ -228,7 +209,7 @@ namespace Rem::Common
 	}
 	
 	template<typename T, bool bConstantStringLength = false>
-	FString GetNetRoleString(const T* Object)
+	FString GetNetRoleString(T&& Object)
 	{
 		if constexpr (bConstantStringLength)
 		{
@@ -248,15 +229,40 @@ namespace Rem::Common
 	}
 
 	template<typename T>
-	FName GetNetRoleName(const T* Object)
+	FName GetNetRoleName(T&& Object)
 	{
 		return StaticEnum<ENetRole>()->GetValueAsName(Common::GetNetRole(Object));
 	}
 
 	template<typename T>
-	FText GetNetRoleText(const T* Object)
+	FText GetNetRoleText(T&& Object)
 	{
 		return StaticEnum<ENetRole>()->GetDisplayValueAsText(Common::GetNetRole(Object));
+	}
+
+	template<typename  T, bool bShouldValidate = true>
+	FString GetNetDebugString(T&& Object)
+	{
+		if constexpr (bShouldValidate)
+		{
+			if (!Common::IsValid(Object))
+			{
+				return {};
+			}
+		}
+		
+		const FString NetModeString = Common::GetNetModeString<T, true>(std::forward<T>(Object));
+
+		if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
+		{
+			const FString NetRoleString = Common::GetNetRoleString<T, true>(std::forward<T>(Object));
+							
+			return FString::Format(TEXT("{0} {1}"), { NetModeString, NetRoleString });
+		}
+		else
+		{
+			return FString::Format(TEXT("{0}"), { NetModeString });
+		}
 	}
 
 	template<typename  T>
@@ -264,18 +270,7 @@ namespace Rem::Common
 	{
 		if (Common::IsValid(Object))
 		{
-			const FString NetModeString = Common::GetNetModeString<T, true>(Object);
-
-			if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
-			{
-				const FString NetRoleString = Common::GetNetRoleString<T, true>(Object);
-								
-				return FString::Format(TEXT("{0} {1}"), { NetModeString, NetRoleString });
-			}
-			else
-			{
-				return FString::Format(TEXT("{0}"), { NetModeString });
-			}
+			return GetNetDebugString<T, false>(std::forward<T>(*Object));
 		}
 		return {};
 	}

@@ -2,12 +2,12 @@
 
 #pragma once
 
-#define ON_SCOPE_EXIT_WEAK auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
+#define REM_ON_SCOPE_EXIT_WEAK auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
 	::WeakScopeExit::FHelper(this) += [&]
 
-#define ON_SCOPE_EXIT_WEAK_OBJ(Obj) \
+#define REM_ON_SCOPE_EXIT_WEAK_OBJECT(Object) \
 	auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
-	::WeakScopeExit::FHelper(Obj) += [&]
+	::WeakScopeExit::FHelper(Object) += [&]
 
 namespace Rem::Common::WeakScopeExit
 {
