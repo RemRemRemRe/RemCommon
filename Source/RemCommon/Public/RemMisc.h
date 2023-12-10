@@ -320,4 +320,7 @@ namespace Rem::Common
 	{
 		 return *::GetMutableDefault<T>();
 	}
+
+	constexpr uint8 RoleCount = ENetRole::ROLE_MAX - 1u;
+	constexpr uint8 NetModeCount = ENetMode::NM_MAX;
 }

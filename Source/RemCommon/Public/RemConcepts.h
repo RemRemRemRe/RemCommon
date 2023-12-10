@@ -70,4 +70,13 @@ namespace Rem::Common::Concepts
 	{
 		Result = Object.IsValid();
 	};
+
+	template<class T>
+	concept is_uobject = std::is_base_of_v<UObject, T>;
+
+	template<class T>
+	concept is_data_asset = std::is_base_of_v<UDataAsset, T>;
+
+	template<class T>
+	concept is_anim_instance = std::is_base_of_v<UAnimInstance, T>;
 }

@@ -6,9 +6,7 @@
 #include "Macro/RemAssertionMacros.h"
 #include "RemObjectStatics.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
 {
@@ -113,5 +111,19 @@ namespace Rem::Common::Object
 	inline bool IsClassDefaultObject(const UObject& Object)
 	{
 		return static_cast<bool>(Object.GetFlags() & EObjectFlags::RF_ClassDefaultObject);
+	}
+
+	constexpr bool IsArrayItselfChanged(const EPropertyChangeType::Type ChangeType)
+	{
+		return ChangeType == EPropertyChangeType::ArrayAdd
+			|| ChangeType == EPropertyChangeType::ArrayRemove
+			|| ChangeType == EPropertyChangeType::Duplicate
+			|| ChangeType == EPropertyChangeType::ArrayMove;
+	}
+
+	constexpr bool IsOnlyArrayElementChanged(const EPropertyChangeType::Type ChangeType)
+	{
+		return ChangeType == EPropertyChangeType::ValueSet
+			|| ChangeType == EPropertyChangeType::Redirected;
 	}
 }

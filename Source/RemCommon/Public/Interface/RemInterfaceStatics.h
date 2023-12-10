@@ -5,9 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemInterfaceStatics.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class REMCOMMON_API URemInterfaceStatics : public UBlueprintFunctionLibrary
 {
