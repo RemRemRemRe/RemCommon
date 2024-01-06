@@ -1,6 +1,8 @@
 
 #pragma once
 
+class ISlateTextureAtlasInterface;
+
 namespace Rem::Common::Concepts
 {
 	template<class T>
@@ -79,4 +81,13 @@ namespace Rem::Common::Concepts
 
 	template<class T>
 	concept is_anim_instance = std::is_base_of_v<UAnimInstance, T>;
+
+	template<class T>
+	concept is_material_interface = std::is_base_of_v<UMaterialInterface, T>;
+
+	template<class T>
+	concept is_streamable_render_asset = std::is_base_of_v<UStreamableRenderAsset, T>;
+
+	template<class T>
+	concept is_image = is_material_interface<T> || std::is_base_of_v<ISlateTextureAtlasInterface, T>;
 }

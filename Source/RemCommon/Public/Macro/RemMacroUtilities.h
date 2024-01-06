@@ -13,3 +13,17 @@
 	constexpr std::source_location Rem_Source_Location_Current = std::source_location::current(); \
 	const FString VariableName = FString::Format(TEXT("[File: {0}] [Function: {1}] [Line: {2}]"), \
 	{Rem_Source_Location_Current.file_name(), Rem_Source_Location_Current.function_name(), Rem_Source_Location_Current.line()});
+
+#ifdef REM_WITH_DEVELOPMENT_ONLY_CODE
+
+#define REM_RETURN_IF_NOT_GAME_WORLD \
+	if (!GetWorld()->IsGameWorld()) \
+	{ \
+		return; \
+	}
+
+#else
+
+#define REM_RETURN_IF_NOT_GAME_WORLD
+
+#endif
