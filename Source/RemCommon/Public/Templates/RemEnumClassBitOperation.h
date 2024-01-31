@@ -1,6 +1,8 @@
-﻿#pragma once
+﻿// Copyright RemRemRemRe, All Rights Reserved.
 
-namespace Rem::Common::Enum::BitOperation
+#pragma once
+
+namespace Rem::Enum::BitOperation
 {
 	// @see https://wiggling-bits.net/using-enum-classes-as-type-safe-bitmasks/
 

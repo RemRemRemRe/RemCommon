@@ -15,7 +15,7 @@ enum class ERemCardinalDirection : uint8
 	Down,
 };
 
-namespace Rem::Common::Enum
+namespace Rem::Enum
 {
 	template<typename EnumType>
 	requires std::is_enum_v<EnumType>

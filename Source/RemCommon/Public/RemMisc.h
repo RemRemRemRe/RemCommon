@@ -4,7 +4,7 @@
 
 #include "RemConcepts.h"
 
-namespace Rem::Common
+namespace Rem
 {
 	template<typename T>
 	bool IsValid(T&& Object)
@@ -39,7 +39,7 @@ namespace Rem::Common
 			
 			if constexpr (std::is_base_of_v<UObject, RawType>)
 			{
-				return Common::IsValid(*Object);
+				return Rem::IsValid(*Object);
 			}
 			else
 			{
@@ -56,7 +56,7 @@ namespace Rem::Common
 		
 		if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::GetNetMode(*Object);
+			return Rem::GetNetMode(*Object);
 		}
 		else if constexpr (Concepts::has_get_net_mode<RawType>)
 		{
@@ -76,7 +76,7 @@ namespace Rem::Common
 			
 		if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::IsNetMode(*Object, NetMode);
+			return Rem::IsNetMode(*Object, NetMode);
 		}
 		else if constexpr (Concepts::has_is_net_mode<RawType>)
 		{
@@ -115,11 +115,11 @@ namespace Rem::Common
 		}
 		else if constexpr (std::is_same_v<bool, RawType>)
 		{
-			return Common::BoolToString(std::forward<T>(Data));
+			return Rem::BoolToString(std::forward<T>(Data));
 		}
 		else if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::ToString(*Data);
+			return Rem::ToString(*Data);
 		}
 		else if constexpr (Concepts::has_to_string<RawType>)
 		{
@@ -129,11 +129,11 @@ namespace Rem::Common
 		{
 			return Data.GetName();
 		}
-		else if constexpr (Concepts::unreal_struct_provider<RawType>)
+		else if constexpr (Concepts::has_static_struct<RawType>)
 		{
 			return ToString(*RawType::StaticStruct(), &Data);
 		}
-		else if constexpr (Concepts::lex_to_string<RawType>)
+		else if constexpr (Concepts::has_lex_to_string<RawType>)
 		{
 			return LexToString(std::forward<T>(Data));
 		}
@@ -147,7 +147,7 @@ namespace Rem::Common
 	template<typename T>
 	FString ToString(T* Data)
 	{
-		if (Common::IsValid(Data))
+		if (Rem::IsValid(Data))
 		{
 			return ToString(*Data);
 		}
@@ -161,7 +161,7 @@ namespace Rem::Common
 		
 		if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
-			return Common::GetNetRole(*Object);
+			return Rem::GetNetRole(*Object);
 		}
 		if constexpr (Concepts::has_get_local_role<T>)
 		{
@@ -181,7 +181,7 @@ namespace Rem::Common
 	template<typename T, bool bConstantStringLength = false>
 	FString GetNetModeString(T&& Object)
 	{
-		if (Common::IsNetMode(Object, NM_DedicatedServer) || Common::IsNetMode(Object, NM_ListenServer))
+		if (Rem::IsNetMode(Object, NM_DedicatedServer) || Rem::IsNetMode(Object, NM_ListenServer))
 		{
 			if constexpr (bConstantStringLength)
 			{
@@ -215,7 +215,7 @@ namespace Rem::Common
 		{
 			constexpr int32 MaxLength = std::string_view("ROLE_AutonomousProxy").length();
 			
-			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Common::GetNetRole(Object));
+			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
 			
 			NetRoleString.Reserve(MaxLength);
 			AppendSpaces(NetRoleString, MaxLength - NetRoleString.Len());
@@ -224,20 +224,20 @@ namespace Rem::Common
 		}
 		else
 		{
-			return StaticEnum<ENetRole>()->GetValueAsString(Common::GetNetRole(Object));
+			return StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
 		}
 	}
 
 	template<typename T>
 	FName GetNetRoleName(T&& Object)
 	{
-		return StaticEnum<ENetRole>()->GetValueAsName(Common::GetNetRole(Object));
+		return StaticEnum<ENetRole>()->GetValueAsName(Rem::GetNetRole(Object));
 	}
 
 	template<typename T>
 	FText GetNetRoleText(T&& Object)
 	{
-		return StaticEnum<ENetRole>()->GetDisplayValueAsText(Common::GetNetRole(Object));
+		return StaticEnum<ENetRole>()->GetDisplayValueAsText(Rem::GetNetRole(Object));
 	}
 
 	template<typename  T, bool bShouldValidate = true>
@@ -245,17 +245,17 @@ namespace Rem::Common
 	{
 		if constexpr (bShouldValidate)
 		{
-			if (!Common::IsValid(Object))
+			if (!Rem::IsValid(Object))
 			{
 				return {};
 			}
 		}
 		
-		const FString NetModeString = Common::GetNetModeString<T, true>(std::forward<T>(Object));
+		const FString NetModeString = Rem::GetNetModeString<T, true>(std::forward<T>(Object));
 
 		if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
 		{
-			const FString NetRoleString = Common::GetNetRoleString<T, true>(std::forward<T>(Object));
+			const FString NetRoleString = Rem::GetNetRoleString<T, true>(std::forward<T>(Object));
 							
 			return FString::Format(TEXT("{0} {1}"), { NetModeString, NetRoleString });
 		}
@@ -268,14 +268,14 @@ namespace Rem::Common
 	template<typename  T>
 	FString GetNetDebugString(T* Object)
 	{
-		if (Common::IsValid(Object))
+		if (Rem::IsValid(Object))
 		{
 			return GetNetDebugString<T, false>(std::forward<T>(*Object));
 		}
 		return {};
 	}
 
-	namespace Private
+	namespace Impl
 	{
 		// recursion ends with this empty implementation:
 		inline void FillStringFormatArgs(FStringFormatOrderedArguments&)
@@ -291,10 +291,10 @@ namespace Rem::Common
 			}
 			else
 			{
-				Args.Add(Common::ToString(std::forward<F>(First)));
+				Args.Add(Rem::ToString(std::forward<F>(First)));
 			}
 
-			Private::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
+			Impl::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
 		}
 	}
 
@@ -302,20 +302,18 @@ namespace Rem::Common
 	FString StringFormat(const TCHAR* Format, T&&... Args)
 	{
 		FStringFormatOrderedArguments OrderedArgs;
-		Private::FillStringFormatArgs(OrderedArgs, std::forward<T>(Args)...);
+		Impl::FillStringFormatArgs(OrderedArgs, std::forward<T>(Args)...);
 
 		return FString::Format(Format, std::move(OrderedArgs));
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UObject, T>
+	template<Concepts::is_uobject T>
 	decltype(auto) GetDefaultRef()
 	{
 		 return *::GetDefault<T>();
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UObject, T>
+	template<Concepts::is_uobject T>
 	decltype(auto) GetMutableDefaultRef()
 	{
 		 return *::GetMutableDefault<T>();
@@ -323,4 +321,7 @@ namespace Rem::Common
 
 	constexpr uint8 RoleCount = ENetRole::ROLE_MAX - 1u;
 	constexpr uint8 NetModeCount = ENetMode::NM_MAX;
+
+	REMCOMMON_API uint8* AllocateStructMemory(const UStruct& Struct);
+	REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
 }

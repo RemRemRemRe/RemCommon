@@ -1,4 +1,4 @@
-//
+// Copyright RemRemRemRe, All Rights Reserved.
 
 #pragma once
 
@@ -120,22 +120,22 @@
 #pragma region Ensure Variable
 
 #define REM_ENSURE_VARIABLE_6(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro) \
-    REM_ENSURE_CONDITION_6(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
+    REM_ENSURE_CONDITION_6(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
 
 #define REM_ENSURE_VARIABLE_5(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    REM_ENSURE_CONDITION_5(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
+    REM_ENSURE_CONDITION_5(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
 #define REM_ENSURE_VARIABLE_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
-    REM_ENSURE_CONDITION_4(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
+    REM_ENSURE_CONDITION_4(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
 
 #define REM_ENSURE_VARIABLE_3(Pointer, InvalidHandlingStatement, CategoryName) \
-    REM_ENSURE_CONDITION_3(Rem::Common::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
+    REM_ENSURE_CONDITION_3(Rem::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
 
 #define REM_ENSURE_VARIABLE_2(Pointer, InvalidHandlingStatement) \
-    REM_ENSURE_CONDITION_2(Rem::Common::IsValid(Pointer), InvalidHandlingStatement)
+    REM_ENSURE_CONDITION_2(Rem::IsValid(Pointer), InvalidHandlingStatement)
 
 #define REM_ENSURE_VARIABLE_1(Pointer) \
-    REM_ENSURE_CONDITION_1(Rem::Common::IsValid(Pointer))
+    REM_ENSURE_CONDITION_1(Rem::IsValid(Pointer))
 
 /**
  * Use this to validate a variable.

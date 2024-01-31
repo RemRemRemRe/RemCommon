@@ -1,8 +1,10 @@
-﻿#pragma once
+﻿// Copyright RemRemRemRe, All Rights Reserved.
 
-namespace Rem::Common
+#pragma once
+
+namespace Rem
 {
-	namespace Private
+	namespace Impl
 	{
 		template <typename, template <typename...> typename>
 		struct TIsInstanceImpl : std::false_type {};
@@ -14,6 +16,6 @@ namespace Rem::Common
 	// check if type T is an instantiation of template U
 	// @see https://stackoverflow.com/a/61040973
 	template <typename T, template <typename ...> typename U>
-	using TIsInstance = Private::TIsInstanceImpl<std::_Remove_cvref_t<T>, U>;
+	using TIsInstance = Impl::TIsInstanceImpl<std::_Remove_cvref_t<T>, U>;
 	
 }

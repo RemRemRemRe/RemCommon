@@ -1,5 +1,4 @@
-//
-
+// Copyright RemRemRemRe, All Rights Reserved.
 
 namespace UnrealBuildTool.Rules
 {
@@ -21,6 +20,8 @@ namespace UnrealBuildTool.Rules
 					"Core",
 					"CoreUObject",
 					"Engine",
+					
+					"StructUtils",
 				}
 			);
 		}

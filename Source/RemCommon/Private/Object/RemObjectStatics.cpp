@@ -126,7 +126,7 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 	PlayerController->ServerViewNextPlayer();
 }
 
-namespace Rem::Common::Object
+namespace Rem::Object
 {
 	
 void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,

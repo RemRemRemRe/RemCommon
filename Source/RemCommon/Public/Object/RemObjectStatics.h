@@ -66,7 +66,7 @@ public:
 	static void ServerViewNextPlayer(const UObject* WorldContextObject);
 };
 
-namespace Rem::Common::Object
+namespace Rem::Object
 {
 	REMCOMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
 		TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate);
@@ -74,16 +74,14 @@ namespace Rem::Common::Object
 	REMCOMMON_API bool IsImplementedInBlueprint(const UFunction* Function);
 
 	/** Templated version of FindComponentByClass that handles casting for you */
-	template<class T>
-	requires std::is_base_of_v<UActorComponent, T>
+	template<Concepts::is_actor_component T>
 	T* FindComponentByClass(const AActor* Actor)
 	{
 		RemEnsureVariable(Actor, return {});
 		return Actor->FindComponentByClass<T>();
 	}
 
-	template<typename T = APlayerState>
-	requires std::is_base_of_v<APlayerState, T>
+	template<Concepts::is_player_state T>
 	T* GetPlayerStateFromPawnOwner(const UActorComponent* Component)
 	{
 		RemEnsureVariable(Component, return {});
@@ -95,8 +93,7 @@ namespace Rem::Common::Object
 		return Pawn->GetPlayerState<T>();
 	}
 
-	template<typename T = APlayerController>
-	requires std::is_base_of_v<APlayerController, T>
+	template<Concepts::is_player_controller T = APlayerController>
 	T* GetControllerFromPawnOwner(const UActorComponent* Component)
 	{
 		RemEnsureVariable(Component, return {});

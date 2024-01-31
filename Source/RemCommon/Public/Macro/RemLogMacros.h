@@ -22,7 +22,7 @@
 
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
-		const FString OriginalStr = Rem::Common::StringFormat(FormatString, ##__VA_ARGS__); \
+		const FString OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
 		const FString FinalStr = FString::Format(TEXT("{0} {1} {2}"), {Prefix, OriginalStr, Suffix}); \
 		UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FinalStr); \
 	}

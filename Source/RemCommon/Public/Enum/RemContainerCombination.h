@@ -1,10 +1,10 @@
-﻿//
+﻿// Copyright RemRemRemRe, All Rights Reserved.
 
 #pragma once
 
 #include "Templates/RemEnumClassBitOperation.h"
 
-namespace Rem::Common::Enum
+namespace Rem::Enum
 {
 	REMCOMMON_API enum class EContainerCombination : uint8
 	{

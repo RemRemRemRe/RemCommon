@@ -1,6 +1,8 @@
-﻿#pragma once
+﻿// Copyright RemRemRemRe, All Rights Reserved.
 
-namespace Rem::Common::PropertyHelper
+#pragma once
+
+namespace Rem::Property
 {
 
 	template<typename T = FObjectPropertyBase>

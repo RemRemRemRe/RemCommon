@@ -3,13 +3,13 @@
 #pragma once
 
 #define REM_ON_SCOPE_EXIT_WEAK auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
-	::WeakScopeExit::FHelper(this) += [&]
+	Rem::FHelper(this) += [&]
 
 #define REM_ON_SCOPE_EXIT_WEAK_OBJECT(Object) \
 	auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
-	::WeakScopeExit::FHelper(Object) += [&]
+	Rem::FHelper(Object) += [&]
 
-namespace Rem::Common::WeakScopeExit
+namespace Rem
 {
 	template<typename F>
 	struct TWeakScopeExit

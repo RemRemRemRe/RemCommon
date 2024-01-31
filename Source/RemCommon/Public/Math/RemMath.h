@@ -1,8 +1,8 @@
-//
+// Copyright RemRemRemRe, All Rights Reserved.
 
 #pragma once
 
-namespace Rem::Common::Math
+namespace Rem::Math
 {
 	template<typename T>
 	requires !std::is_signed_v<T> && (sizeof(T) <= 4U)
@@ -18,13 +18,13 @@ namespace Rem::Common::Math
 
 	/** Clamps Value to be between 0 and 1, inclusive */
 	template< class T >
-	UE_NODISCARD static constexpr T Clamp01(const T Value)
+	UE_NODISCARD constexpr T Clamp01(const T Value)
 	{
 		return FMath::Clamp<T>(Value, 0, 1);
 	}
 	
 	template< class T >
-	UE_NODISCARD static constexpr decltype(auto) Saturate(const T Value)
+	UE_NODISCARD constexpr decltype(auto) Saturate(const T Value)
 	{
 		return Clamp01<T>(Value);
 	}
