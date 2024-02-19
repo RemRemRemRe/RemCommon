@@ -28,7 +28,7 @@
             if constexpr ( constexpr std::string_view StringView = #Message; \
             !StringView.empty()) \
             { \
-                UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FString(Message) ) \
+                UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d, %s"), ::GFrameNumber, *FString(Message) ) \
             } \
         } while (false)
 #endif // REM_DISABLE_LOG

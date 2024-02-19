@@ -10,7 +10,7 @@
 #define REM_VIRTUAL_WARN(CategoryName, ...) \
 	{ \
 		REM_INITIALIZE_SOURCE_LOCATION_STRING(SourceLocation) \
-		UE_LOG(CategoryName, Error, TEXT("Called a virtual function which is not implemented (%s)"), *SourceLocation); \
+		UE_LOG(CategoryName, Error, TEXT("Frame:%d Called a virtual function which is not implemented (%s)"), ::GFrameNumber, *SourceLocation); \
 		__VA_ARGS__ \
 	}
 

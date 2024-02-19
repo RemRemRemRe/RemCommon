@@ -24,7 +24,7 @@
 	{ \
 		const FString OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
 		const FString FinalStr = FString::Format(TEXT("{0} {1} {2}"), {Prefix, OriginalStr, Suffix}); \
-		UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FinalStr); \
+		UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d %s"), ::GFrameNumber, *FinalStr); \
 	}
 
 // Log message with optional role name prefix
