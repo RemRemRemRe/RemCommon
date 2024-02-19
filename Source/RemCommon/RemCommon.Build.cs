@@ -21,6 +21,7 @@ namespace UnrealBuildTool.Rules
 					"CoreUObject",
 					"Engine",
 					
+					"DeveloperSettings",
 					"StructUtils",
 				}
 			);
