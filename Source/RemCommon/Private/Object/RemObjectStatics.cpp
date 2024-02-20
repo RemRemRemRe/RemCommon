@@ -2,11 +2,9 @@
 
 
 #include "Object/RemObjectStatics.h"
+#include "Object/RemObjectStatics.inl"
 
 #include "GameFramework/PlayerState.h"
-
-#include "Kismet/GameplayStatics.h"
-
 #include "Macro/RemAssertionMacros.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
@@ -35,22 +33,7 @@ APlayerState* URemObjectStatics::GetPlayerState(const AActor* Actor)
 {
 	RemEnsureVariable(Actor, return {});
 	
-	if (const APawn* Pawn = Cast<APawn>(Actor))
-	{
-		return Pawn->GetPlayerState();
-	}
-	
-	if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
-	{
-		return PlayerController->GetPlayerState<APlayerState>();
-	}
-
-	if (const APlayerState* PlayerState = Cast<APlayerState>(Actor))
-	{
-		return const_cast<APlayerState*>(PlayerState);
-	}
-	
-	return {};
+	return Rem::Object::GetPlayerState<APlayerState>(*Actor);
 }
 
 void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
@@ -62,46 +45,33 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 }
 
 APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
-{	
-	// ReSharper disable once CommentTypo
-	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
-	
-	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-
-	return GameInstance->GetFirstLocalPlayerController();
+{
+	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+	return Rem::Object::GetFirstLocalPlayerController(*WorldContextObject);
 }
 
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
-	const auto* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-
-	return GameInstance->GetFirstGamePlayer();
+	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+	return Rem::Object::GetFirstLocalPlayer(*WorldContextObject);
 }
 
 APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
 {
-	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
-
-	return PlayerController->GetPawn();
+	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+	return Rem::Object::GetFirstLocalPlayerPawn(*WorldContextObject);
 }
 
 APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
 {
-	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
-
-	return PlayerController->GetPlayerState<APlayerState>();
+	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+	return Rem::Object::GetFirstLocalPlayerState(*WorldContextObject);
 }
 
 APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
 {
-	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
-
-	return PlayerController->PlayerCameraManager;
+	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+	return Rem::Object::GetFirstLocalPlayerCameraManager(*WorldContextObject);
 }
 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
@@ -130,7 +100,7 @@ namespace Rem::Object
 {
 	
 void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
-	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate)
+	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate)
 {
 	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(ArrayProperty->Inner);
 	RemCheckVariable(ObjectProperty, return;);

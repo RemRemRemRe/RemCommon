@@ -101,6 +101,12 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_player_controller = std::is_base_of_v<APlayerController, T>;
+	
+	template<class T>
+	concept is_player_camera_manager = std::is_base_of_v<APlayerCameraManager, T>;
+
+	template<class T>
+	concept is_local_player = std::is_base_of_v<ULocalPlayer, T>;
 
 	template<class T>
 	concept is_ai_controller = std::is_base_of_v<AAIController, T>;

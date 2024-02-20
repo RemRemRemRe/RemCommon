@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Macro/RemAssertionMacros.h"
 #include "RemObjectStatics.generated.h"
 
 
@@ -69,41 +68,9 @@ public:
 namespace Rem::Object
 {
 	REMCOMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
-		TFunctionRef<void(void* ObjectMemberPtr, int32 Index)> Predicate);
+		const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate);
 
 	REMCOMMON_API bool IsImplementedInBlueprint(const UFunction* Function);
-
-	/** Templated version of FindComponentByClass that handles casting for you */
-	template<Concepts::is_actor_component T>
-	T* FindComponentByClass(const AActor* Actor)
-	{
-		RemEnsureVariable(Actor, return {});
-		return Actor->FindComponentByClass<T>();
-	}
-
-	template<Concepts::is_player_state T>
-	T* GetPlayerStateFromPawnOwner(const UActorComponent* Component)
-	{
-		RemEnsureVariable(Component, return {});
-
-		APawn* Pawn = Component->GetOwner<APawn>();
-		
-		RemEnsureVariable(Pawn, return {});
-
-		return Pawn->GetPlayerState<T>();
-	}
-
-	template<Concepts::is_player_controller T = APlayerController>
-	T* GetControllerFromPawnOwner(const UActorComponent* Component)
-	{
-		RemEnsureVariable(Component, return {});
-
-		APawn* Pawn = Component->GetOwner<APawn>();
-		
-		RemEnsureVariable(Pawn, return {});
-
-		return Pawn->GetController<T>();
-	}
 
 	inline bool IsClassDefaultObject(const UObject& Object)
 	{
