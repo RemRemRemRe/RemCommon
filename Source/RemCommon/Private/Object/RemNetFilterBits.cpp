@@ -1,7 +1,9 @@
-﻿// Copyright RemRemRemRe, All Rights Reserved.
+// Copyright RemRemRemRe, All Rights Reserved.
 
 
 #include "Object/RemNetFilterBits.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(RemNetFilterBits)
 
 constexpr bool FRemNetFilterBits::Matches(const ENetMode NetMode, const ENetRole Role) const
 {
