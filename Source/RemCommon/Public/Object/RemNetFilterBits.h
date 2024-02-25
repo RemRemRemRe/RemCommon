@@ -24,5 +24,5 @@ struct FRemNetFilterBits
 	UPROPERTY(EditAnywhere, Category = "Net Mode")
 	uint8 bRunOnListenServer : 1 {true};
 
-	REMCOMMON_API constexpr bool Matches(ENetMode NetMode, ENetRole Role) const;
+	REMCOMMON_API bool Matches(ENetMode NetMode, ENetRole Role) const;
 };

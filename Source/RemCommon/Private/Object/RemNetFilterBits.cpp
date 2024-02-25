@@ -5,7 +5,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemNetFilterBits)
 
-constexpr bool FRemNetFilterBits::Matches(const ENetMode NetMode, const ENetRole Role) const
+bool FRemNetFilterBits::Matches(const ENetMode NetMode, const ENetRole Role) const
 {
 	if (NetMode == NM_Client)
 	{
