@@ -9,14 +9,11 @@
 
 #if NO_LOGGING
 
-#define REM_LOG_ROLE(Object, CategoryName, Verbosity, Format, ...) \
-	UE_LOG(CategoryName, Verbosity, Format, ##__VA_ARGS__)
+#define REM_LOG_ROLE(Object, CategoryName, Verbosity, Format, ...)
 
-#define REM_LOG_FUNCTION(CategoryName, Verbosity, Format, ...) \
-	UE_LOG(CategoryName, Verbosity, Format, ##__VA_ARGS__)
+#define REM_LOG_FUNCTION(CategoryName, Verbosity, Format, ...)
 
-#define REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ...) \
-	UE_LOG(CategoryName, Verbosity, Format, ##__VA_ARGS__)
+#define REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ...)
 
 #else
 
