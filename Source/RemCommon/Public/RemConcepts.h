@@ -4,6 +4,12 @@
 
 class AAIController;
 class ISlateTextureAtlasInterface;
+class ULocalPlayer;
+class AGameStateBase;
+class AGameModeBase;
+class UAnimInstance;
+class UStreamableRenderAsset;
+struct FTableRowBase;
 
 namespace Rem::Concepts
 {

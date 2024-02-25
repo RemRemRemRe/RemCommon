@@ -4,6 +4,7 @@
 
 #include "Macro/RemAssertionMacros.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/GameInstance.h"
 
 namespace Rem::Object
 {

@@ -25,8 +25,8 @@
     #define REM_LOG_HELPER(CategoryName, Verbosity, Message) \
         do \
         { \
-            if constexpr ( constexpr std::string_view StringView = #Message; \
-            !StringView.empty()) \
+            if constexpr ( constexpr auto StringView = TEXTVIEW(#Message); \
+            !StringView.IsEmpty()) \
             { \
                 UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d, %s"), ::GFrameNumber, *FString(Message) ) \
             } \
@@ -41,8 +41,8 @@
     #define REM_ASSER_CONDITION(AssertionMacro, Condition) \
         do \
         { \
-            if constexpr ( constexpr std::string_view StringView = #AssertionMacro; \
-            !StringView.empty()) \
+            if constexpr ( constexpr auto StringView = TEXTVIEW(#AssertionMacro); \
+            !StringView.IsEmpty()) \
             { \
                 AssertionMacro(Condition); \
             } \

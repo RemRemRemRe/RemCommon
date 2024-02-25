@@ -213,7 +213,7 @@ namespace Rem
 	{
 		if constexpr (bConstantStringLength)
 		{
-			constexpr int32 MaxLength = std::string_view("ROLE_AutonomousProxy").length();
+			constexpr auto MaxLength = TEXTVIEW("ROLE_AutonomousProxy").Len();
 			
 			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
 			
