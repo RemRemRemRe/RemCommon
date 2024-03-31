@@ -10,7 +10,8 @@ namespace UnrealBuildTool.Rules
 			ShadowVariableWarningLevel = WarningLevel.Error;
 			IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 			DefaultBuildSettings = BuildSettingsVersion.Latest;
-			CppStandard = CppStandardVersion.Cpp20;
+			CppStandard = CppStandardVersion.EngineDefault;
+			UnsafeTypeCastWarningLevel = WarningLevel.Warning;
 
 			bEnableNonInlinedGenCppWarnings = true;
 			bUseUnity = false;
