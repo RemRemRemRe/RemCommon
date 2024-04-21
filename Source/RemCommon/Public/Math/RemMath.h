@@ -39,15 +39,27 @@ namespace Rem::Math
 
 	/** Clamps Value to be between 0 and 1, inclusive */
 	template< class T >
-	UE_NODISCARD constexpr T Clamp01(const T Value)
+	[[nodiscard]] constexpr T Clamp01(const T Value)
 	{
 		return FMath::Clamp<T>(Value, 0.0f, 1.0f);
 	}
 	
 	template< class T >
-	UE_NODISCARD constexpr decltype(auto) Saturate(const T Value)
+	[[nodiscard]] constexpr decltype(auto) Saturate(const T Value)
 	{
 		return Clamp01<T>(Value);
+	}
+
+	template<class T>
+	auto CombineNumericRanges(const UE::Math::TVector2<T>& Range1, const UE::Math::TVector2<T>& Range2) -> decltype(auto)
+	{
+		return CombineNumericRanges(Range1.X, Range2.X, Range1.Y, Range2.Y);
+	}
+
+	template<class T>
+	auto CombineNumericRanges(const T& Min1, const T& Min2, const T& Max1, const T& Max2) -> decltype(auto)
+	{
+		return UE::Math::TVector2<T>{std::max(Min1, Min2), std::min(Max1, Max2) };
 	}
 
 }

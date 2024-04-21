@@ -2,7 +2,15 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include "RemConcepts.h"
+#include "UObject/Class.h"
+#include "UObject/Object.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/EngineBaseTypes.h"
+
+struct FGameplayTag;
 
 namespace Rem
 {
@@ -200,11 +208,12 @@ namespace Rem
 	 * @brief Append spaces to the string
 	 * @note better to make sure String has enough capacity using FString::Reserve
 	 */
-	inline void AppendSpaces(FString& String, const int32 NumSpaceToAdd)
+	inline void AppendCharRepeated(FString& String, const TCHAR* Char, const int32 TimesToRepeat)
 	{
-		for (int32 Count = 0; Count < NumSpaceToAdd; ++Count)
+		String.Reserve(String.Len() + TimesToRepeat);
+		for (int32 Counter = 0; Counter < TimesToRepeat; ++Counter)
 		{
-			String.AppendChar(' ');
+			String.AppendChar(*Char);
 		}
 	}
 	
@@ -218,7 +227,7 @@ namespace Rem
 			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
 			
 			NetRoleString.Reserve(MaxLength);
-			AppendSpaces(NetRoleString, MaxLength - NetRoleString.Len());
+			AppendCharRepeated(NetRoleString, TEXT(" "), MaxLength - NetRoleString.Len());
 			
 			return NetRoleString;
 		}
@@ -324,4 +333,7 @@ namespace Rem
 
 	REMCOMMON_API uint8* AllocateStructMemory(const UStruct& Struct);
 	REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
+
+	REMCOMMON_API FString TagToStringWithoutDot(const FGameplayTag& Tag);
+	REMCOMMON_API FName TagToNameWithoutDot(const FGameplayTag& Tag);
 }

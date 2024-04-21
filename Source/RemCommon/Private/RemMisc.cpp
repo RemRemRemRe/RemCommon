@@ -2,7 +2,11 @@
 
 #include "RemMisc.h"
 
+#include "GameplayTagContainer.h"
 #include "Macro/RemAssertionMacros.h"
+#include "UObject/Object.h"
+#include "UObject/PropertyPortFlags.h"
+#include "UObject/SoftObjectPath.h"
 
 namespace Rem
 {
@@ -53,6 +57,16 @@ void FreeStructMemory(const UStruct& Struct, uint8& Memory)
 {
 	Struct.DestroyStruct(&Memory);
 	FMemory::Free(&Memory);
+}
+
+FString TagToStringWithoutDot(const FGameplayTag& Tag)
+{
+	return Tag.GetTagName().ToString().Replace(TEXTVIEW(".").GetData(), TEXTVIEW("").GetData());
+}
+
+FName TagToNameWithoutDot(const FGameplayTag& Tag)
+{
+	return FName{TagToStringWithoutDot(Tag)};
 }
 
 }
