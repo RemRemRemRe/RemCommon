@@ -123,11 +123,15 @@ namespace Rem
 		}
 		else if constexpr (std::is_same_v<bool, RawType>)
 		{
-			return Rem::BoolToString(std::forward<T>(Data));
+			return Rem::BoolToString(std::forward<T>(Data)).GetData();
 		}
 		else if constexpr (TIsTObjectPtr<RawType>::Value)
 		{
 			return Rem::ToString(*Data);
+		}
+		else if constexpr (Concepts::has_to_compact_string<RawType>)
+		{
+			return Data.ToCompactString();
 		}
 		else if constexpr (Concepts::has_to_string<RawType>)
 		{
@@ -294,7 +298,7 @@ namespace Rem
 		template<typename F, typename... R>
 		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
 		{
-			if constexpr (std::is_constructible_v<FStringFormatArg, F>)
+			if constexpr (!std::is_same_v<bool, F> && std::is_constructible_v<FStringFormatArg, F>)
 			{
 				Args.Add(std::forward<F>(First));
 			}

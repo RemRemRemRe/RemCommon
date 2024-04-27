@@ -38,6 +38,12 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
+	concept has_to_compact_string = requires (FString String, const T Object)
+	{
+		String = Object.ToCompactString();
+	};
+
+	template<class T>
 	concept has_to_string = requires (FString String, const T Object)
 	{
 		String = Object.ToString();
