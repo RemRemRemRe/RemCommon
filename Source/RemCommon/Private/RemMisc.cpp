@@ -24,7 +24,7 @@ FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath)
 	const FString& SubPathString = SoftObjectPath.GetSubPathString();
 
 	// may just construct a FCoreRedirectObjectName to help doing this,
-	// but will that did too much extra work?
+	// but will that do too much extra work?
 	if (int32 ObjectNameIndex;
 		SubPathString.FindLastChar(TEXT('.'), ObjectNameIndex))
 	{
