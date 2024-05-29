@@ -27,6 +27,15 @@ namespace UnrealBuildTool.Rules
 					"GameplayTags"
 				}
 			);
+			
+			if (Target.bBuildEditor)
+			{
+				PrivateDependencyModuleNames.AddRange(
+					new[] {
+						"PropertyEditor",
+					}
+				);
+			}
 		}
 	}
 }

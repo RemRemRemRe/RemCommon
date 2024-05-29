@@ -2,6 +2,26 @@
 
 #pragma once
 
+struct FGameplayTag;
+class FSoftObjectProperty;
+class FObjectPropertyBase;
+class FProperty;
+class UMaterialInterface;
+class UDataAsset;
+class APlayerCameraManager;
+class APlayerController;
+class AController;
+class APawn;
+class APlayerState;
+class UActorComponent;
+class AActor;
+class UObject;
+struct FSoftObjectPath;
+class UClass;
+class UScriptStruct;
+enum ENetRole : int;
+enum ENetMode;
+class FString;
 class AAIController;
 class ISlateTextureAtlasInterface;
 class ULocalPlayer;
@@ -30,6 +50,18 @@ namespace Rem::Concepts
 	{
 		Mode = Object.GetNetMode();
 	};
+
+	template<class T>
+	concept has_tag = requires (FGameplayTag& Tag, const T Object)
+	{
+		Tag = T::Tag;
+	};
+
+	template<class T>
+	concept has_get_tag = requires (FGameplayTag& Tag, const T Object)
+	{
+		Tag = Object.GetTag();
+	};
 	
 	template<class T>
 	concept has_is_net_mode = requires (ENetMode Mode, const T Object, bool Result)
@@ -38,25 +70,25 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept has_to_compact_string = requires (FString String, const T Object)
+	concept has_to_compact_string = requires (FString& String, const T Object)
 	{
 		String = Object.ToCompactString();
 	};
 
 	template<class T>
-	concept has_to_string = requires (FString String, const T Object)
+	concept has_to_string = requires (FString& String, const T Object)
 	{
 		String = Object.ToString();
 	};
 
 	template<class T>
-	concept has_get_name = requires (FString String, const T Object)
+	concept has_get_name = requires (FString& String, const T Object)
 	{
 		String = Object.GetName();
 	};
 
 	template<class T>
-	concept has_lex_to_string = requires (FString String, const T Object)
+	concept has_lex_to_string = requires (FString& String, const T Object)
 	{
 		String = LexToString(Object);
 	};
@@ -88,7 +120,7 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept has_to_soft_object_path = requires (FSoftObjectPath SoftPath, bool bNull, const T Object)
+	concept has_to_soft_object_path = requires (FSoftObjectPath& SoftPath, bool bNull, const T Object)
 	{
 		SoftPath = Object.ToSoftObjectPath();
 	};
