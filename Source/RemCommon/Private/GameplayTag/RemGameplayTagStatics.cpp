@@ -6,6 +6,8 @@
 #include "GameplayTagContainer.h"
 #include "UObject/PrimaryAssetId.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(RemGameplayTagStatics)
+
 namespace Rem::GameplayTag
 {
 

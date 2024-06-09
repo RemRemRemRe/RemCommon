@@ -2,12 +2,14 @@
 
 #pragma once
 
+class UMediaTexture;
 struct FGameplayTag;
 class FSoftObjectProperty;
 class FObjectPropertyBase;
 class FProperty;
 class UMaterialInterface;
 class UDataAsset;
+class UPrimaryDataAsset;
 class APlayerCameraManager;
 class APlayerController;
 class AController;
@@ -20,6 +22,7 @@ struct FSoftObjectPath;
 class UClass;
 class UScriptStruct;
 enum ENetRole : int;
+// ReSharper disable once CppForwardEnumDeclarationWithoutUnderlyingType
 enum ENetMode;
 class FString;
 class AAIController;
@@ -129,6 +132,9 @@ namespace Rem::Concepts
 	concept is_uobject = std::is_base_of_v<UObject, T>;
 
 	template<class T>
+	concept is_uclass = std::is_base_of_v<UClass, T>;
+
+	template<class T>
 	concept is_actor = std::is_base_of_v<AActor, T>;
 
 	template<class T>
@@ -165,6 +171,9 @@ namespace Rem::Concepts
 	concept is_data_asset = std::is_base_of_v<UDataAsset, T>;
 
 	template<class T>
+	concept is_primary_data_asset = std::is_base_of_v<UPrimaryDataAsset, T>;
+
+	template<class T>
 	concept is_anim_instance = std::is_base_of_v<UAnimInstance, T>;
 
 	template<class T>
@@ -174,7 +183,13 @@ namespace Rem::Concepts
 	concept is_streamable_render_asset = std::is_base_of_v<UStreamableRenderAsset, T>;
 
 	template<class T>
-	concept is_image = is_material_interface<T> || std::is_base_of_v<ISlateTextureAtlasInterface, T>;
+	concept is_meadia_texture = std::is_base_of_v<UMediaTexture, T>;
+
+	template<class T>
+	concept is_slate_texture_atlas_interface = std::is_base_of_v<ISlateTextureAtlasInterface, T>;
+
+	template<class T>
+	concept is_image = !is_meadia_texture<T> && (is_material_interface<T> || is_slate_texture_atlas_interface<T>);
 
 	template<class T>
 	concept is_property = std::is_base_of_v<FProperty, T>;
