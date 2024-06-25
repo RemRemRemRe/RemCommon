@@ -12,12 +12,12 @@ struct REMCOMMON_API FRemGameplayTagWithCategory
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Rem")
 	FGameplayTag Tag;
 
 #if WITH_EDITORONLY_DATA
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY(EditAnywhere, Category = "Rem")
 	FGameplayTag Category;
 
 #endif
@@ -38,7 +38,7 @@ public:
 	REM_DEFINE_GETTERS_RETURN_REFERENCE_SIMPLE(Tag)
 
 #if WITH_EDITORONLY_DATA
-	
+
 	REM_DEFINE_GETTERS_RETURN_REFERENCE_SIMPLE(Category)
 
 #endif

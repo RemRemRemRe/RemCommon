@@ -4,6 +4,7 @@
 #include "Object/RemObjectStatics.h"
 #include "Object/RemObjectStatics.inl"
 
+#include "Engine/BlueprintGeneratedClass.h"
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
 
@@ -120,5 +121,35 @@ bool IsImplementedInBlueprint(const UFunction* Function)
 	return Function && ensure(Function->GetOuter())
 		&& Function->GetOuter()->IsA(UBlueprintGeneratedClass::StaticClass());
 }
-	
+
+bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, const bool bShouldHaveNextNode)
+{
+	const auto* MemberNode = PropertyChain.GetActiveMemberNode();
+	for (auto& Name : PropertyNamePath)
+	{
+		if (!MemberNode)
+		{
+			// different property path
+			return false;
+		}
+
+		if (const auto* Value = MemberNode->GetValue();
+			!Value || Value->GetFName() != Name)
+		{
+			// different property path
+			return false;
+		}
+			
+		MemberNode = MemberNode->GetNextNode();
+	}
+
+	if (!bShouldHaveNextNode && MemberNode
+		|| bShouldHaveNextNode && !MemberNode)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 }

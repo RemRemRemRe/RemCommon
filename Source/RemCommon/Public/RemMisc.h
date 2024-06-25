@@ -224,7 +224,7 @@ namespace Rem
 			}
 		}
 
-		return FString::Format(TEXT("Client {0}"), {int32{GPlayInEditorID}});
+		return FString::Format(TEXT("Client {0}"), {UE::GetPlayInEditorID()});
 	}
 
 	/**

@@ -90,4 +90,6 @@ namespace Rem::Object
 		return ChangeType == EPropertyChangeType::ValueSet
 			|| ChangeType == EPropertyChangeType::Redirected;
 	}
+
+	REMCOMMON_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
 }

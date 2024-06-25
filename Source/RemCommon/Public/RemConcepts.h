@@ -2,6 +2,16 @@
 
 #pragma once
 
+class UCameraModifier;
+class UPoseAsset;
+class UAnimStreamable;
+class UAnimComposite;
+class UAimOffsetBlendSpace;
+class UBlendSpace;
+class UAnimMontage;
+class UAnimSequence;
+class UAnimSequenceBase;
+class UAnimationAsset;
 class UMediaTexture;
 struct FGameplayTag;
 class FSoftObjectProperty;
@@ -202,4 +212,34 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_table_row = std::is_base_of_v<FTableRowBase, T>;
+
+	template<class T>
+	concept is_animation_asset = std::is_base_of_v<UAnimationAsset, T>;
+
+	template<class T>
+	concept is_anim_sequence_base = std::is_base_of_v<UAnimSequenceBase, T>;
+
+	template<class T>
+	concept is_anim_sequence = std::is_base_of_v<UAnimSequence, T>;
+
+	template<class T>
+	concept is_anim_montage = std::is_base_of_v<UAnimMontage, T>;
+
+	template<class T>
+	concept is_blend_space = std::is_base_of_v<UBlendSpace, T>;
+
+	template<class T>
+	concept is_aim_offset = std::is_base_of_v<UAimOffsetBlendSpace, T>;
+
+	template<class T>
+	concept is_aim_composite = std::is_base_of_v<UAnimComposite, T>;
+
+	template<class T>
+	concept is_aim_streamable = std::is_base_of_v<UAnimStreamable, T>;
+
+	template<class T>
+	concept is_pose_asset = std::is_base_of_v<UPoseAsset, T>;
+
+	template<class T>
+	concept is_camera_modifier = std::is_base_of_v<UCameraModifier, T>;
 }
