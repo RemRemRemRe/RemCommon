@@ -23,7 +23,6 @@ namespace UnrealBuildTool.Rules
 					"Engine",
 					
 					"DeveloperSettings",
-					"StructUtils",
 					"GameplayTags"
 				}
 			);

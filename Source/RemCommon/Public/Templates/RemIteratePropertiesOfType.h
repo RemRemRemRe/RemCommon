@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "InstancedStruct.h"
+#include "StructUtils/InstancedStruct.h"
 
 namespace Rem::Property
 {
@@ -24,7 +24,7 @@ namespace Impl
 			{
 				InFunction(InProperty, InContainer);
 			}
-			
+
 			for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
 			{
 				const void* ValuePtr = Helper.GetRawPtr(DynamicIndex);
@@ -89,7 +89,7 @@ namespace Impl
 
 			const void* StructContainer;
 			const UScriptStruct* ScriptStruct = StructProperty->Struct;
-			
+
 			if (FInstancedStruct::StaticStruct() == ScriptStruct)
 			{
 				// redirect it for instanced struct
@@ -100,7 +100,7 @@ namespace Impl
 				}
 				else
 				{
-					// InstancedStruct is null 
+					// InstancedStruct is null
 					return;
 				}
 			}
@@ -125,7 +125,7 @@ namespace Impl
 		}
 	}
 }
-	
+
 	template<Concepts::is_property PropertyType>
 	void IteratePropertiesOfType(const UStruct* InStruct, const void* InContainer, const FIteratePropertiesFunction& InFunction)
 	{
