@@ -5,6 +5,7 @@
 #include "Macro/RemAssertionMacros.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameInstance.h"
+#include "GameFramework/Pawn.h"
 
 namespace Rem::Object
 {
@@ -34,7 +35,7 @@ T* GetPlayerState(const AActor& Actor)
 	{
 		return Pawn->GetPlayerState<T>();
 	}
-	
+
 	if (const auto* PlayerController = Cast<APlayerController>(&Actor))
 	{
 		return PlayerController->GetPlayerState<T>();
@@ -44,7 +45,7 @@ T* GetPlayerState(const AActor& Actor)
 	{
 		return const_cast<T*>(PlayerState);
 	}
-	
+
 	return {};
 }
 
@@ -53,7 +54,7 @@ T* GetFirstLocalPlayerController(const UObject& WorldContextObject)
 {
 	// ReSharper disable once CommentTypo
 	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
-	
+
 	const auto* GameInstance = UGameplayStatics::GetGameInstance(&WorldContextObject);
 	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
@@ -94,6 +95,19 @@ T* GetFirstLocalPlayerCameraManager(const UObject& WorldContextObject)
 	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
 
 	return Cast<T>(PlayerController->PlayerCameraManager);
+}
+
+template<Concepts::is_uobject T>
+[[nodiscard]] uint32 GetHashForObjects(const TConstArrayView<T*> Objects)
+{
+	uint32 HashResult{GetTypeHash(Objects.Num())};
+
+	for (auto* Object : Objects)
+	{
+		HashResult = HashCombineFast(HashResult, GetTypeHash(FWeakObjectPtr{Object}));
+	}
+
+	return HashResult;
 }
 
 }

@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemGameplayTagStatics.generated.h"
 
+struct FGameplayTagContainer;
 struct FGameplayTag;
 
 UCLASS()
@@ -13,7 +14,7 @@ class REMCOMMON_API URemGameplayTagStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	
+
 };
 
 namespace Rem::GameplayTag
@@ -23,7 +24,7 @@ namespace Rem::GameplayTag
 	 * @return first parent of the given tag
 	 */
 	REMCOMMON_API FGameplayTag GetFirstParent(const FGameplayTag& Tag);
-	
+
 	/**
 	 * @brief Using a FGameplayTag to construct a FPrimaryAssetId
 	 * @param Tag an identifier for something
@@ -31,4 +32,6 @@ namespace Rem::GameplayTag
 	 */
 	REMCOMMON_API FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag);
 
+	REMCOMMON_API [[nodiscard]] uint32 GetHashForTags(const TConstArrayView<const FGameplayTag> Tags);
+	REMCOMMON_API [[nodiscard]] uint32 GetHashForTags(const FGameplayTagContainer& Tags);
 }

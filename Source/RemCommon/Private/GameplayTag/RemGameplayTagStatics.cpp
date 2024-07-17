@@ -21,4 +21,20 @@ FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag)
 	return FPrimaryAssetId{GetFirstParent(Tag).GetTagName(), Tag.GetTagName()};
 }
 
+uint32 GetHashForTags(const TConstArrayView<const FGameplayTag> Tags)
+{
+	uint32 HashResult{GetTypeHash(Tags.Num())};
+
+	for (auto& Tag : Tags)
+	{
+		HashResult = HashCombineFast(HashResult, GetTypeHash(Tag));
+	}
+
+	return HashResult;
+}
+
+uint32 GetHashForTags(const FGameplayTagContainer& Tags)
+{
+	return GetHashForTags(Tags.GetGameplayTagArray());
+}
 }
