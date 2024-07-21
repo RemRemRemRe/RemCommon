@@ -14,7 +14,7 @@ class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintPure, meta = (DeterminesOutputType = ObjectClass))
 	static UObject* GetObject(const TSoftObjectPtr<UObject>& SoftObjectPtr, UClass* ObjectClass);
-	
+
 	/**
 	 * @brief Is Object a blueprint object
 	 */
@@ -79,16 +79,16 @@ namespace Rem::Object
 
 	constexpr bool IsArrayItselfChanged(const EPropertyChangeType::Type ChangeType)
 	{
-		return ChangeType == EPropertyChangeType::ArrayAdd
-			|| ChangeType == EPropertyChangeType::ArrayRemove
-			|| ChangeType == EPropertyChangeType::Duplicate
-			|| ChangeType == EPropertyChangeType::ArrayMove;
+		return ChangeType & EPropertyChangeType::ArrayAdd
+			|| ChangeType & EPropertyChangeType::ArrayRemove
+			|| ChangeType & EPropertyChangeType::Duplicate
+			|| ChangeType & EPropertyChangeType::ArrayMove;
 	}
 
 	constexpr bool IsOnlyArrayElementChanged(const EPropertyChangeType::Type ChangeType)
 	{
-		return ChangeType == EPropertyChangeType::ValueSet
-			|| ChangeType == EPropertyChangeType::Redirected;
+		return ChangeType & EPropertyChangeType::ValueSet
+			|| ChangeType & EPropertyChangeType::Redirected;
 	}
 
 	REMCOMMON_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
