@@ -5,6 +5,10 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemObjectStatics.generated.h"
 
+using FTimerDelegate = TDelegate<void(), FNotThreadSafeNotCheckedDelegateUserPolicy>;
+struct FTimerManagerTimerParameters;
+
+struct FTimerHandle;
 
 UCLASS()
 class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
@@ -92,4 +96,10 @@ namespace Rem::Object
 	}
 
 	REMCOMMON_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
+
+	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
+	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate);
+
+	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate);
+	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate);
 }

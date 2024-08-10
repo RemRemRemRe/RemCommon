@@ -28,25 +28,42 @@ T* GetControllerFromPawnOwner(const UActorComponent& Component)
 	return Pawn->GetController<T>();
 }
 
-template<Concepts::is_player_state T = APlayerState>
+template<Concepts::is_player_state T = APlayerState, bool bRecursive = false>
 T* GetPlayerState(const AActor& Actor)
 {
+	T* Result{nullptr};
 	if (const auto* Pawn = Cast<APawn>(&Actor))
 	{
-		return Pawn->GetPlayerState<T>();
+		Result = Pawn->GetPlayerState<T>();
 	}
-
-	if (const auto* PlayerController = Cast<APlayerController>(&Actor))
+	else if (const auto* PlayerController = Cast<APlayerController>(&Actor))
 	{
-		return PlayerController->GetPlayerState<T>();
+		Result = PlayerController->GetPlayerState<T>();
 	}
-
-	if (const T* PlayerState = Cast<T>(&Actor))
+	else if (const T* PlayerState = Cast<T>(&Actor))
 	{
-		return const_cast<T*>(PlayerState);
+		Result = const_cast<T*>(PlayerState);
 	}
 
-	return {};
+	if constexpr (bRecursive)
+	{
+		if (!Result)
+		{
+			// try to find player state from owner chain
+			if (const auto* Owner = Actor.GetOwner())
+			{
+				return GetPlayerState<T, bRecursive>(*Owner);
+			}
+		}
+	}
+
+	return Result;
+}
+
+template<Concepts::is_player_state T = APlayerState>
+T* GetPlayerStateRecursive(const AActor& Actor)
+{
+	return GetPlayerState<T, true>(Actor);
 }
 
 template<Concepts::is_player_controller T = APlayerController>

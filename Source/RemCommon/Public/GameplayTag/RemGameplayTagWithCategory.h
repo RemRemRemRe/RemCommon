@@ -23,7 +23,7 @@ private:
 #endif
 
 public:
-	explicit FRemGameplayTagWithCategory(
+	FRemGameplayTagWithCategory(
 		const FGameplayTag& InTag = FGameplayTag::EmptyTag
 #if WITH_EDITORONLY_DATA
 		, const FGameplayTag& InCategory = FGameplayTag::EmptyTag
