@@ -10,7 +10,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemIntegerWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	int32 Number{};
 };
@@ -28,7 +28,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemFloatWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	float Number{};
 };
@@ -37,7 +37,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemFloatArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<float> Numbers{};
 };
@@ -46,7 +46,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemDoubleWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	double Number{};
 };
@@ -55,7 +55,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemDoubleArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<double> Numbers{};
 };
@@ -64,7 +64,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemTextWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	FText Text{};
 };
@@ -73,7 +73,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemTextArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<FText> Texts{};
 };
@@ -101,7 +101,7 @@ struct REMCOMMON_API FRemWeakDataAssetWrapper
 	TWeakObjectPtr<const UDataAsset> DataAsset;
 
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, DataAsset, /*no suffix*/, Cast<T>(DataAsset.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, Object, /*no suffix*/, Cast<T>(DataAsset.Get()))
 };
@@ -115,7 +115,7 @@ struct REMCOMMON_API FRemSoftDataAssetWrapper
 	TSoftObjectPtr<const UDataAsset> DataAsset;
 
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, DataAsset, /*no suffix*/, Cast<T>(DataAsset.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, Object, /*no suffix*/, Cast<T>(DataAsset.Get()))
 };
@@ -124,7 +124,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemObjectWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	UObject* Object{};
 
@@ -136,14 +136,14 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemObjectArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Object))
 	TArray<FRemObjectWrapper> Objects;
-	
+
 	using ThisType = FRemObjectArrayWrapper;
     using IsArrayOfObjectWrapper = std::true_type;
     using WrapperElementType = decltype(Objects)::ElementType;
-	
+
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
 };
 
@@ -151,7 +151,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemWeakObjectWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	TWeakObjectPtr<UObject> Object;
 
@@ -163,7 +163,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemWeakObjectArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Object))
 	TArray<FRemWeakObjectWrapper> Objects;
 
@@ -178,7 +178,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemConstObjectWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	const UObject* Object{};
 
@@ -190,14 +190,14 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemConstObjectArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Object))
 	TArray<FRemConstObjectWrapper> Objects;
-	
+
 	using ThisType = FRemConstObjectArrayWrapper;
     using IsArrayOfObjectWrapper = std::true_type;
     using WrapperElementType = decltype(Objects)::ElementType;
-	
+
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
 };
 
@@ -205,7 +205,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemConstWeakObjectWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	TWeakObjectPtr<const UObject> Object;
 
@@ -217,7 +217,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemConstWeakObjectArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Object))
 	TArray<FRemConstWeakObjectWrapper> Objects;
 
@@ -232,13 +232,13 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemSoftObjectWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	TSoftObjectPtr<const UObject> Object;
 
 	using ThisType = FRemSoftObjectWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object.Get()))
 };
@@ -247,7 +247,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemSoftObjectArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Object))
 	TArray<FRemSoftObjectWrapper> Objects;
 
@@ -262,25 +262,26 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemClassWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	const UClass* Class{};
 
 	using ThisType = FRemClassWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_GETTERS_RETURN_REFERENCE_SIMPLE(Class)
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Object, /*no suffix*/, Class)
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Class)
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, TSubclassOf<T>{const_cast<UClass*>(Class)}.Get())
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Class, /*no suffix*/, TSubclassOf<T>{const_cast<UClass*>(Class)})
 };
 
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemClassArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Class))
 	TArray<FRemClassWrapper> Classes;
 
@@ -295,25 +296,26 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemSoftClassWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	TSoftClassPtr<UObject> Class;
-	
+
 	using ThisType = FRemSoftClassWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_GETTERS_RETURN_REFERENCE_SIMPLE(Class)
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Class.Get())
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Class.Get())
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, TSubclassOf<T>{Class.Get()})
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Class, /*no suffix*/, GetObject<T>())
 };
 
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemSoftClassArrayWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Class))
 	TArray<FRemSoftClassWrapper> Classes;
 
@@ -328,34 +330,34 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemImageWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem",
 		meta=( DisplayThumbnail="true", AllowedClasses="/Script/Engine.Texture,/Script/Engine.MaterialInterface,/Script/Engine.SlateTextureAtlasInterface",
 			DisallowedClasses = "/Script/MediaAssets.MediaTexture", AddFilterUI = true))
 	const UObject* Image{};
 
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Image, /*no suffix*/, Cast<T>(Image))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Image)
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image))
 };
 
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemWeakImageWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem",
 		meta=( DisplayThumbnail="true", AllowedClasses="/Script/Engine.Texture,/Script/Engine.MaterialInterface,/Script/Engine.SlateTextureAtlasInterface",
 			DisallowedClasses = "/Script/MediaAssets.MediaTexture", AddFilterUI = true))
 	TWeakObjectPtr<const UObject> Image;
-	
+
 	using ThisType = FRemWeakImageWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Image, /*no suffix*/, Cast<T>(Image.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image.Get()))
@@ -365,7 +367,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemSoftImageWrapper
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem",
 		meta=( DisplayThumbnail="true", AllowedClasses="/Script/Engine.Texture,/Script/Engine.MaterialInterface,/Script/Engine.SlateTextureAtlasInterface",
 			DisallowedClasses = "/Script/MediaAssets.MediaTexture", AddFilterUI = true))
@@ -373,9 +375,9 @@ struct REMCOMMON_API FRemSoftImageWrapper
 
 	using ThisType = FRemSoftImageWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Image, /*no suffix*/, Cast<T>(Image.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image.Get()))
@@ -390,7 +392,7 @@ struct REMCOMMON_API FRemMaterialWrapper
 	UMaterialInterface* Material{};
 
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Material, /*no suffix*/, Cast<T>(Material))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Material)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Object, /*no suffix*/, Cast<T>(Material))
@@ -406,9 +408,9 @@ struct REMCOMMON_API FRemWeakMaterialWrapper
 
 	using ThisType = FRemWeakMaterialWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Material, /*no suffix*/, Cast<T>(Material.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Material.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Object, /*no suffix*/, Cast<T>(Material.Get()))
@@ -438,7 +440,7 @@ struct REMCOMMON_API FRemStreamableRenderAssetWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	const UStreamableRenderAsset* StreamableRenderAsset{};
-	
+
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, StreamableRenderAsset, /*no suffix*/, Cast<T>(StreamableRenderAsset))
 
 	using IsObjectWrapper = std::true_type;
@@ -453,12 +455,12 @@ struct REMCOMMON_API FRemWeakStreamableRenderAssetWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
 	TWeakObjectPtr<const UStreamableRenderAsset> StreamableRenderAsset;
-	
+
 	using ThisType = FRemWeakStreamableRenderAssetWrapper;
 	bool operator==(const ThisType&) const = default;
-	
+
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, StreamableRenderAsset, , Cast<T>(StreamableRenderAsset.Get()))
-	
+
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, StreamableRenderAsset.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, Object, /*no suffix*/, Cast<T>(StreamableRenderAsset.Get()))
@@ -480,4 +482,3 @@ struct REMCOMMON_API FRemSoftStreamableRenderAssetWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, Object, /*no suffix*/, Cast<T>(StreamableRenderAsset.Get()))
 };
-

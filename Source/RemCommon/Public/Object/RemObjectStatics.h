@@ -85,6 +85,7 @@ namespace Rem::Object
 	{
 		return ChangeType & EPropertyChangeType::ArrayAdd
 			|| ChangeType & EPropertyChangeType::ArrayRemove
+			|| ChangeType & EPropertyChangeType::ArrayClear
 			|| ChangeType & EPropertyChangeType::Duplicate
 			|| ChangeType & EPropertyChangeType::ArrayMove;
 	}
