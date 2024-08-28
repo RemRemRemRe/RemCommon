@@ -4,6 +4,7 @@
 
 #include <type_traits>
 
+#include "RemAlwaysFalse.h"
 #include "RemConcepts.h"
 #include "UObject/Class.h"
 #include "UObject/Object.h"
@@ -52,7 +53,7 @@ namespace Rem
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T is either a TObjectPtr, UObject nor has 'IsValid' member");
+				static_assert(always_false<T>::value, "T is either a TObjectPtr, UObject nor has 'IsValid' member");
 				return false;
 			}
 		}
@@ -79,7 +80,7 @@ namespace Rem
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T should have member GetNetMode");
+				static_assert(always_false<T>::value, "T should have member GetNetMode");
 				return {};
 			}
 		}
@@ -110,7 +111,7 @@ namespace Rem
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T should have member IsNetMode or GetNetMode");
+				static_assert(always_false<T>::value, "T should have member IsNetMode or GetNetMode");
 				return {};
 			}
 		}
@@ -172,7 +173,7 @@ namespace Rem
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T is not supported for ToString");
+				static_assert(always_false<T>::value, "T is not supported for ToString");
 				return {};
 			}
 		}
@@ -203,7 +204,7 @@ namespace Rem
 			}
 			else
 			{
-				static_assert(std::_Always_false<T>, "T should have member GetLocalRole or GetOwnerRole that returns ENetRole");
+				static_assert(always_false<T>::value, "T should have member GetLocalRole or GetOwnerRole that returns ENetRole");
 				return {};
 			}
 		}

@@ -16,8 +16,8 @@ namespace Rem
 	// check if type T is an instantiation of template U
 	// @see https://stackoverflow.com/a/61040973
 	template <typename T, template <typename ...> typename U>
-	using is_instance = Impl::TIsInstanceImpl<std::_Remove_cvref_t<T>, U>;
+	using is_instance = Impl::TIsInstanceImpl<std::remove_cvref_t<T>, U>;
 
 	template <typename T, template <typename ...> typename U>
-	constexpr bool is_instance_v = Impl::TIsInstanceImpl<std::_Remove_cvref_t<T>, U>::value;
+	constexpr bool is_instance_v = Impl::TIsInstanceImpl<std::remove_cvref_t<T>, U>::value;
 }

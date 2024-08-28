@@ -29,7 +29,7 @@ namespace Rem
 		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T is not supported");
+			static_assert(always_false<T>::value, "T is not supported");
 			return {};
 		}
 	}

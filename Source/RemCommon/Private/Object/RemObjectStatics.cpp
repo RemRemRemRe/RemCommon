@@ -20,7 +20,7 @@ UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<>& SoftObjectPtr, UCl
 
 bool URemObjectStatics::IsBlueprintObject(const UObject* Object)
 {
-	RemCheckVariable(Object, false);
+	RemCheckVariable(Object, return false);
 
 	return Object->GetClass()->HasAnyClassFlags(CLASS_CompiledFromBlueprint)
 		|| !Object->GetClass()->HasAnyClassFlags(CLASS_Native);
@@ -28,7 +28,7 @@ bool URemObjectStatics::IsBlueprintObject(const UObject* Object)
 
 bool URemObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
 {
-	RemCheckVariable(Object, false);
+	RemCheckVariable(Object, return false);
 
 	return !Object->HasAnyFlags(RF_BeginDestroyed) && !Object->IsUnreachable();
 }
@@ -146,8 +146,8 @@ bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TA
 		MemberNode = MemberNode->GetNextNode();
 	}
 
-	if (!bShouldHaveNextNode && MemberNode
-		|| bShouldHaveNextNode && !MemberNode)
+	if ((!bShouldHaveNextNode && MemberNode)
+		|| (bShouldHaveNextNode && !MemberNode))
 	{
 		return false;
 	}

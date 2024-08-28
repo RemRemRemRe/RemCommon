@@ -32,6 +32,6 @@ namespace Rem::GameplayTag
 	 */
 	REMCOMMON_API FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag);
 
-	REMCOMMON_API [[nodiscard]] uint32 GetHashForTags(const TConstArrayView<const FGameplayTag> Tags);
-	REMCOMMON_API [[nodiscard]] uint32 GetHashForTags(const FGameplayTagContainer& Tags);
+	[[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const TConstArrayView<const FGameplayTag> Tags);
+	[[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const FGameplayTagContainer& Tags);
 }

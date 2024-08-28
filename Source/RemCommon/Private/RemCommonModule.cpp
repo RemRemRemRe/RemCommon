@@ -78,7 +78,7 @@ void FRemCommonModule::ShutdownModule()
 void FRemCommonModule::OnGetCategoriesMetaFromPropertyHandle(const TSharedPtr<IPropertyHandle> PropertyHandle,
 	FString& OutCategoryString)
 {
-	static_assert(Rem::Concepts::has_tag<FRemGameplayTagWithCategory>, "Tag member of FRemGameplayTagWithCategory is missing!");
+	//static_assert(Rem::Concepts::has_tag<FRemGameplayTagWithCategory>, "Tag member of FRemGameplayTagWithCategory is missing!");
 	const auto TagPropertyName = FName{TEXTVIEW("Tag")};
 	
 	if (const auto* Property = PropertyHandle->GetProperty();

@@ -2,10 +2,12 @@
 
 #pragma once
 
+#include "RemAlwaysFalse.h"
+
 namespace Rem::Math
 {
 	template<typename T>
-	requires !std::is_signed_v<T>
+	requires (!std::is_signed_v<T>)
 	T GetBitsNeeded(const T Value)
 	{
 		if constexpr (std::is_same_v<T, uint8>)
@@ -26,7 +28,7 @@ namespace Rem::Math
 		}
 		else
 		{
-			static_assert(std::_Always_false<T>, "T is not supported");
+			static_assert(always_false<T>::value, "T is not supported");
 			return {};
 		}
 	}

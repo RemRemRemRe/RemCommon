@@ -6,7 +6,7 @@
 
 namespace Rem::Enum
 {
-	REMCOMMON_API enum class EContainerCombination : uint8
+	enum class REMCOMMON_API EContainerCombination : uint8
 	{
 		None					= 0,
 		NotAContainer			= None,
