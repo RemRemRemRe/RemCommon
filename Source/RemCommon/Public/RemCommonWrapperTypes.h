@@ -7,12 +7,36 @@
 #include "RemCommonWrapperTypes.generated.h"
 
 USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemByteWrapper
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+	uint8 Byte{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Byte)
+};
+
+USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemByteArrayWrapper
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+	TArray<uint8> Bytes{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Bytes)
+};
+
+USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemIntegerWrapper
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	int32 Number{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Number)
 };
 
 USTRUCT(BlueprintType)
@@ -22,6 +46,8 @@ struct REMCOMMON_API FRemIntegerArrayWrapper
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
     TArray<int32> Integers{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Integers)
 };
 
 USTRUCT(BlueprintType)
@@ -31,6 +57,8 @@ struct REMCOMMON_API FRemFloatWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	float Number{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Number)
 };
 
 USTRUCT(BlueprintType)
@@ -40,6 +68,8 @@ struct REMCOMMON_API FRemFloatArrayWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<float> Numbers{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Numbers)
 };
 
 USTRUCT(BlueprintType)
@@ -49,6 +79,8 @@ struct REMCOMMON_API FRemDoubleWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	double Number{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Number)
 };
 
 USTRUCT(BlueprintType)
@@ -58,6 +90,8 @@ struct REMCOMMON_API FRemDoubleArrayWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<double> Numbers{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Numbers)
 };
 
 USTRUCT(BlueprintType)
@@ -67,6 +101,8 @@ struct REMCOMMON_API FRemTextWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	FText Text{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Text)
 };
 
 USTRUCT(BlueprintType)
@@ -76,6 +112,8 @@ struct REMCOMMON_API FRemTextArrayWrapper
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TArray<FText> Texts{};
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Texts)
 };
 
 USTRUCT(BlueprintType)
@@ -90,6 +128,8 @@ struct REMCOMMON_API FRemDataAssetWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, Object, /*no suffix*/, Cast<T>(DataAsset))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, DataAsset)
 };
 
 USTRUCT(BlueprintType)
@@ -104,6 +144,8 @@ struct REMCOMMON_API FRemWeakDataAssetWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, Object, /*no suffix*/, Cast<T>(DataAsset.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, DataAsset)
 };
 
 USTRUCT(BlueprintType)
@@ -118,6 +160,8 @@ struct REMCOMMON_API FRemSoftDataAssetWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_data_asset<T>, Object, /*no suffix*/, Cast<T>(DataAsset.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, DataAsset)
 };
 
 USTRUCT(BlueprintType)
@@ -130,6 +174,8 @@ struct REMCOMMON_API FRemObjectWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Object)
 };
 
 USTRUCT(BlueprintType)
@@ -145,6 +191,8 @@ struct REMCOMMON_API FRemObjectArrayWrapper
     using WrapperElementType = decltype(Objects)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Objects)
 };
 
 USTRUCT(BlueprintType)
@@ -157,6 +205,8 @@ struct REMCOMMON_API FRemWeakObjectWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Object)
 };
 
 USTRUCT(BlueprintType)
@@ -172,6 +222,8 @@ struct REMCOMMON_API FRemWeakObjectArrayWrapper
 	using WrapperElementType = decltype(Objects)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Objects)
 };
 
 USTRUCT(BlueprintType)
@@ -184,6 +236,8 @@ struct REMCOMMON_API FRemConstObjectWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Object)
 };
 
 USTRUCT(BlueprintType)
@@ -199,6 +253,8 @@ struct REMCOMMON_API FRemConstObjectArrayWrapper
     using WrapperElementType = decltype(Objects)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Objects)
 };
 
 USTRUCT(BlueprintType)
@@ -211,6 +267,8 @@ struct REMCOMMON_API FRemConstWeakObjectWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Object)
 };
 
 USTRUCT(BlueprintType)
@@ -226,6 +284,8 @@ struct REMCOMMON_API FRemConstWeakObjectArrayWrapper
 	using WrapperElementType = decltype(Objects)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Objects)
 };
 
 USTRUCT(BlueprintType)
@@ -241,6 +301,8 @@ struct REMCOMMON_API FRemSoftObjectWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, Cast<T>(Object.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Object)
 };
 
 USTRUCT(BlueprintType)
@@ -256,6 +318,8 @@ struct REMCOMMON_API FRemSoftObjectArrayWrapper
 	using WrapperElementType = decltype(Objects)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Objects)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Objects)
 };
 
 USTRUCT(BlueprintType)
@@ -275,6 +339,8 @@ struct REMCOMMON_API FRemClassWrapper
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Object, /*no suffix*/, Class)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, TSubclassOf<T>{const_cast<UClass*>(Class)}.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Class, /*no suffix*/, TSubclassOf<T>{const_cast<UClass*>(Class)})
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Class)
 };
 
 USTRUCT(BlueprintType)
@@ -290,6 +356,8 @@ struct REMCOMMON_API FRemClassArrayWrapper
 	using WrapperElementType = decltype(Classes)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Classes)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Classes)
 };
 
 USTRUCT(BlueprintType)
@@ -309,6 +377,8 @@ struct REMCOMMON_API FRemSoftClassWrapper
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Class.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, TSubclassOf<T>{Class.Get()})
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Class, /*no suffix*/, GetObject<T>())
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Class)
 };
 
 USTRUCT(BlueprintType)
@@ -324,6 +394,8 @@ struct REMCOMMON_API FRemSoftClassArrayWrapper
 	using WrapperElementType = decltype(Classes)::ElementType;
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Classes)
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Classes)
 };
 
 USTRUCT(BlueprintType)
@@ -341,6 +413,8 @@ struct REMCOMMON_API FRemImageWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Image)
 };
 
 USTRUCT(BlueprintType)
@@ -361,6 +435,8 @@ struct REMCOMMON_API FRemWeakImageWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Image)
 };
 
 USTRUCT(BlueprintType)
@@ -381,6 +457,8 @@ struct REMCOMMON_API FRemSoftImageWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_image<T>, Object, /*no suffix*/, Cast<T>(Image.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Image)
 };
 
 USTRUCT(BlueprintType)
@@ -396,6 +474,8 @@ struct REMCOMMON_API FRemMaterialWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Material)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Object, /*no suffix*/, Cast<T>(Material))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Material)
 };
 
 USTRUCT(BlueprintType)
@@ -414,6 +494,8 @@ struct REMCOMMON_API FRemWeakMaterialWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Material.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Object, /*no suffix*/, Cast<T>(Material.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Material)
 };
 
 USTRUCT(BlueprintType)
@@ -431,6 +513,8 @@ struct REMCOMMON_API FRemSoftMaterialWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_material_interface<T>, Object, /*no suffix*/, Cast<T>(Material.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Material)
 };
 
 USTRUCT(BlueprintType)
@@ -446,6 +530,8 @@ struct REMCOMMON_API FRemStreamableRenderAssetWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, StreamableRenderAsset)
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, Object, /*no suffix*/, Cast<T>(StreamableRenderAsset))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, StreamableRenderAsset)
 };
 
 USTRUCT(BlueprintType)
@@ -464,6 +550,8 @@ struct REMCOMMON_API FRemWeakStreamableRenderAssetWrapper
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, StreamableRenderAsset.Get())
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, Object, /*no suffix*/, Cast<T>(StreamableRenderAsset.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, StreamableRenderAsset)
 };
 
 USTRUCT(BlueprintType)
@@ -481,4 +569,6 @@ struct REMCOMMON_API FRemSoftStreamableRenderAssetWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_streamable_render_asset<T>, Object, /*no suffix*/, Cast<T>(StreamableRenderAsset.Get()))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, StreamableRenderAsset)
 };
