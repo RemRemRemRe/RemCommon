@@ -14,7 +14,7 @@ namespace Rem
 bool IsClassDefaultObject(const UObject* Object)
 {
 	RemCheckVariable(Object, {});
-	
+
 	const UClass* Class = Object->GetClass();
 	return Class->GetDefaultObject(false) == Object;
 }
@@ -31,7 +31,7 @@ FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath)
 		// + 1 to get rid of the '.'
 		return SubPathString.RightChop(ObjectNameIndex + 1);
 	}
-	
+
 	return {};
 }
 
@@ -49,7 +49,7 @@ uint8* AllocateStructMemory(const UStruct& Struct)
 	RemCheckVariable(StructMemory, return {});
 
 	Struct.InitializeStruct(StructMemory);
-	
+
 	return StructMemory;
 }
 
@@ -57,16 +57,6 @@ void FreeStructMemory(const UStruct& Struct, uint8& Memory)
 {
 	Struct.DestroyStruct(&Memory);
 	FMemory::Free(&Memory);
-}
-
-FString TagToStringWithoutDot(const FGameplayTag& Tag)
-{
-	return Tag.GetTagName().ToString().Replace(TEXTVIEW(".").GetData(), TEXTVIEW("").GetData());
-}
-
-FName TagToNameWithoutDot(const FGameplayTag& Tag)
-{
-	return FName{TagToStringWithoutDot(Tag)};
 }
 
 }

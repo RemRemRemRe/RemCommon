@@ -23,7 +23,7 @@ namespace Rem
 			if (Object != nullptr)
 			{
 				using RawType = std::remove_reference_t<std::remove_pointer_t<T>>;
-			
+
 				if constexpr (std::is_base_of_v<UObject, RawType>)
 				{
 					return Rem::IsValid(*Object);
@@ -96,7 +96,7 @@ namespace Rem
 		else
 		{
 			using RawType = std::remove_reference_t<T>;
-				
+
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
 				return Rem::IsNetMode(*Object, NetMode);
@@ -123,7 +123,7 @@ namespace Rem
 	{
 		return bValue ? TEXTVIEW("True") : TEXTVIEW("False");
 	}
-	
+
 	REMCOMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
 	REMCOMMON_API FString ToString(const UScriptStruct& ScriptStruct, const void* Value);
@@ -138,7 +138,7 @@ namespace Rem
 		else
 		{
 			using RawType = std::remove_reference_t<T>;
-			
+
 			if constexpr (std::is_enum_v<RawType>)
 			{
 				return UEnum::GetValueAsString(Data);
@@ -178,7 +178,7 @@ namespace Rem
 			}
 		}
 	}
-	
+
 	template<typename T>
 	ENetRole GetNetRole(const T& Object)
 	{
@@ -189,7 +189,7 @@ namespace Rem
 		else
 		{
 			using RawType = std::remove_reference_t<T>;
-			
+
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
 				return Rem::GetNetRole(*Object);
@@ -240,7 +240,7 @@ namespace Rem
 			String.AppendChar(*Char);
 		}
 	}
-	
+
 	template<typename T, bool bConstantStringLength = false>
 	FString GetNetRoleString(const T& Object)
 	{
@@ -251,15 +251,15 @@ namespace Rem
 		else
 		{
 			FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
-			
+
 			if constexpr (bConstantStringLength)
 			{
 				constexpr auto MaxLength = TEXTVIEW("ROLE_AutonomousProxy").Len();
-				
+
 				NetRoleString.Reserve(MaxLength);
 				AppendCharRepeated(NetRoleString, TEXT(" "), MaxLength - NetRoleString.Len());
 			}
-			
+
 			return NetRoleString;
 		}
 	}
@@ -283,7 +283,7 @@ namespace Rem
 		{
 			return TEXT("Invalid Object");
 		}
-		
+
 		if constexpr (std::is_pointer_v<T>)
 		{
 			return Rem::GetNetDebugString(*Object);
@@ -291,7 +291,7 @@ namespace Rem
 		else
 		{
 			using RawType = std::remove_reference_t<T>;
-			
+
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
 				return Rem::GetNetDebugString(*Object);
@@ -303,7 +303,7 @@ namespace Rem
 				if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
 				{
 					const FString NetRoleString = Rem::GetNetRoleString<T, true>(Object);
-									
+
 					return FString::Format(TEXT("{0} {1}"), { NetModeString, NetRoleString });
 				}
 				else
@@ -363,7 +363,4 @@ namespace Rem
 
 	REMCOMMON_API uint8* AllocateStructMemory(const UStruct& Struct);
 	REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
-
-	REMCOMMON_API FString TagToStringWithoutDot(const FGameplayTag& Tag);
-	REMCOMMON_API FName TagToNameWithoutDot(const FGameplayTag& Tag);
 }

@@ -32,6 +32,18 @@ namespace Rem::GameplayTag
 	 */
 	REMCOMMON_API FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag);
 
-	[[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const TConstArrayView<const FGameplayTag> Tags);
+	[[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const TConstArrayView<FGameplayTag> Tags);
 	[[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const FGameplayTagContainer& Tags);
+
+	[[nodiscard]] REMCOMMON_API FString TagToStringWithoutDot(const FGameplayTag& Tag);
+	[[nodiscard]] REMCOMMON_API FName TagToNameWithoutDot(const FGameplayTag& Tag);
+
+	[[nodiscard]] REMCOMMON_API FGameplayTag TryGetTagFromString(const FString& TagString);
+
+	/**
+	 * @param StringRef string to modify
+	 * @param Tag string source
+	 * @return true if StringRef get modified
+	 */
+	REMCOMMON_API bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag);
 }
