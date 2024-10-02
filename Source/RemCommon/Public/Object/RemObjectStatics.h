@@ -98,6 +98,12 @@ namespace Rem::Object
 
 	REMCOMMON_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
 
+	///
+	///
+	//// Rem::Latent::SetTimerForThisTick is preferred for gameplay as it's more "tick order / dependency" friendly
+	///
+	///
+
 	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
 	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate);
 
