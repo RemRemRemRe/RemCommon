@@ -78,6 +78,15 @@ T* GetFirstLocalPlayerController(const UObject& WorldContextObject)
 	return Cast<T>(GameInstance->GetFirstLocalPlayerController());
 }
 
+template<Concepts::is_hud T = AHUD>
+T* GetFirstLocalHUD(const UObject& WorldContextObject)
+{
+	const auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+
+	return PlayerController->GetHUD<T>();
+}
+
 template<Concepts::is_local_player T = ULocalPlayer>
 T* GetFirstLocalPlayer(const UObject& WorldContextObject)
 {
