@@ -2,6 +2,7 @@
 
 #pragma once
 
+class AHUD;
 class UCameraModifier;
 class UPoseAsset;
 class UAnimStreamable;
@@ -75,7 +76,7 @@ namespace Rem::Concepts
 	{
 		Tag = Object.GetTag();
 	};
-	
+
 	template<class T>
 	concept has_is_net_mode = requires (ENetMode Mode, const T Object, bool Result)
 	{
@@ -111,7 +112,7 @@ namespace Rem::Concepts
 	{
 		StructRef = T::StaticStruct();
 	};
-	
+
 	template<class T>
 	concept is_stringable = has_static_struct<T>
 		|| std::is_enum_v<T>
@@ -143,6 +144,9 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_uclass = std::is_base_of_v<UClass, T>;
+	
+	template<class T>
+	concept is_hud = std::is_base_of_v<AHUD, T>;
 
 	template<class T>
 	concept is_actor = std::is_base_of_v<AActor, T>;
@@ -161,7 +165,7 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_player_controller = std::is_base_of_v<APlayerController, T>;
-	
+
 	template<class T>
 	concept is_player_camera_manager = std::is_base_of_v<APlayerCameraManager, T>;
 
