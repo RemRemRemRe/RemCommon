@@ -46,9 +46,9 @@ public:
 	void SetTagAndCategory(const FGameplayTag& InTag);
 
 	/** Used so we can have a TMap of this struct */
-	friend uint32 GetTypeHash(const FRemGameplayTagWithCategory& Tag)
+	friend uint32 GetTypeHash(const FRemGameplayTagWithCategory& TagWithCategory)
 	{
-		return GetTypeHash(Tag.GetTag());
+		return GetTypeHash(TagWithCategory.GetTag());
 	}
 
 	bool operator==(const FRemGameplayTagWithCategory& Other) const
