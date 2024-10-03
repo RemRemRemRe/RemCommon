@@ -4,6 +4,9 @@
 
 #include "RemNetFilterBits.generated.h"
 
+enum ENetMode;
+enum ENetRole : int;
+
 USTRUCT(BlueprintType)
 struct FRemNetFilterBits
 {

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 class AHUD;
 class UCameraModifier;
 class UPoseAsset;

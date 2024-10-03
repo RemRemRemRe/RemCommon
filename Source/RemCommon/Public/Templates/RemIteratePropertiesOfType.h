@@ -8,7 +8,7 @@ namespace Rem::Property
 {
 	using FIteratePropertiesFunction = TFunctionRef<void(const FProperty* InProperty, const void* InContainer)>;
 
-namespace Impl
+namespace Private
 {
 	template<Concepts::is_property PropertyType>
 	void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, const void* InContainer, const FIteratePropertiesFunction& InFunction)
@@ -132,7 +132,7 @@ namespace Impl
 		// type needs to be FProperty, to handle container properties
 		for(TFieldIterator<FProperty> It(InStruct); It; ++It)
 		{
-			Impl::IteratePropertiesOfTypeRecursive<PropertyType>(*It, InContainer, InFunction);
+			Private::IteratePropertiesOfTypeRecursive<PropertyType>(*It, InContainer, InFunction);
 		}
 	}
 

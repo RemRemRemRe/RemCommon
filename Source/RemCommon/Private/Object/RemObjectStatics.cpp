@@ -8,6 +8,7 @@
 #include "Engine/TimerHandle.h"
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/World.h"
+#include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
 
@@ -155,33 +156,33 @@ bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TA
 	return true;
 }
 
-FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate)
 {
 	auto* World = WorldContextObject.GetWorld();
 	RemCheckVariable(World, return {});
 
-	return SetTimerForThisTick(*World, InDelegate);
+	return SetTimerForThisTick(*World, Delegate);
 }
 
-FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate)
 {
-	return World.GetTimerManager().SetTimerForNextTick(InDelegate);
+	return World.GetTimerManager().SetTimerForNextTick(Delegate);
 }
 
-FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate)
 {
 	FTimerHandle Handle;
-	World.GetTimerManager().SetTimer(Handle, InDelegate, UE_SMALL_NUMBER, {});
+	World.GetTimerManager().SetTimer(Handle, Delegate, UE_SMALL_NUMBER, {});
 
 	return Handle;
 }
 
-FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate)
 {
 	auto* World = WorldContextObject.GetWorld();
 	RemCheckVariable(World, return {});
 
-	return SetTimerForNextTick(*World, InDelegate);
+	return SetTimerForNextTick(*World, Delegate);
 }
 
 }

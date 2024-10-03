@@ -3,6 +3,9 @@
 
 #include "Object/RemNetFilterBits.h"
 
+#include "Engine/EngineBaseTypes.h"
+#include "Engine/EngineTypes.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemNetFilterBits)
 
 bool FRemNetFilterBits::Matches(const ENetMode NetMode, const ENetRole Role) const

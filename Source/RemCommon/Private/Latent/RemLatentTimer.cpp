@@ -353,7 +353,7 @@ FTimerLatentAction_Delay* FindTimerAction(UObject& WorldContextObject, const FTi
 
 bool IsTimerActive(UObject& WorldContextObject, const FTimerHandle TimerHandle)
 {
-	return FindTimerAction(WorldContextObject, TimerHandle);
+	return !!FindTimerAction(WorldContextObject, TimerHandle);
 }
 
 bool ResetTimerDelay(UObject& WorldContextObject, const FTimerHandle TimerHandle)
