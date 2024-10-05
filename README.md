@@ -1,5 +1,9 @@
 # Features
 
+## Latent timer
+
+An alternative timer implementation for `FTimerManager`, a [seperate page](https://remremremre.github.io/posts/Latent-Timer/) is created for it
+
 ## RemEnsureCondition and RemEnsureVariable
 
 Use `RemEnsureCondition` to validate a `Condition`, if the condition is `false`, it could **optionally** execute **any number of** `InvalidHandlingStatement` you specified, trigger a breakpoint with `AssertionMacro` (ensure, ensureAlways, etc.) or `log` some message
