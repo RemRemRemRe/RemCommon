@@ -13,9 +13,13 @@ Use `RemEnsureCondition` to validate a `Condition`, if the condition is `false`,
 ### The world between `Let it crash` and `Check everything and do nothing if invalid`
 
 I divide the stages that I can code on into:
+
 1. pre-preprocessor (eg: UBT, UHT)
-2. compiler-time 
+
+2. compiler-time
+
 3. editor-time (working with unreal editor)
+
 4. runtime (game is running without unreal editor)
 
 I want to "check everything" in `editor time` to make it crash less or no crash which will bring a `better editor experience` and check unexpected things on site which is `better for debugging`
@@ -27,9 +31,12 @@ I want to "let it crash" (zero unnecessary check) in `runtime` to gain bit more 
 These two are just `conditional` alias of `RemEnsureCondition` and `RemEnsureVariable` ATM, but could be implemented in other way if needed
 
 Ideally, I could accomplish things mentioned above by check everything (any `Condition`) that is only needed at editor-time with `RemCheckCondition`, and disable it at runtime, leaving `RemEnsureCondition` unchanged. like:
+
 - null asset reference
+
 - error configurations
-- things not matching 
+
+- things not matching
 
 I could replace `RemEnsureCondition` with `RemCheckCondition` (replace ensure with check) if I'm sure it's editor-only, or vice verse if problems found in play-test
 
@@ -51,17 +58,19 @@ Some helper functions dealing with `FProperty` series
 
 ### Rem::Property::IteratePropertiesOfType
 
+## Rem::LoadAssets, Rem::IsLoaded
+
+Start loading asset(s) of `any soft reference` type
+
 ## Rem::Object
 
-Some helper functions dealing with `UObject`
+Some helper functions dealing with `UObject` or other things
 
 ### Rem::Object::ForeachObjectInArray
 
-Some helper functions dealing with other things
-
-### Rem::LoadAssets, Rem::IsLoaded
-
 ### Rem::IsValidPtr
+
+Validate object in a smarter way: `IsValid()` for `concept` type, `::IsValid(Object)` for `UObject`
 
 ### Rem::GetNetMode
 
@@ -106,8 +115,6 @@ a gameplay tag wrapper that let you select tag category at editor-time / editing
 ### REM_VIRTUAL_WARN
 
 An alternative for PURE_VIRTUAL which will cause unwanted process terminated
-
-### BOOL_TO_STRING
 
 ### REM_LOG_ROLE, REM_LOG_FUNCTION, REM_LOG_ROLE_FUNCTION
 
