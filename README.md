@@ -112,3 +112,13 @@ An alternative for PURE_VIRTUAL which will cause unwanted process terminated
 REM_MULTI_MACRO
 
 @see `RemEnsureCondition`
+
+## Star History
+
+<a href="https://star-history.com/#RemCommon/RemCommon&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=RemCommon/RemCommon&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=RemCommon/RemCommon&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=RemCommon/RemCommon&type=Date" />
+ </picture>
+</a>
