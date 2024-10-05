@@ -103,7 +103,7 @@ namespace Rem::Latent
 		uint32 bTimeOrFrame : 1{0};
 
 		uint32 bPaused : 1{0};
-		uint32 bPauseOnce : 1{0};
+		uint32 bPausedOneFrame : 1{0};
 		uint32 bStopped : 1{0};
 
 		/**
@@ -152,7 +152,7 @@ namespace Rem::Latent
 	REMCOMMON_API void UnpauseTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
 	REMCOMMON_API void SetTimerPaused(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
 
-	REMCOMMON_API void SetTimerPauseOnce(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
+	REMCOMMON_API void SetTimerPausedOneFrame(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
 
 	REMCOMMON_API void StopTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
 

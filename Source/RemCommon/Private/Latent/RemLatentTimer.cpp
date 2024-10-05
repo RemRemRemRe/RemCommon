@@ -43,7 +43,7 @@ FTimerLatentAction_Delay::FTimerLatentAction_Delay(const FTimerDelegate& InDeleg
 	CurrentTimeOrFrame.Time =
 		DelayParameter.InitialDelay < 0.0f ? DelayParameter.TimeToDelay : DelayParameter.InitialDelay;
 
-	bPauseOnce = DelayParameter.bSkipCountingThisFrame;
+	bPausedOneFrame = DelayParameter.bSkipCountingThisFrame;
 }
 
 FTimerLatentAction_Delay::FTimerLatentAction_Delay(const FTimerDelegate& InDelegate,
@@ -60,7 +60,7 @@ FTimerLatentAction_Delay::FTimerLatentAction_Delay(const FTimerDelegate& InDeleg
 			? DelayParameter.InitialDelay + 1
 			: TimeOrFrameToDelay.Frame;
 
-	bPauseOnce = DelayParameter.bSkipCountingThisFrame;
+	bPausedOneFrame = DelayParameter.bSkipCountingThisFrame;
 }
 
 void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
@@ -73,9 +73,9 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 		return Super::UpdateOperation(Response);
 	}
 
-	if (bPauseOnce)
+	if (bPausedOneFrame)
 	{
-		bPauseOnce = false;
+		bPausedOneFrame = false;
 		return;
 	}
 
@@ -216,9 +216,9 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 			return Super::UpdateOperation(Response);
 		}
 
-		if (bPauseOnce)
+		if (bPausedOneFrame)
 		{
-			bPauseOnce = false;
+			bPausedOneFrame = false;
 			return;
 		}
 
@@ -259,7 +259,7 @@ FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelega
 	auto* TimerLatentAction = new FTimerLatentAction_Delay{};
 	TimerLatentAction->Delegate = InDelegate;
 
-	TimerLatentAction->bPauseOnce = 1;
+	TimerLatentAction->bPausedOneFrame = 1;
 
 	const auto Handle{FTimerHandle::NewHandle()};
 
@@ -325,11 +325,11 @@ void SetTimerPaused(UObject& WorldContextObject, const FTimerHandle TimerHandle,
 	}
 }
 
-void SetTimerPauseOnce(UObject& WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
+void SetTimerPausedOneFrame(UObject& WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
-		TimerLatentAction->bPauseOnce = bPause;
+		TimerLatentAction->bPausedOneFrame = bPause;
 	}
 }
 
