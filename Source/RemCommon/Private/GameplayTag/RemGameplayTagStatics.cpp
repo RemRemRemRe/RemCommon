@@ -5,6 +5,7 @@
 
 #include "GameplayTagContainer.h"
 #include "GameplayTagsManager.h"
+#include "Macro/RemAssertionMacros.h"
 #include "UObject/PrimaryAssetId.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemGameplayTagStatics)
@@ -82,4 +83,110 @@ bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag)
 	// updated
 	return true;
 }
+
+TArray<FString> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
+{
+	TArray<FString> TagsString{};
+	TagsString.Reserve(Tags.Num());
+
+	for (auto& TagOne : Tags)
+	{
+		TagsString.Add(TagOne.ToString());
+	}
+
+	return TagsString;
+}
+
+FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo)
+{
+	RemCheckVariable(TagOne, return {});
+	RemCheckVariable(TagTwo, return {});
+
+	if (TagOne == TagTwo)
+	{
+		return TagOne;
+	}
+
+	// could we get string view of tag?
+	const auto StringOne = TagOne.ToString();
+	const auto StringTwo = TagTwo.ToString();
+
+	return FindCommonParentTag(StringOne, StringTwo);
+}
+
+FGameplayTag FindCommonParentTag(const FStringView TagStringOne, const FStringView TagStringTwo)
+{
+	const auto MinLength = FMath::Min(TagStringOne.Len(), TagStringTwo.Len());
+	int32 DotIndex{INDEX_NONE};
+
+	for (int32 Index= 0; Index < MinLength; ++Index)
+	{
+		if (TagStringOne[Index] != TagStringTwo[Index])
+		{
+			break;
+		}
+
+		if (TagStringOne[Index] == '.')
+		{
+			DotIndex = Index;
+		}
+	}
+
+	if (DotIndex == INDEX_NONE)
+	{
+		return {};
+	}
+
+	return FGameplayTag::RequestGameplayTag(*FString{TagStringOne.SubStr(0, DotIndex)});
+}
+
+TArray<FGameplayTag> FindCommonParentTags(const TConstArrayView<FGameplayTag> TagsOne, const TConstArrayView<FGameplayTag> TagsTwo)
+{
+	const auto Number = FMath::Min(TagsOne.Num(), TagsTwo.Num());
+	if (Number == 0)
+	{
+		return {};
+	}
+
+	TArray<FGameplayTag> Results{};
+	Results.Reserve(Number);
+
+	const auto TagsStringOne = GetTagsString(TagsOne);
+	const auto TagsStringTwo = GetTagsString(TagsTwo);
+
+	for (auto& TagOne : TagsStringOne)
+	{
+		for (auto& TagTwo : TagsStringTwo)
+		{
+			if (auto CommonTag = FindCommonParentTag(TagOne, TagTwo);
+				CommonTag.IsValid())
+			{
+				Results.Add(CommonTag);
+			}
+		}
+	}
+
+	return Results;
+}
+
+bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const TConstArrayView<FGameplayTag> TagsToMatch)
+{
+	return IsTagQueryMatches(TagQuery, FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>{TagsToMatch}));
+}
+
+bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTag& TagToMatch)
+{
+	return IsTagQueryMatches(TagQuery, TagToMatch.GetSingleTagContainer());
+}
+
+bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch)
+{
+	if (TagQuery.IsEmpty())
+	{
+		return true;
+	}
+
+	return TagQuery.Matches(TagsToMatch);
+}
+
 }

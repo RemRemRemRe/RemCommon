@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemGameplayTagStatics.generated.h"
 
+struct FGameplayTagQuery;
 struct FGameplayTagContainer;
 struct FGameplayTag;
 
@@ -46,4 +47,18 @@ namespace Rem::GameplayTag
 	 * @return true if StringRef get modified
 	 */
 	REMCOMMON_API bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag);
+
+	REMCOMMON_API TArray<FString> GetTagsString(TConstArrayView<FGameplayTag> Tags);
+
+	REMCOMMON_API FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo);
+	REMCOMMON_API FGameplayTag FindCommonParentTag(FStringView TagStringOne, FStringView TagStringTwo);
+	REMCOMMON_API TArray<FGameplayTag> FindCommonParentTags(TConstArrayView<FGameplayTag> TagsOne, TConstArrayView<FGameplayTag> TagsTwo);
+
+	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, TConstArrayView<FGameplayTag> TagsToMatch);
+	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTag& TagToMatch);
+
+	/**
+	 * passing FGameplayTagContainer when possible as this overload won't do allocating or anything else
+	 */
+	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch);
 }
