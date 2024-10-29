@@ -48,11 +48,13 @@ namespace Rem::GameplayTag
 	 */
 	REMCOMMON_API bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag);
 
-	REMCOMMON_API TArray<FString> GetTagsString(TConstArrayView<FGameplayTag> Tags);
+	[[nodiscard]] REMCOMMON_API TArray<FString> GetTagsString(TConstArrayView<FGameplayTag> Tags);
+	[[nodiscard]] REMCOMMON_API FGameplayTagContainer ToTagContainer(TConstArrayView<FGameplayTag> Tags);
+	[[nodiscard]] REMCOMMON_API FString ToString(TConstArrayView<FGameplayTag> Tags, bool bQuoted = false);
 
 	REMCOMMON_API FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo);
 	REMCOMMON_API FGameplayTag FindCommonParentTag(FStringView TagStringOne, FStringView TagStringTwo);
-	REMCOMMON_API TArray<FGameplayTag> FindCommonParentTags(TConstArrayView<FGameplayTag> TagsOne, TConstArrayView<FGameplayTag> TagsTwo);
+	[[nodiscard]] REMCOMMON_API TArray<FGameplayTag> FindCommonParentTags(TConstArrayView<FGameplayTag> TagsOne, TConstArrayView<FGameplayTag> TagsTwo);
 
 	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, TConstArrayView<FGameplayTag> TagsToMatch);
 	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTag& TagToMatch);

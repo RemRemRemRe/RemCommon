@@ -97,6 +97,34 @@ TArray<FString> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
 	return TagsString;
 }
 
+FGameplayTagContainer ToTagContainer(const TConstArrayView<FGameplayTag> Tags)
+{
+	return FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>(Tags));
+}
+
+FString ToString(const TConstArrayView<FGameplayTag> Tags, const bool bQuoted)
+{
+	FString RetString;
+	for (int32 Index = 0; Index < Tags.Num(); ++Index)
+	{
+		if (bQuoted)
+		{
+			RetString += TEXT("\"");
+		}
+		RetString += Tags[Index].ToString();
+		if (bQuoted)
+		{
+			RetString += TEXT("\"");
+		}
+
+		if (Index < Tags.Num() - 1)
+		{
+			RetString += TEXT(", ");
+		}
+	}
+	return RetString;
+}
+
 FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo)
 {
 	RemCheckVariable(TagOne, return {});
@@ -171,7 +199,7 @@ TArray<FGameplayTag> FindCommonParentTags(const TConstArrayView<FGameplayTag> Ta
 
 bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const TConstArrayView<FGameplayTag> TagsToMatch)
 {
-	return IsTagQueryMatches(TagQuery, FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>{TagsToMatch}));
+	return IsTagQueryMatches(TagQuery, ToTagContainer(TagsToMatch));
 }
 
 bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTag& TagToMatch)
