@@ -155,6 +155,10 @@ namespace Rem
 			{
 				return Data.ToCompactString();
 			}
+			else if constexpr (Concepts::has_to_string_simple<RawType>)
+			{
+				return Data.ToStringSimple();
+			}
 			else if constexpr (Concepts::has_to_string<RawType>)
 			{
 				return Data.ToString();

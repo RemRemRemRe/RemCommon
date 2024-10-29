@@ -31,6 +31,7 @@ class APlayerState;
 class UActorComponent;
 class AActor;
 class UObject;
+class UWorld;
 struct FSoftObjectPath;
 class UClass;
 class UScriptStruct;
@@ -49,6 +50,12 @@ struct FTableRowBase;
 
 namespace Rem::Concepts
 {
+	template<class T>
+	concept has_get_world = requires (UWorld* World, const T Object)
+	{
+		World = Object.GetWorld();
+	};
+
 	template<class T>
 	concept has_get_local_role = requires (ENetRole Role, const T Object)
 	{
@@ -89,6 +96,12 @@ namespace Rem::Concepts
 	concept has_to_compact_string = requires (FString& String, const T Object)
 	{
 		String = Object.ToCompactString();
+	};
+
+	template<class T>
+	concept has_to_string_simple = requires (FString& String, const T Object)
+	{
+		String = Object.ToStringSimple();
 	};
 
 	template<class T>
