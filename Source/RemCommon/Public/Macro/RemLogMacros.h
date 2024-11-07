@@ -15,6 +15,20 @@
 
 #define REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ...)
 
+
+#define REM_LOG_ROLE_COND(Condition, Object, CategoryName, Verbosity, Format, ...)
+
+#define REM_LOG_FUNCTION_COND(Condition, CategoryName, Verbosity, Format, ...)
+
+#define REM_LOG_ROLE_FUNCTION_COND(Condition, Object, CategoryName, Verbosity, Format, ...)
+
+
+#define REM_LOG_ROLE_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...)
+
+#define REM_LOG_FUNCTION_CVAR(ConsoleVariableName, CategoryName, Verbosity, Format, ...)
+
+#define REM_LOG_ROLE_FUNCTION_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...)
+
 #else
 
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
@@ -51,6 +65,65 @@
 		REM_INITIALIZE_SOURCE_LOCATION_STRING(Suffix) \
 		\
 		REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, Format, ##__VA_ARGS__) \
+	} while (false)
+
+
+#define REM_LOG_ROLE_COND(Condition, Object, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (UNLIKELY(Condition)) \
+		{ \
+			REM_LOG_ROLE(Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
+		} \
+	} while (false)
+
+#define REM_LOG_FUNCTION_COND(Condition, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (UNLIKELY(Condition)) \
+		{ \
+			REM_LOG_FUNCTION(CategoryName, Verbosity, Format, ##__VA_ARGS__); \
+		} \
+	} while (false)
+
+#define REM_LOG_ROLE_FUNCTION_COND(Condition, Object, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (UNLIKELY(Condition)) \
+		{ \
+			REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
+		} \
+	} while (false)
+
+
+#define REM_LOG_ROLE_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+			ensure(CVar)) \
+		{ \
+			REM_LOG_ROLE_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
+		} \
+	} while (false)
+
+#define REM_LOG_FUNCTION_CVAR(ConsoleVariableName, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+			ensure(CVar)) \
+		{ \
+			REM_LOG_FUNCTION_COND(CVar->GetBool(), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
+		} \
+	} while (false)
+
+#define REM_LOG_ROLE_FUNCTION_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...) \
+	do \
+	{ \
+		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+			ensure(CVar)) \
+		{ \
+			REM_LOG_ROLE_FUNCTION_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
+		} \
 	} while (false)
 
 #endif
