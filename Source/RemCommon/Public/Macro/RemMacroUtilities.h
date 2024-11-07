@@ -9,7 +9,7 @@
 
 #define REM_INITIALIZE_SOURCE_LOCATION_STRING(VariableName) \
 	const auto VariableName = FString::Format(TEXT("[Function: {0}] [Line: {1}]"), \
-	{__func__, __LINE__});
+	{__FUNCTION__, __LINE__});
 
 #ifdef REM_WITH_DEVELOPMENT_ONLY_CODE
 
