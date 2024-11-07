@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "RemMisc.h"
+
 #define REM_WITH_DEVELOPMENT_ONLY_CODE !UE_BUILD_SHIPPING
 
 #define REM_INITIALIZE_NET_DEBUG_STRING(Object, VariableName) \
