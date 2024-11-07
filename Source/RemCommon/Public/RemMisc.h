@@ -237,12 +237,12 @@ namespace Rem
 	 * @brief Append spaces to the string
 	 * @note better to make sure String has enough capacity using FString::Reserve
 	 */
-	inline void AppendCharRepeated(FString& String, const TCHAR* Char, const int32 TimesToRepeat)
+	inline void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat)
 	{
 		String.Reserve(String.Len() + TimesToRepeat);
 		for (int32 Counter = 0; Counter < TimesToRepeat; ++Counter)
 		{
-			String.AppendChar(*Char);
+			String.AppendChar(Char);
 		}
 	}
 
@@ -262,7 +262,7 @@ namespace Rem
 				constexpr auto MaxLength = TEXTVIEW("ROLE_AutonomousProxy").Len();
 
 				NetRoleString.Reserve(MaxLength);
-				AppendCharRepeated(NetRoleString, TEXT(" "), MaxLength - NetRoleString.Len());
+				AppendCharRepeated(NetRoleString, TEXT(' '), MaxLength - NetRoleString.Len());
 			}
 
 			return NetRoleString;
