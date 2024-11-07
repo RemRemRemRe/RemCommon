@@ -3,6 +3,7 @@
 #include "RemMisc.h"
 
 #include "GameplayTagContainer.h"
+#include "HAL/IConsoleManager.h"
 #include "Macro/RemAssertionMacros.h"
 #include "UObject/Object.h"
 #include "UObject/PropertyPortFlags.h"
@@ -59,4 +60,8 @@ void FreeStructMemory(const UStruct& Struct, uint8& Memory)
 	FMemory::Free(&Memory);
 }
 
+IConsoleVariable* FindConsoleVariable(const TCHAR* Name)
+{
+	return IConsoleManager::Get().FindConsoleVariable(Name);
+}
 }

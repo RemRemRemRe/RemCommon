@@ -12,6 +12,7 @@
 #include "Engine/EngineBaseTypes.h"
 
 struct FGameplayTag;
+class IConsoleVariable;
 
 namespace Rem
 {
@@ -367,4 +368,6 @@ namespace Rem
 
 	REMCOMMON_API uint8* AllocateStructMemory(const UStruct& Struct);
 	REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
+
+	REMCOMMON_API IConsoleVariable* FindConsoleVariable(const TCHAR* Name);
 }
