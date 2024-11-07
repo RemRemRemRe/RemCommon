@@ -33,8 +33,8 @@
 
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
-		const auto OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
-		const auto FinalStr = FString::Format(TEXT("{0} {1} {2}"), {std::move(Prefix), std::move(OriginalStr), std::move(Suffix)}); \
+		auto OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
+		auto FinalStr = FString::Format(TEXT("{0} {1} {2}"), {std::move(Prefix), std::move(OriginalStr), std::move(Suffix)}); \
 		UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d %s"), ::GFrameNumber, *FinalStr); \
 	}
 
