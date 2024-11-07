@@ -34,7 +34,21 @@
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
 		auto OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
-		auto FinalStr = FString::Format(TEXT("{0} {1} {2}"), {std::move(Prefix), std::move(OriginalStr), std::move(Suffix)}); \
+		 \
+		if (!Prefix.IsEmpty()) \
+		{ \
+			Prefix.Append(TEXT(' ')); \
+		} \
+		 \
+		Prefix.Append(std::move(OriginalStr)); \
+		 \
+		if (!Suffix.IsEmpty()) \
+		{ \
+			Prefix.Append(TEXT(' ')); \
+			Prefix.Append(std::move(Suffix)); \
+		} \
+		 \
+		auto&& FinalStr = Prefix; \
 		UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d %s"), ::GFrameNumber, *FinalStr); \
 	}
 
