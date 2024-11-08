@@ -100,7 +100,7 @@
     REM_ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, LogTemp)
 
 #define REM_ENSURE_CONDITION_1(Condition) \
-    REM_ENSURE_CONDITION_2(Condition, /*InvalidHandlingStatement*/)
+    REM_ENSURE_CONDITION_2(Condition, /* InvalidHandlingStatement */)
 
 /**
  * Use this to validate a condition.
