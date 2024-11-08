@@ -3,6 +3,8 @@
 #pragma once
 
 #include "RemMacroUtilities.h"
+
+// for Rem::StringFormat
 #include "RemMisc.h"
 
 // Extended log macro
@@ -33,23 +35,30 @@
 
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
-		auto OriginalStr = Rem::StringFormat(FormatString, ##__VA_ARGS__); \
+		constexpr auto Delimiter = TEXT(' '); \
+		TStringBuilder<256> FinalString{}; \
 		 \
-		if (!Prefix.IsEmpty()) \
+		FinalString<<TEXT("Frame:"); \
+		FinalString<<::GFrameNumber; \
+		FinalString<<Delimiter; \
+		 \
+		if constexpr ( constexpr auto StringView = TEXTVIEW(#Prefix); \
+			!StringView.IsEmpty()) \
 		{ \
-			Prefix.Append(TEXT(' ')); \
+			FinalString<<FString{Prefix}; \
+			FinalString<<Delimiter; \
 		} \
 		 \
-		Prefix.Append(std::move(OriginalStr)); \
+		FinalString<<Rem::StringFormat(FormatString, ##__VA_ARGS__); \
 		 \
-		if (!Suffix.IsEmpty()) \
+		if constexpr ( constexpr auto StringView = TEXTVIEW(#Suffix); \
+			!StringView.IsEmpty()) \
 		{ \
-			Prefix.Append(TEXT(' ')); \
-			Prefix.Append(std::move(Suffix)); \
+			FinalString<<Delimiter; \
+			FinalString<<FString{Suffix}; \
 		} \
 		 \
-		auto&& FinalStr = Prefix; \
-		UE_LOG(CategoryName, Verbosity, TEXT("Frame:%d %s"), ::GFrameNumber, *FinalStr); \
+		UE_LOG(CategoryName, Verbosity, TEXT("%s"), *FinalString); \
 	}
 
 // Log message with optional role name prefix
@@ -58,7 +67,7 @@
 	{ \
 		REM_INITIALIZE_NET_DEBUG_STRING(Object, Prefix) \
 		\
-		REM_LOGGER_INTERNAL(Prefix, TEXT(""), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
+		REM_LOGGER_INTERNAL(std::move(Prefix), /* no suffix */, CategoryName, Verbosity, Format, ##__VA_ARGS__) \
 	} while (false)
 
 // Log message with __FUNCTION__ suffix
@@ -67,7 +76,7 @@
 	{ \
 		REM_INITIALIZE_SOURCE_LOCATION_STRING(Suffix) \
 		\
-		REM_LOGGER_INTERNAL(TEXT(""), Suffix, CategoryName, Verbosity, Format, ##__VA_ARGS__) \
+		REM_LOGGER_INTERNAL(/* no prefix */, std::move(Suffix), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
 	} while (false)
 
 // Log message with optional role name prefix, __FUNCTION__ suffix
@@ -78,7 +87,7 @@
 		\
 		REM_INITIALIZE_SOURCE_LOCATION_STRING(Suffix) \
 		\
-		REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, Format, ##__VA_ARGS__) \
+		REM_LOGGER_INTERNAL(std::move(Prefix), std::move(Suffix), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
 	} while (false)
 
 
