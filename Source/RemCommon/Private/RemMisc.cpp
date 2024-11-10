@@ -44,6 +44,15 @@ FString ToString(const UScriptStruct& ScriptStruct, const void* Value)
 	return HumanReadableMessage;
 }
 
+void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat)
+{
+	String.Reserve(String.Len() + TimesToRepeat);
+	for (int32 Counter = 0; Counter < TimesToRepeat; ++Counter)
+	{
+		String.AppendChar(Char);
+	}
+}
+
 uint8* AllocateStructMemory(const UStruct& Struct)
 {
 	uint8* StructMemory = static_cast<uint8*>(FMemory::Malloc(Struct.GetStructureSize()));

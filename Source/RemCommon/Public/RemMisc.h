@@ -237,14 +237,7 @@ namespace Rem
 	 * @brief Append spaces to the string
 	 * @note better to make sure String has enough capacity using FString::Reserve
 	 */
-	inline void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat)
-	{
-		String.Reserve(String.Len() + TimesToRepeat);
-		for (int32 Counter = 0; Counter < TimesToRepeat; ++Counter)
-		{
-			String.AppendChar(Char);
-		}
-	}
+	REMCOMMON_API void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat);
 
 	template<typename T, bool bConstantStringLength = false>
 	FString GetNetRoleString(const T& Object)
