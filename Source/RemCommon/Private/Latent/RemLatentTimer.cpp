@@ -273,7 +273,7 @@ static FTimerHandle SetTimerHelper(UObject& WorldContextObject, const FTimerDele
 	if constexpr (std::is_same_v<T, FTimerParameterHelper_Time>)
 	{
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
-		if (!ensure(DelayParameter.TimeToDelay >= 0.0f))
+		if (!REM_ENSURE(DelayParameter.TimeToDelay >= 0.0f))
 		{
 			return {};
 		}

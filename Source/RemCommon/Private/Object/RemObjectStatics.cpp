@@ -122,7 +122,7 @@ void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* In
 
 bool IsImplementedInBlueprint(const UFunction* Function)
 {
-	return Function && ensure(Function->GetOuter())
+	return Function && REM_ENSURE(Function->GetOuter())
 		&& Function->GetOuter()->IsA(UBlueprintGeneratedClass::StaticClass());
 }
 

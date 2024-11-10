@@ -123,7 +123,7 @@
 	do \
 	{ \
 		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
-			ensure(CVar)) \
+			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_ROLE_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
 		} \
@@ -133,7 +133,7 @@
 	do \
 	{ \
 		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
-			ensure(CVar)) \
+			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_FUNCTION_COND(CVar->GetBool(), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
 		} \
@@ -143,7 +143,7 @@
 	do \
 	{ \
 		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
-			ensure(CVar)) \
+			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_ROLE_FUNCTION_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
 		} \

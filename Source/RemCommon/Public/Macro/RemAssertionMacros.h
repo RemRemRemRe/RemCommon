@@ -4,6 +4,7 @@
 
 #include "RemMacroAsFunctionOverloads.h"
 #include "RemMisc.h"
+#include "RemEnsureMacro.h"
 
 #pragma region Config Macro
 
@@ -37,6 +38,7 @@
 #ifdef REM_DISABLE_ASSERTION
     #define REM_ASSER_CONDITION(AssertionMacro, Condition)
     #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition)
+
 #else
     #define REM_ASSER_CONDITION(AssertionMacro, Condition) \
         do \
@@ -51,8 +53,7 @@
     #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition) \
         do \
         { \
-            constexpr bool RightConditionIsFalse = false; \
-            REM_ASSER_CONDITION(AssertionMacro, RightConditionIsFalse && ( Condition )); \
+            REM_ASSER_CONDITION(AssertionMacro, Condition); \
         } while (false)
 
 #endif // REM_DISABLE_ASSERTION
@@ -67,7 +68,7 @@
 
 #define REM_NO_LOG_OR_ASSERTION LogTemp, Log, REM_NO_LOG, REM_NO_ASSERTION
 
-#define REM_NO_LOG_BUT_ENSURE LogTemp, Log, REM_NO_LOG, ensure
+#define REM_NO_LOG_BUT_ENSURE LogTemp, Log, REM_NO_LOG, REM_ASSERTION_INTERNAL_ENSURE
 
 #pragma endregion Dummy Macro For Readability
 
@@ -88,7 +89,7 @@
     }
 
 #define REM_ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    REM_ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, ensureAlways)
+    REM_ENSURE_CONDITION_6(Condition, InvalidHandlingStatement, CategoryName, Verbosity, Message, REM_ASSERTION_INTERNAL_ENSURE_ALWAYS)
 
 #define REM_ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Verbosity) \
     REM_ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
@@ -111,7 +112,7 @@
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
  * @param Message                   formatted log message when condition is false
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
+ * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
  */
 #define RemEnsureCondition(...) REM_MULTI_MACRO(REM_ENSURE_CONDITION, ##__VA_ARGS__)
 
@@ -146,7 +147,7 @@
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
  * @param Message                   formatted log message when pointer is invalid
- * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
+ * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways (or "similarities")
  */
 #define RemEnsureVariable(...) REM_MULTI_MACRO(REM_ENSURE_VARIABLE, ##__VA_ARGS__)
 
@@ -168,7 +169,7 @@
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
  * @param Message                   formatted log message when condition is false
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways
+ * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
  */
 #define RemCheckCondition(...) RemEnsureCondition(__VA_ARGS__)
 
@@ -181,7 +182,7 @@
  * @param CategoryName              name of the logging category. default to LogTemp
  * @param Verbosity                 verbosity type. default to ELogVerbosity::Type::Warning
  * @param Message                   formatted log message when pointer is invalid
- * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways
+ * @param AssertionMacro            assertion macro to use when pointer is invalid. default to ensureAlways (or "similarities")
  */
 #define RemCheckVariable(...) RemEnsureVariable(__VA_ARGS__)
 
