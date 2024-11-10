@@ -22,8 +22,8 @@ namespace Rem::FuEnsure
 	                                                          const TCHAR* StaticMessage, const TCHAR* Format, ...);
 }
 
-#define REM_FU_ENSURE_IMPLEMENTATION(Capture, bEnsureAlways, Expression, Format, ...) \
-	(LIKELY(Expression) || [Capture]() UE_DEBUG_SECTION \
+#define REM_FU_ENSURE_IMPLEMENTATION(Capture, bEnsureAlways, Expression, NoneTextAndExpression, Format, ...) \
+	((LIKELY(NoneTextAndExpression) && LIKELY(Expression)) || [Capture]() UE_DEBUG_SECTION \
 	{ \
 		static constexpr auto StaticMessage{TEXT("Ensure failed: " #Expression ", File: " __FILE__ ", Line: " REM_FU_STRINGIFY(__LINE__) ".")}; \
  		static std::atomic<bool> bExecuted{false}; \
@@ -38,10 +38,12 @@ namespace Rem::FuEnsure
 		return false; \
 	}())
 
-#define REM_FU_ENSURE(Expression) REM_FU_ENSURE_IMPLEMENTATION( , false, Expression, TEXT(""))
-#define REM_FU_ENSURE_MESSAGE(Expression, Format, ...) REM_FU_ENSURE_IMPLEMENTATION(&, false, Expression, Format, ##__VA_ARGS__)
-#define REM_FU_ENSURE_ALWAYS(Expression) REM_FU_ENSURE_IMPLEMENTATION( , true, Expression, TEXT(""))
-#define REM_FU_ENSURE_ALWAYS_MESSAGE(Expression, Format, ...) REM_FU_ENSURE_IMPLEMENTATION(&, true, Expression, Format, ##__VA_ARGS__)
+#define REM_FU_ENSURE(Expression) REM_FU_ENSURE_IMPLEMENTATION( , false, Expression, true, TEXT(""))
+#define REM_FU_ENSURE_EVALUATED_TO_FALSE(Expression) REM_FU_ENSURE_IMPLEMENTATION( , false, Expression, false, TEXT(""))
+#define REM_FU_ENSURE_MESSAGE(Expression, Format, ...) REM_FU_ENSURE_IMPLEMENTATION(&, false, Expression, true, Format, ##__VA_ARGS__)
+#define REM_FU_ENSURE_ALWAYS(Expression) REM_FU_ENSURE_IMPLEMENTATION( , true, Expression, true, TEXT(""))
+#define REM_FU_ENSURE_ALWAYS_EVALUATED_TO_FALSE(Expression) REM_FU_ENSURE_IMPLEMENTATION( , true, Expression, false, TEXT(""))
+#define REM_FU_ENSURE_ALWAYS_MESSAGE(Expression, Format, ...) REM_FU_ENSURE_IMPLEMENTATION(&, true, Expression, true, Format, ##__VA_ARGS__)
 
 #else
 
