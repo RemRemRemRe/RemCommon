@@ -122,7 +122,7 @@
 #define REM_LOG_ROLE_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+		if (static const auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
 			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_ROLE_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
@@ -132,7 +132,7 @@
 #define REM_LOG_FUNCTION_CVAR(ConsoleVariableName, CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+		if (static const auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
 			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_FUNCTION_COND(CVar->GetBool(), CategoryName, Verbosity, Format, ##__VA_ARGS__) \
@@ -142,7 +142,7 @@
 #define REM_LOG_ROLE_FUNCTION_CVAR(ConsoleVariableName, Object, CategoryName, Verbosity, Format, ...) \
 	do \
 	{ \
-		if (auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
+		if (static const auto* CVar = Rem::FindConsoleVariable(ConsoleVariableName); \
 			REM_ENSURE(CVar)) \
 		{ \
 			REM_LOG_ROLE_FUNCTION_COND(CVar->GetBool(), Object, CategoryName, Verbosity, Format, ##__VA_ARGS__); \
