@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright Sixze, RemRemRemRe. 2024 All Rights Reserved.
+
+#pragma once
 
 #include "Misc/AssertionMacros.h"
 
