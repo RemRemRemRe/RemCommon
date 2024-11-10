@@ -230,7 +230,7 @@ namespace Rem
 			}
 		}
 
-		return FString::Format(TEXT("Client {0}"), {UE::GetPlayInEditorID()});
+		return FString::Format(TEXT("Client:{0}"), {UE::GetPlayInEditorID()});
 	}
 
 	/**
