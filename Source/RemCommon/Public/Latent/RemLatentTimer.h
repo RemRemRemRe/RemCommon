@@ -109,7 +109,7 @@ namespace Rem::Latent
 		/**
 		 * @see FTimerData::bMaxOncePerFrame
 		 */
-		uint32 bMaxOncePerFrame : 1{1};
+		uint32 bMaxOncePerFrame : 1{0};
 
 
 		//// bits wasted ////
