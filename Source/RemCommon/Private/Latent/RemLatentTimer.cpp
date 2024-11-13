@@ -16,9 +16,9 @@ FTimerHandle FTimerHandle::NewHandle()
 	static FHandleType LatentTimerGlobalSerialNumber{};
 	++LatentTimerGlobalSerialNumber;
 
-	if (UNLIKELY(LatentTimerGlobalSerialNumber == 0))
+	if (!LIKELY(REM_ENSURE(LatentTimerGlobalSerialNumber != 0)))
 	{
-		REM_LOG_FUNCTION(LogRemCommon, Log, TEXT("LatentTimerGlobalSerialNumber is wrapper to 0"));
+		REM_LOG_FUNCTION(LogRemCommon, Warning, TEXT("LatentTimerGlobalSerialNumber is wrapper to 0"));
 
 		// it's wrapped to 0, advance it again to let it be "valid"
 		++LatentTimerGlobalSerialNumber;
