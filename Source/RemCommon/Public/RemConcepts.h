@@ -4,6 +4,10 @@
 
 #include <type_traits>
 
+class UCurveLinearColor;
+class UCurveVector;
+class UCurveFloat;
+class UCurveBase;
 class AHUD;
 class UCameraModifier;
 class UPoseAsset;
@@ -198,6 +202,18 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_data_asset = std::is_base_of_v<UDataAsset, T>;
+
+	template<class T>
+	concept is_curve_base = std::is_base_of_v<UCurveBase, T>;
+
+	template<class T>
+	concept is_curve_float = std::is_base_of_v<UCurveFloat, T>;
+
+	template<class T>
+	concept is_curve_vector = std::is_base_of_v<UCurveVector, T>;
+
+	template<class T>
+	concept is_curve_linear_color = std::is_base_of_v<UCurveLinearColor, T>;
 
 	template<class T>
 	concept is_primary_data_asset = std::is_base_of_v<UPrimaryDataAsset, T>;
