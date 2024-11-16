@@ -9,6 +9,9 @@
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/World.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/NavMovementComponent.h"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
 
@@ -183,6 +186,17 @@ FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimer
 	RemCheckVariable(World, return {});
 
 	return SetTimerForNextTick(*World, Delegate);
+}
+
+FVector GetActorFeetLocation(const AActor& Actor)
+{
+	if (const auto* MovementComponent = FindMovementComponent<UNavMovementComponent>(Actor))
+	{
+		return MovementComponent->GetActorFeetLocation();
+	}
+
+	RemCheckCondition(Actor.GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
+	return Actor.GetRootComponent()->GetComponentLocation() - FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z};
 }
 
 }
