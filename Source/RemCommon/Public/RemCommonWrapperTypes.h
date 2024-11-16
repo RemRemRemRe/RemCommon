@@ -6,6 +6,8 @@
 #include "RemConcepts.h"
 #include "RemCommonWrapperTypes.generated.h"
 
+class UCurveBase;
+
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemByteWrapper
 {
@@ -114,6 +116,22 @@ struct REMCOMMON_API FRemTextArrayWrapper
 	TArray<FText> Texts{};
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Texts)
+};
+
+USTRUCT(Blueprintable)
+struct FRemCurveBaseWrapper
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
+	const UCurveBase* Curve;
+
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_curve_base<T>, Curve, /*no suffix*/, Cast<T>(Curve))
+
+	using IsObjectWrapper = std::true_type;
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_curve_base<T>, Object, /*no suffix*/, Cast<T>(Curve))
+
+	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Curve)
 };
 
 USTRUCT(BlueprintType)
