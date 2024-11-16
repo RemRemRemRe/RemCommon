@@ -7,6 +7,8 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 
+class UMovementComponent;
+
 namespace Rem::Object
 {
 
@@ -134,6 +136,18 @@ template<Concepts::is_uobject T>
 	}
 
 	return HashResult;
+}
+
+template<typename T = UMovementComponent>
+requires std::is_base_of_v<UMovementComponent, T>
+T* FindMovementComponent(const AActor& Actor)
+{
+	if (auto* Pawn = Cast<APawn>(&Actor))
+	{
+		return Cast<T>(Pawn->GetMovementComponent());
+	}
+
+	return Actor.FindComponentByClass<T>();
 }
 
 }
