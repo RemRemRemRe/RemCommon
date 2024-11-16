@@ -3,8 +3,10 @@
 #include "RemMisc.h"
 
 #include "GameplayTagContainer.h"
+#include "Curves/RealCurve.h"
 #include "HAL/IConsoleManager.h"
 #include "Macro/RemAssertionMacros.h"
+#include "Math/RemMath.h"
 #include "UObject/Object.h"
 #include "UObject/PropertyPortFlags.h"
 #include "UObject/SoftObjectPath.h"
@@ -73,4 +75,20 @@ IConsoleVariable* FindConsoleVariable(const TCHAR* Name)
 {
 	return IConsoleManager::Get().FindConsoleVariable(Name);
 }
+
+float EvaluateCurve01(const FRealCurve& RichCurve, const float Alpha)
+{
+	float Min;
+	float Max;
+	RichCurve.GetTimeRange(Min, Max);
+
+	const auto MappedTime = FMath::Lerp(Min, Max, Alpha);
+	return RichCurve.Eval(MappedTime);
+}
+
+float EvaluateCurve01Clamped(const FRealCurve& RichCurve, const float Alpha)
+{
+	return Math::Clamp01(EvaluateCurve01(RichCurve, Alpha));
+}
+
 }

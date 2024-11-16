@@ -11,6 +11,7 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/EngineBaseTypes.h"
 
+struct FRealCurve;
 struct FGameplayTag;
 class IConsoleVariable;
 
@@ -363,4 +364,7 @@ namespace Rem
 	REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
 
 	REMCOMMON_API IConsoleVariable* FindConsoleVariable(const TCHAR* Name);
+
+	REMCOMMON_API float EvaluateCurve01(const FRealCurve& RichCurve, const float Alpha);
+	REMCOMMON_API float EvaluateCurve01Clamped(const FRealCurve& RichCurve, const float Alpha);
 }
