@@ -105,8 +105,8 @@ namespace Rem::Object
 	///
 
 	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate);
+	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
 	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& InDelegate);
+	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 }
