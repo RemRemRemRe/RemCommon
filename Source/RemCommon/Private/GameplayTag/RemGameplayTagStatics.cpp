@@ -5,6 +5,7 @@
 
 #include "GameplayTagContainer.h"
 #include "GameplayTagsManager.h"
+#include "RemCommonLog.h"
 #include "Macro/RemAssertionMacros.h"
 #include "UObject/PrimaryAssetId.h"
 
@@ -217,4 +218,18 @@ bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagCont
 	return TagQuery.Matches(TagsToMatch);
 }
 
+const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag)
+{
+	if (const auto TagNode = UGameplayTagsManager::Get().FindTagNode(Tag);
+		TagNode.IsValid())
+	{
+		return TagNode->GetSingleTagContainer();
+	}
+
+	// This tag should always be invalid if the node is missing
+	RemCheckVariable(Tag, REM_NO_HANDLING, LogRemCommon, Error,
+		StringFormat(TEXT("GetSingleTagContainer passed invalid gameplay tag {0}, only registered tags can be queried"), Tag));
+
+	return FGameplayTagContainer::EmptyContainer;
+}
 }

@@ -63,4 +63,7 @@ namespace Rem::GameplayTag
 	 * passing FGameplayTagContainer when possible as this overload won't do allocating or anything else
 	 */
 	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch);
+
+	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch);
+	[[nodiscard]] REMCOMMON_API const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag);
 }
