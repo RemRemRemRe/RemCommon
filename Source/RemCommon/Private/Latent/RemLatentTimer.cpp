@@ -35,7 +35,7 @@ FTimerLatentAction_Delay::FTimerLatentAction_Delay(const FTimerDelegate& InDeleg
 	TimeOrFrameToDelay.Time = DelayParameter.TimeToDelay;
 	bTimeOrFrame = 1;
 
-	bMaxOncePerFrame = DelayParameter.bMaxOncePerFrame;
+	bMaxOncePerFrame = TimeOrFrameToDelay.Time <= 0.0f || DelayParameter.bMaxOncePerFrame;
 
 	LoopCount = DelayParameter.LoopCount;
 
@@ -116,10 +116,11 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
-				RemCheckCondition(TimeOrFrameToDelay.Time > 0.0f, {bFinished = true; return;});
+				RemCheckCondition(TimeOrFrameToDelay.Time >= 0.0f, {bFinished = true; return;});
 
 #endif
 
+				// if Time is zero, bMaxOncePerFrame will be true
 				CallCount =	bMaxOncePerFrame ? 1 : FMath::TruncToInt( Response.ElapsedTime() / TimeOrFrameToDelay.Time ) + 1;
 			}
 			else if (LoopCount > 1)
@@ -129,10 +130,11 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
-				RemCheckCondition(TimeOrFrameToDelay.Time > 0.0f, {bFinished = true; return;});
+				RemCheckCondition(TimeOrFrameToDelay.Time >= 0.0f, {bFinished = true; return;});
 
 #endif
 
+				// if Time is zero, bMaxOncePerFrame will be true
 				CallCount =	bMaxOncePerFrame ? 1 : FMath::TruncToInt( Response.ElapsedTime() / TimeOrFrameToDelay.Time ) + 1;
 
 				if (LoopCount - CallCount >= 1)
