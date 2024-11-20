@@ -124,7 +124,7 @@ struct FRemCurveBaseWrapper
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
-	const UCurveBase* Curve;
+	const UCurveBase* Curve{};
 
 	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_curve_base<T>, Curve, /*no suffix*/, Cast<T>(Curve))
 
