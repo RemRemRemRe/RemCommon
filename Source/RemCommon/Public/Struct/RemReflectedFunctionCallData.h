@@ -19,7 +19,7 @@ struct REMCOMMON_API FRemReflectedFunctionCallData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	TObjectPtr<UObject> ContextObject;
 
-	UPROPERTY(EditAnywhere, Category = "Rem", meta=(FixedLayout, ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Rem", meta=(FixedLayout))
 	FInstancedPropertyBag Parameters;
 
 	void Execute();
