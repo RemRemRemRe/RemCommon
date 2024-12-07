@@ -3,7 +3,9 @@
 
 #include "Struct/RemReflectedFunctionCallData.h"
 
+#include "RemCommonLog.h"
 #include "Macro/RemAssertionMacros.h"
+#include "Macro/RemLogMacros.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemReflectedFunctionCallData)
 
@@ -35,6 +37,8 @@ void FRemReflectedFunctionCallData::Execute()
 
 bool FRemReflectedFunctionCallData::TryFillParameters()
 {
+	Parameters.Reset();
+
 	if (!FunctionData.FunctionOwnerClass || FunctionData.FunctionName.IsNone())
 	{
 		return false;
@@ -43,19 +47,30 @@ bool FRemReflectedFunctionCallData::TryFillParameters()
 	auto* Function = FunctionData.FunctionOwnerClass->FindFunctionByName(FunctionData.FunctionName);
 	RemCheckVariable(Function, return false;);
 
-	Parameters.Reset();
-
 	TArray<FPropertyBagPropertyDesc> BagPropertyDesc;
 
 	for (TFieldIterator<FProperty> Iter{Function}; Iter && Iter->PropertyFlags & CPF_Parm; ++Iter)
 	{
-		FProperty* Property = *Iter;
-		RemCheckVariable(Property, continue;);
+		auto* Property = *Iter;
+		RemCheckVariable(Property, return false;);
 
-		BagPropertyDesc.Add({Property->GetFName(), Property});
+		FPropertyBagPropertyDesc Desc{Property->GetFName(), Property};
+
+#if REM_WITH_DEVELOPMENT_ONLY_CODE
+
+		if (Desc.ValueType == EPropertyBagPropertyType::None)
+		{
+			REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("parameter type:{0} of function:{1} is not supported"), Desc, FunctionData);
+
+			FunctionData.FunctionName = {};
+			return false;
+		}
+
+#endif
+
+		BagPropertyDesc.Add(Desc);
 	}
 
 	Parameters.AddProperties(BagPropertyDesc);
-
 	return true;
 }
