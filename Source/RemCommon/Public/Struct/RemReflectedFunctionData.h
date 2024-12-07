@@ -14,4 +14,10 @@ struct REMCOMMON_API FRemReflectedFunctionData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
 	FName FunctionName;
+
+	// TODO: utilize it
+	UPROPERTY(EditAnywhere, Category = "Rem")
+	uint32 Flags{};
+
+	UFunction* GetFunction() const;
 };

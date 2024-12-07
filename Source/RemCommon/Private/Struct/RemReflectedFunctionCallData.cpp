@@ -9,26 +9,23 @@
 
 void FRemReflectedFunctionCallData::Execute()
 {
-	UObject* LocalObject;
-	UFunction* LocalFunction;
+	UFunction* LocalFunction{FunctionData.GetFunction()};
+	RemCheckVariable(LocalFunction, return;);
 
+	UObject* LocalObject;
 	if (ContextObject)
 	{
 		LocalObject = ContextObject;
 
+		// TODO: if this is required?
 		const auto* Class = ContextObject.GetClass();
-		RemCheckCondition(Class->IsChildOf(FunctionData.FunctionOwnerClass), return);
-
-		LocalFunction = Class->FindFunctionByName(FunctionData.FunctionName);
-		RemCheckVariable(LocalFunction, return;);
+		RemCheckCondition(Class->IsChildOf(FunctionData.FunctionOwnerClass), return;, LogRemCommon, Error,
+			TEXT("class of ContextObject is different from FunctionOwnerClass"));
 	}
 	else
 	{
-		RemCheckVariable(FunctionData.FunctionOwnerClass, return;);
-
-		LocalFunction = FunctionData.FunctionOwnerClass->FindFunctionByName(FunctionData.FunctionName);
-		RemCheckVariable(LocalFunction, return;);
-		RemCheckCondition(LocalFunction->HasAllFunctionFlags(EFunctionFlags::FUNC_Static), return;);
+		RemCheckCondition(LocalFunction->HasAllFunctionFlags(EFunctionFlags::FUNC_Static), return;, LogRemCommon, Error,
+			TEXT("ContextObject is required for member function"));
 
 		LocalObject = GetMutableDefault<UObject>(FunctionData.FunctionOwnerClass);
 	}
