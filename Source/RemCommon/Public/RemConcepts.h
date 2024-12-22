@@ -133,14 +133,6 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept is_stringable = has_static_struct<T>
-		|| std::is_enum_v<T>
-		|| std::is_same_v<bool, T>
-		|| has_to_string<T>
-		|| has_get_name<T>
-		|| has_lex_to_string<T>;
-
-	template<class T>
 	concept has_static_class = requires (UClass*& StructRef)
 	{
 		StructRef = T::StaticClass();
@@ -157,6 +149,16 @@ namespace Rem::Concepts
 	{
 		String = Object.GetFullName();
 	};
+
+	template<class T>
+	concept is_stringable = std::is_enum_v<T>
+		|| std::is_same_v<bool, T>
+		|| has_to_compact_string<T>
+		|| has_to_string_simple<T>
+		|| has_to_simple_string<T>
+		|| has_to_string<T>
+		|| has_lex_to_string<T>;
+
 	template<class T>
 	concept has_is_valid = requires (bool Result, const T Object)
 	{
