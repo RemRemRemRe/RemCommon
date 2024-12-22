@@ -109,15 +109,15 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept has_to_string = requires (FString& String, const T Object)
+	concept has_to_simple_string = requires (FString& String, const T Object)
 	{
-		String = Object.ToString();
+		String = Object.ToSimpleString();
 	};
 
 	template<class T>
-	concept has_get_name = requires (FString& String, const T Object)
+	concept has_to_string = requires (FString& String, const T Object)
 	{
-		String = Object.GetName();
+		String = Object.ToString();
 	};
 
 	template<class T>
@@ -146,6 +146,11 @@ namespace Rem::Concepts
 		StructRef = T::StaticClass();
 	};
 
+	template<class T>
+	concept has_get_name = requires (FString& String, const T Object)
+	{
+		String = Object.GetName();
+	};
 	template<class T>
 	concept has_is_valid = requires (bool Result, const T Object)
 	{
