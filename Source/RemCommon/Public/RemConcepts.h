@@ -151,6 +151,12 @@ namespace Rem::Concepts
 	{
 		String = Object.GetName();
 	};
+
+	template<class T>
+	concept has_get_full_name = requires (FString& String, const T Object)
+	{
+		String = Object.GetFullName();
+	};
 	template<class T>
 	concept has_is_valid = requires (bool Result, const T Object)
 	{
