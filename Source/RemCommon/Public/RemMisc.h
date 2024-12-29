@@ -14,19 +14,24 @@
 struct FRealCurve;
 struct FGameplayTag;
 class IConsoleVariable;
+template <typename T>
+struct TIsUEnumClass;
+class FDelegateHandle;
 
 namespace Rem
 {
 	template<typename T>
 	bool IsValid(const T& Object)
 	{
+		using RawType = std::remove_cvref_t<T>;
+
 		if constexpr (std::is_pointer_v<T>)
 		{
 			if (Object != nullptr)
 			{
-				using RawType = std::remove_reference_t<std::remove_pointer_t<T>>;
+				using Type = std::remove_pointer_t<RawType>;
 
-				if constexpr (std::is_base_of_v<UObject, RawType>)
+				if constexpr (std::is_base_of_v<UObject, Type>)
 				{
 					return Rem::IsValid(*Object);
 				}
@@ -39,8 +44,6 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
-
 			if constexpr (std::is_base_of_v<UObject, RawType>)
 			{
 				return ::IsValidChecked(&Object);
@@ -70,7 +73,7 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
+			using RawType = std::remove_cvref_t<T>;
 
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
@@ -97,7 +100,7 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
+			using RawType = std::remove_cvref_t<T>;
 
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
@@ -139,19 +142,11 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
+			using RawType = std::remove_cvref_t<T>;
 
-			if constexpr (std::is_enum_v<RawType>)
-			{
-				return UEnum::GetValueAsString(Data);
-			}
-			else if constexpr (std::is_same_v<bool, RawType>)
+			if constexpr (std::is_same_v<bool, RawType>)
 			{
 				return Rem::BoolToString(Data).GetData();
-			}
-			else if constexpr (TIsTObjectPtr<RawType>::Value)
-			{
-				return Rem::ToString(*Data);
 			}
 			else if constexpr (Concepts::has_to_compact_string<RawType>)
 			{
@@ -173,13 +168,26 @@ namespace Rem
 			{
 				return LexToString(Data);
 			}
-			else if constexpr (Concepts::has_static_struct<RawType>)
-			{
-				return ToString(*RawType::StaticStruct(), &Data);
-			}
 			else if constexpr (Concepts::has_get_name<RawType>)
 			{
 				return Data.GetName();
+			}
+			else if constexpr (TIsTObjectPtr<RawType>::Value)
+			{
+				return Rem::ToString(*Data);
+			}
+			else if constexpr (std::is_same_v<FDelegateHandle, RawType>)
+			{
+				// print FDelegateHandle as uint64
+				return FString::Format(TEXT("{0}"), {*reinterpret_cast<const uint64*>(&Data)});
+			}
+			else if constexpr (TIsUEnumClass<RawType>::Value)
+			{
+				return UEnum::GetValueAsString(Data);
+			}
+			else if constexpr (Concepts::has_static_struct<RawType>)
+			{
+				return ToString(*RawType::StaticStruct(), &Data);
 			}
 			else
 			{
@@ -198,7 +206,7 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
+			using RawType = std::remove_cvref_t<T>;
 
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{
@@ -293,7 +301,7 @@ namespace Rem
 		}
 		else
 		{
-			using RawType = std::remove_reference_t<T>;
+			using RawType = std::remove_cvref_t<T>;
 
 			if constexpr (TIsTObjectPtr<RawType>::Value)
 			{

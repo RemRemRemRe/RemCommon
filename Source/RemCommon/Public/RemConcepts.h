@@ -51,6 +51,9 @@ class AGameModeBase;
 class UAnimInstance;
 class UStreamableRenderAsset;
 struct FTableRowBase;
+template <typename T>
+struct TIsUEnumClass;
+class FDelegateHandle;
 
 namespace Rem::Concepts
 {
@@ -151,13 +154,18 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept is_stringable = std::is_enum_v<T>
-		|| std::is_same_v<bool, T>
+	concept is_stringable =
+		std::is_same_v<bool, T>
 		|| has_to_compact_string<T>
 		|| has_to_string_simple<T>
 		|| has_to_simple_string<T>
 		|| has_to_string<T>
-		|| has_lex_to_string<T>;
+		|| has_lex_to_string<T>
+		|| has_get_name<T>
+		|| std::is_same_v<FDelegateHandle, std::remove_cvref_t<T>>
+		|| TIsUEnumClass<T>::Value
+		|| has_static_struct<T>
+	;
 
 	template<class T>
 	concept has_is_valid = requires (bool Result, const T Object)
