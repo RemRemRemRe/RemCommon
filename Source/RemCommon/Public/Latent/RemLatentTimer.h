@@ -21,6 +21,9 @@ namespace Rem::Latent
 
 		operator FHandleType() const { return Handle; }
 
+		FHandleType& operator*() { return Handle; }
+		const FHandleType& operator*() const { return Handle; }
+
 		static FTimerHandle NewHandle();
 	};
 
