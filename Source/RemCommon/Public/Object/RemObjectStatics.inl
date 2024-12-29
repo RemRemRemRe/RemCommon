@@ -5,12 +5,23 @@
 #include "Macro/RemAssertionMacros.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameInstance.h"
+#include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 
 class UMovementComponent;
 
 namespace Rem::Object
 {
+
+template<typename T = UGameInstance>
+requires std::is_base_of_v<UGameInstance, T>
+T* GetGameInstance(const UObject& Object)
+{
+	auto* World = Object.GetWorld();
+	RemCheckVariable(World, return nullptr);
+
+	return World->GetGameInstance<T>();
+}
 
 template<Concepts::is_player_state T = APlayerState>
 T* GetPlayerStateFromPawnOwner(const UActorComponent& Component)
@@ -74,7 +85,7 @@ T* GetFirstLocalPlayerController(const UObject& WorldContextObject)
 	// ReSharper disable once CommentTypo
 	// https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
 
-	const auto* GameInstance = UGameplayStatics::GetGameInstance(&WorldContextObject);
+	const auto* GameInstance = GetGameInstance(WorldContextObject);
 	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return Cast<T>(GameInstance->GetFirstLocalPlayerController());
@@ -92,7 +103,7 @@ T* GetFirstLocalHUD(const UObject& WorldContextObject)
 template<Concepts::is_local_player T = ULocalPlayer>
 T* GetFirstLocalPlayer(const UObject& WorldContextObject)
 {
-	const auto* GameInstance = UGameplayStatics::GetGameInstance(&WorldContextObject);
+	const auto* GameInstance = GetGameInstance(WorldContextObject);
 	RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return Cast<T>(GameInstance->GetFirstGamePlayer());

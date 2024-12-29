@@ -5,6 +5,11 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemObjectStatics.generated.h"
 
+class FAudioDeviceHandle;
+class UGameInstance;
+class APlayerCameraManager;
+class APlayerState;
+class ULocalPlayer;
 using FTimerDelegate = TDelegate<void(), FNotThreadSafeNotCheckedDelegateUserPolicy>;
 struct FTimerManagerTimerParameters;
 
@@ -24,6 +29,11 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Rem|Object")
 	static bool IsBlueprintObject(const UObject* Object);
+
+	UFUNCTION(BlueprintPure, Category = "Rem|Object")
+	static UGameInstance* GetGameInstance(const UObject* Object);
+
+	static FAudioDeviceHandle GetAudioDevice(const UObject* Object);
 
 	/**
 	 * @brief Dose the class of the object is blueprint class
@@ -71,6 +81,8 @@ public:
 
 namespace Rem::Object
 {
+	REMCOMMON_API FAudioDeviceHandle GetAudioDevice(const UObject& Object);
+
 	REMCOMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
 		const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate);
 

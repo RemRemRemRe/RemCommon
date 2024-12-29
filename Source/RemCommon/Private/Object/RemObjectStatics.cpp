@@ -14,6 +14,7 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
+#include "AudioDeviceHandle.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
 
@@ -28,6 +29,20 @@ bool URemObjectStatics::IsBlueprintObject(const UObject* Object)
 
 	return Object->GetClass()->HasAnyClassFlags(CLASS_CompiledFromBlueprint)
 		|| !Object->GetClass()->HasAnyClassFlags(CLASS_Native);
+}
+
+UGameInstance* URemObjectStatics::GetGameInstance(const UObject* Object)
+{
+	RemCheckVariable(Object, return nullptr);
+
+	return Rem::Object::GetGameInstance(*Object);
+}
+
+FAudioDeviceHandle URemObjectStatics::GetAudioDevice(const UObject* Object)
+{
+	RemCheckVariable(Object, return {});
+
+	return Rem::Object::GetAudioDevice(*Object);
 }
 
 bool URemObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
@@ -102,6 +117,14 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 
 	PlayerController->ServerViewNextPlayer();
+}
+
+FAudioDeviceHandle Rem::Object::GetAudioDevice(const UObject& Object)
+{
+	auto* World = Object.GetWorld();
+	RemCheckVariable(World, return {});
+
+	return World->GetAudioDevice();
 }
 
 namespace Rem::Object
