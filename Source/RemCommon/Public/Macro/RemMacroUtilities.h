@@ -10,8 +10,8 @@
 	auto VariableName = Rem::GetNetDebugString(Object);
 
 #define REM_INITIALIZE_SOURCE_LOCATION_STRING(VariableName) \
-	auto VariableName = FString::Format(TEXT("[Function: {0}] [Line: {1}]"), \
-	{__FUNCTION__, __LINE__});
+	auto VariableName = FString::Format(TEXT("[Function: {0}] [Line: {1}] [File: {2}]"), \
+	{__FUNCTION__, __LINE__, __FILE__});
 
 #ifdef REM_WITH_DEVELOPMENT_ONLY_CODE
 
