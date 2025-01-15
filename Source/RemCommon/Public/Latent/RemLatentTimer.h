@@ -30,6 +30,9 @@ namespace Rem::Latent
 	/**
 	 * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
 	 *
+	 * @note do set bSkipCountingThisFrame to TRUE if you're set timer WITHIN a latent timer callback
+	 * or it may cause infinite loop when delta time is larger enough than your TimeToDelay
+	 *
 	 * @LoopCount 0 means loop forever
 	 */
 	struct REMCOMMON_API FTimerParameterHelper_Time
