@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <type_traits>
+
+#include "HAL/Platform.h"
+
 #include "Templates/RemEnumClassBitOperation.h"
 
 namespace Rem::Enum
