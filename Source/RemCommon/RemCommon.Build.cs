@@ -1,4 +1,4 @@
-// Copyright RemRemRemRe. All Rights Reserved.
+// Copyright RemRemRemRe. 2025. All Rights Reserved.
 
 using UnrealBuildTool;
 

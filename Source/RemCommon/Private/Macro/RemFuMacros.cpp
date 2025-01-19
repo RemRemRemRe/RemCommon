@@ -13,7 +13,7 @@
 #if DO_ENSURE && !USING_CODE_ANALYSIS
 
 bool UE_DEBUG_SECTION Rem::FuEnsure::Execute(std::atomic<bool>& bExecuted, const bool bEnsureAlways,
-                                        const ANSICHAR* Expression, const TCHAR* StaticMessage, const TCHAR* Format, ...)
+	const ANSICHAR* Expression, const TCHAR* StaticMessage, const TCHAR* Format, ...)
 {
 	static const auto* EnsureAlwaysEnabledConsoleVariable{
 		IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsureAlwaysEnabled"))
