@@ -21,7 +21,7 @@ class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, meta = (DeterminesOutputType = ObjectClass))
+	UFUNCTION(BlueprintPure, Category = "Rem|Object", meta = (DeterminesOutputType = ObjectClass))
 	static UObject* GetObject(const TSoftObjectPtr<UObject>& SoftObjectPtr, UClass* ObjectClass);
 
 	/**
@@ -48,13 +48,13 @@ public:
 	 * @brief Being explicit about nothing
 	 * @see https://landelare.github.io/2022/04/30/uses-of-a-useless-node.html
 	 */
-	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Do Nothing"))
+	UFUNCTION(BlueprintCallable, Category = "Rem", Meta = (DevelopmentOnly, CompactNodeTitle = "Do Nothing"))
 	static void DoNothing()	{}
 
 	/**
 	 * @brief Being explicit about something should not happen
 	 */
-	UFUNCTION(BlueprintCallable, Meta = (DevelopmentOnly, CompactNodeTitle = "Should Not Happen"))
+	UFUNCTION(BlueprintCallable, Category = "Rem", Meta = (DevelopmentOnly, CompactNodeTitle = "Should Not Happen"))
 	static void ShouldNotHappen(const bool bTriggerBreakpointInCpp = true);
 
 	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
