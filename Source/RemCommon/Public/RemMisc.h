@@ -164,10 +164,6 @@ namespace Rem
 			{
 				return Data.ToString();
 			}
-			else if constexpr (Concepts::has_lex_to_string<RawType>)
-			{
-				return LexToString(Data);
-			}
 			else if constexpr (Concepts::has_get_name<RawType>)
 			{
 				return Data.GetName();
@@ -184,6 +180,10 @@ namespace Rem
 			else if constexpr (Concepts::has_static_struct<RawType>)
 			{
 				return ToString(*RawType::StaticStruct(), &Data);
+			}
+			else if constexpr (Concepts::has_lex_to_string<RawType>)
+			{
+				return LexToString(Data);
 			}
 			else
 			{
