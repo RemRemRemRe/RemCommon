@@ -144,10 +144,6 @@ namespace Rem
 		{
 			using RawType = std::remove_cvref_t<T>;
 
-			if constexpr (TIsTObjectPtr<RawType>::Value)
-			{
-				return Rem::ToString(*Data);
-			}
 			if constexpr (std::is_same_v<bool, RawType>)
 			{
 				return Rem::BoolToString(Data).GetData();
