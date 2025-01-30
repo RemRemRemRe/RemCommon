@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "RemCppConcepts.h"
+
 #include "RemComparisonOperator.generated.h"
 
 UENUM(BlueprintType)
@@ -26,17 +28,18 @@ namespace Rem::Math
 			{
 				return FMath::IsNearlyEqual(Left, Right, ErrorTolerance);
 			}
-
-			return Left == Right;
+			else if constexpr (Concepts::has_equals<T>)
+			{
+				return Left.Equals(Right, ErrorTolerance);
+			}
+			else
+			{
+				return Left == Right;
+			}
 		}
 		else if constexpr (ComparisonOperator == ERemComparisonOperator::NotEqual)
 		{
-			if constexpr (std::is_floating_point_v<T>)
-			{
-				return !FMath::IsNearlyEqual(Left, Right, ErrorTolerance);
-			}
-
-			return Left != Right;
+			return !CompareValue<ERemComparisonOperator::Equals, ErrorTolerance, T>(Left, Right);
 		}
 		else if constexpr (ComparisonOperator == ERemComparisonOperator::LessThan)
 		{

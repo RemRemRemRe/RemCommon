@@ -5,6 +5,7 @@
 #include <type_traits>
 
 #include "RemAlwaysFalse.h"
+#include "Enum/RemComparisonOperator.h"
 #include "Templates/RemIsInstance.h"
 
 namespace Rem::Math
@@ -118,7 +119,16 @@ namespace Rem::Math
 	template <typename T>
 	T Interpolate(const T& From, const T& To, float Ratio)
 	{
-		if constexpr (is_instance_v<T, UE::Math::TRotator>)
+		if (CompareValue<ERemComparisonOperator::Equals>(From, To))
+		{
+			return To;
+		}
+
+		if constexpr (is_instance_v<T, UE::Math::TQuat>)
+		{
+			return T::FastLerp(From, To, Ratio).GetNormalized();
+		}
+		else if constexpr (is_instance_v<T, UE::Math::TRotator>)
 		{
 			auto Result{To - From};
 			Result.Normalize();
@@ -197,7 +207,7 @@ namespace Rem::Math
 	}
 
 	/**
-	 * Combine 2 rotations to give you the resulting rotation of first applying A, then B
+	 * Combine 2 rotations to give you the resulting rotation of first applying Left, then Right
 	 */
 	template <typename T>
 	[[nodiscard]] auto CombineRotator(const UE::Math::TRotator<T>& Left, const UE::Math::TRotator<T>& Right) -> auto
