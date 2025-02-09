@@ -31,4 +31,10 @@ namespace Rem::Enum
 		IncludeChildren,
 		MatchExact,
 	};
+
+	enum class EAttributeValueType : uint8
+	{
+		Base,
+		Current,
+	};
 }
