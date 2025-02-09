@@ -8,7 +8,7 @@ enum ENetMode;
 enum ENetRole : int;
 
 USTRUCT(BlueprintType)
-struct FRemNetFilterBits
+struct REMCOMMON_API FRemNetFilterBits
 {
 	GENERATED_BODY()
 
@@ -27,5 +27,5 @@ struct FRemNetFilterBits
 	UPROPERTY(EditAnywhere, Category = "Net Mode")
 	uint8 bRunOnListenServer : 1 {true};
 
-	REMCOMMON_API bool Matches(ENetMode NetMode, ENetRole Role) const;
+	bool Matches(ENetMode NetMode, ENetRole Role) const;
 };
