@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Misc/AssertionMacros.h"
+#include <atomic>
 
 #define REM_FU_STRINGIFY_IMPLEMENTATION(Value) #Value
 

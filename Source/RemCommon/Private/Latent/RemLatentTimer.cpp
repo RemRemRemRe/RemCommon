@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemLogMacros.h"
+#include "Misc/ScopeExit.h"
 
 namespace Rem::Latent
 {
