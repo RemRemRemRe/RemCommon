@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include "Engine/EngineBaseTypes.h"
+
 #include "RemNetFilterBits.generated.h"
 
-enum ENetMode;
+//enum ENetMode;
 enum ENetRole : int;
 
 USTRUCT(BlueprintType)

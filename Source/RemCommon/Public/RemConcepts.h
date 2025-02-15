@@ -3,6 +3,7 @@
 #pragma once
 
 #include <type_traits>
+#include "Engine/EngineBaseTypes.h"
 
 class UCurveLinearColor;
 class UCurveVector;
@@ -40,8 +41,7 @@ struct FSoftObjectPath;
 class UClass;
 class UScriptStruct;
 enum ENetRole : int;
-// ReSharper disable once CppForwardEnumDeclarationWithoutUnderlyingType
-enum ENetMode;
+//enum ENetMode;
 class FString;
 class AAIController;
 class ISlateTextureAtlasInterface;
