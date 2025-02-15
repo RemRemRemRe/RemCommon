@@ -19,8 +19,8 @@ enum class ERemComparisonOperator : uint8
 
 namespace Rem::Math
 {
-	template<ERemComparisonOperator ComparisonOperator, float ErrorTolerance = UE_SMALL_NUMBER, typename T = float>
-	bool CompareValue(const T& Left, const T& Right)
+	template<ERemComparisonOperator ComparisonOperator, typename T = float>
+	bool CompareValue(const T& Left, const T& Right, float ErrorTolerance = UE_SMALL_NUMBER)
 	{
 		if constexpr (ComparisonOperator == ERemComparisonOperator::Equals)
 		{
@@ -28,9 +28,13 @@ namespace Rem::Math
 			{
 				return FMath::IsNearlyEqual(Left, Right, ErrorTolerance);
 			}
-			else if constexpr (Concepts::has_equals<T>)
+			else if constexpr (Concepts::has_equals_with_error_tolerance<T>)
 			{
 				return Left.Equals(Right, ErrorTolerance);
+			}
+			else if constexpr (Concepts::has_equals<T>)
+			{
+				return Left.Equals(Right);
 			}
 			else
 			{
@@ -39,7 +43,7 @@ namespace Rem::Math
 		}
 		else if constexpr (ComparisonOperator == ERemComparisonOperator::NotEqual)
 		{
-			return !CompareValue<ERemComparisonOperator::Equals, ErrorTolerance, T>(Left, Right);
+			return !CompareValue<ERemComparisonOperator::Equals, T>(Left, Right, ErrorTolerance);
 		}
 		else if constexpr (ComparisonOperator == ERemComparisonOperator::LessThan)
 		{

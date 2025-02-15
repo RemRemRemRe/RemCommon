@@ -14,4 +14,11 @@ namespace Rem::Concepts
 	{
 		Result = Left.Equals(Right);
 	};
+
+	template<class T>
+	concept has_equals_with_error_tolerance = requires (bool Result, const T Left, const T Right,
+		float ErrorTolerance)
+	{
+		Result = Left.Equals(Right, ErrorTolerance);
+	};
 }
