@@ -335,12 +335,14 @@ void SetTimerPausedOneFrame(UObject& WorldContextObject, const FTimerHandle Time
 	}
 }
 
-void StopTimer(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+void StopTimer(UObject& WorldContextObject, FTimerHandle& TimerHandle)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
 		TimerLatentAction->bStopped = true;
 	}
+
+	TimerHandle = {};
 }
 
 FTimerLatentAction_Delay* FindTimerAction(UObject& WorldContextObject, const FTimerHandle TimerHandle)

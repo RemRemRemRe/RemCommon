@@ -160,7 +160,7 @@ namespace Rem::Latent
 
 	REMCOMMON_API void SetTimerPausedOneFrame(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
 
-	REMCOMMON_API void StopTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API void StopTimer(UObject& WorldContextObject, FTimerHandle& TimerHandle);
 
 	REMCOMMON_API FTimerLatentAction_Delay* FindTimerAction(UObject& WorldContextObject, FTimerHandle TimerHandle);
 	REMCOMMON_API bool IsTimerActive(UObject& WorldContextObject, FTimerHandle TimerHandle);
