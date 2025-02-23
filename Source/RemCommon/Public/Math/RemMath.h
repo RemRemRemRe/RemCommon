@@ -214,4 +214,66 @@ namespace Rem::Math
 	{
 		return UE::Math::TRotator<T>{Right.Quaternion() * Left.Quaternion()};
 	}
+
+	template <typename T>
+	requires std::is_floating_point_v<T>
+	[[nodiscard]] constexpr UE::Math::TVector2<T> RadianToDirectionXY(T Radian)
+	{
+		T Sin, Cos;
+		FMath::SinCos(&Sin, &Cos, Radian);
+
+		return {Cos, Sin};
+	}
+
+	template <typename T>
+	requires std::is_floating_point_v<T>
+	[[nodiscard]] constexpr UE::Math::TVector2<T> AngleToDirectionXY(T Angle)
+	{
+		return RadianToDirectionXY(FMath::DegreesToRadians(Angle));
+	}
+
+	namespace Private
+	{
+		template <typename T>
+		requires std::is_floating_point_v<T>
+		constexpr void PerpendicularClockwiseXY(T& X, T& Y)
+		{
+			std::swap(X, Y);
+			Y *= -1.0f;
+		}
+
+		template <typename T>
+		requires std::is_floating_point_v<T>
+		constexpr void PerpendicularCounterClockwiseXY(T& X, T& Y)
+		{
+			std::swap(X, Y);
+			X *= -1.0f;
+		}
+	}
+
+	template <typename T>
+	requires (
+		is_instance_v<T, UE::Math::TVector>
+		|| is_instance_v<T, UE::Math::TVector2>
+		|| is_instance_v<T, UE::Math::TVector4>
+		)
+	[[nodiscard]] constexpr T PerpendicularClockwiseXY(const T& Vector)
+	{
+		auto Result{Vector};
+		Private::PerpendicularClockwiseXY(Result.X, Result.Y);
+		return Result;
+	}
+
+	template <typename T>
+	requires (
+		is_instance_v<T, UE::Math::TVector>
+		|| is_instance_v<T, UE::Math::TVector2>
+		|| is_instance_v<T, UE::Math::TVector4>
+		)
+	[[nodiscard]] constexpr T PerpendicularCounterClockwiseXY(const T& Vector)
+	{
+		auto Result{Vector};
+		Private::PerpendicularCounterClockwiseXY(Result.X, Result.Y);
+		return Result;
+	}
 }
