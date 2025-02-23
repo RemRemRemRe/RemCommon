@@ -9,6 +9,7 @@ class FAudioDeviceHandle;
 class UGameInstance;
 class APlayerCameraManager;
 class APlayerState;
+class APlayerController;
 class ULocalPlayer;
 using FTimerDelegate = TDelegate<void(), FNotThreadSafeNotCheckedDelegateUserPolicy>;
 struct FTimerManagerTimerParameters;
@@ -123,4 +124,8 @@ namespace Rem::Object
 	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
 	REMCOMMON_API FVector GetActorFeetLocation(const AActor& Actor);
+
+	REMCOMMON_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
+	REMCOMMON_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);
+	REMCOMMON_API FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController);
 }

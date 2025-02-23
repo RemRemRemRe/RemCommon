@@ -15,6 +15,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
 #include "AudioDeviceHandle.h"
+#include "Math/RemMath.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
 
@@ -222,4 +223,39 @@ FVector GetActorFeetLocation(const AActor& Actor)
 	return Actor.GetRootComponent()->GetComponentLocation() - FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z};
 }
 
+FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController)
+{
+	FVector2f MousePosition;
+	if (const auto bSuccess = PlayerController.GetMousePosition(MousePosition.X, MousePosition.Y);
+		!bSuccess)
+	{
+		return FVector2f::ZeroVector;
+	}
+	//RemCheckCondition(bSuccess, return FVector2f::ZeroVector);
+
+	FVector2f ViewportCenter;
+	{
+		FIntVector2 ViewportSize;
+		PlayerController.GetViewportSize(ViewportSize.X, ViewportSize.Y);
+
+		ViewportCenter = FVector2f{static_cast<float>(ViewportSize.X) / 2.0f, static_cast<float>(ViewportSize.Y) / 2.0f};
+	}
+
+	// return MousePosition - ViewportCenter;
+	return {MousePosition.X - ViewportCenter.X, ViewportCenter.Y - MousePosition.Y};
+}
+
+FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController)
+{
+	return GetScreenCenterToMouseVector2F(PlayerController).GetSafeNormal();
+}
+
+FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController)
+{
+	const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController.GetControlRotation().Yaw)};
+	const auto RightDirection{Math::PerpendicularCounterClockwiseXY(ForwardDirection)};
+
+	const auto ScreenSpaceDirection{GetScreenCenterToMouseDirection2F(PlayerController)};
+	return FVector2f{ForwardDirection * ScreenSpaceDirection.Y + RightDirection * ScreenSpaceDirection.X}.GetSafeNormal();
+}
 }
