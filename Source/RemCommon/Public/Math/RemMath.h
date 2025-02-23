@@ -14,7 +14,7 @@ namespace Rem::Math
 
 	template<typename T>
 	requires (!std::is_signed_v<T>)
-	T GetBitsNeeded(const T Value)
+	[[nodiscard]] T GetBitsNeeded(const T Value)
 	{
 		if constexpr (std::is_same_v<T, uint8>)
 		{
@@ -40,7 +40,7 @@ namespace Rem::Math
 	}
 
 	template<typename T>
-	UE::Math::TVector<T> MakeVectorFromXY(const UE::Math::TVector<T>& Vector)
+	[[nodiscard]] constexpr UE::Math::TVector<T> MakeVectorFromXY(const UE::Math::TVector<T>& Vector)
 	{
 		return {Vector.X, Vector.Y, 0.f};
 	}
@@ -61,20 +61,20 @@ namespace Rem::Math
 	}
 
 	template<class T>
-	auto CombineNumericRanges(const UE::Math::TVector2<T>& Range1, const UE::Math::TVector2<T>& Range2) -> decltype(auto)
+	[[nodiscard]] constexpr auto CombineNumericRanges(const UE::Math::TVector2<T>& Range1, const UE::Math::TVector2<T>& Range2)
 	{
 		return CombineNumericRanges(Range1.X, Range2.X, Range1.Y, Range2.Y);
 	}
 
 	template<class T>
-	auto CombineNumericRanges(const T& Min1, const T& Min2, const T& Max1, const T& Max2) -> decltype(auto)
+	[[nodiscard]] constexpr auto CombineNumericRanges(const T& Min1, const T& Min2, const T& Max1, const T& Max2)
 	{
 		return UE::Math::TVector2<T>{std::max(Min1, Min2), std::min(Max1, Max2) };
 	}
 
-	template <typename ValueType>
-	requires std::is_floating_point_v<ValueType>
-	constexpr ValueType RemapAngleForCounterClockwiseRotation(const ValueType Angle)
+	template <typename T>
+	requires std::is_floating_point_v<T>
+	[[nodiscard]] constexpr T RemapAngleForCounterClockwiseRotation(const T Angle)
 	{
 		if (Angle > 180.0f - CounterClockwiseRotationAngleThreshold)
 		{
@@ -84,14 +84,14 @@ namespace Rem::Math
 		return Angle;
 	}
 
-	inline float Damp(const float DeltaTime, const float Smoothing)
+	constexpr float Damp(const float DeltaTime, const float Smoothing)
 	{
 		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
 
 		return 1.0f - FMath::Pow(Smoothing, DeltaTime);
 	}
 
-	inline float ExponentialDecay(const float DeltaTime, const float Lambda)
+	constexpr float ExponentialDecay(const float DeltaTime, const float Lambda)
 	{
 		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
 
@@ -117,7 +117,7 @@ namespace Rem::Math
 	};
 
 	template <typename T>
-	T Interpolate(const T& From, const T& To, float Ratio)
+	[[nodiscard]] constexpr T Interpolate(const T& From, const T& To, float Ratio)
 	{
 		if (CompareValue<ERemComparisonOperator::Equals>(From, To))
 		{
@@ -157,7 +157,7 @@ namespace Rem::Math
 	}
 
 	template <typename T>
-	T ExponentialDecay(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
+	[[nodiscard]] constexpr T ExponentialDecay(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
 	{
 		if (Lambda <= 0.0f)
 		{
@@ -168,7 +168,7 @@ namespace Rem::Math
 	}
 
 	template <typename T>
-	T Damp(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
+	[[nodiscard]] constexpr T Damp(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
 	{
 		if (Lambda <= 0.0f)
 		{
@@ -179,7 +179,7 @@ namespace Rem::Math
 	}
 
 	template <typename ValueType, typename StateType>
-	ValueType SpringDamp(StateType& SpringState, const ValueType& Current, const ValueType& Target, const float DeltaTime,
+	[[nodiscard]] constexpr ValueType SpringDamp(StateType& SpringState, const ValueType& Current, const ValueType& Target, const float DeltaTime,
 		const float Frequency, const float DampingRatio, const float TargetVelocityAmount)
 	{
 		if (DeltaTime <= UE_SMALL_NUMBER)
@@ -210,7 +210,7 @@ namespace Rem::Math
 	 * Combine 2 rotations to give you the resulting rotation of first applying Left, then Right
 	 */
 	template <typename T>
-	[[nodiscard]] auto CombineRotator(const UE::Math::TRotator<T>& Left, const UE::Math::TRotator<T>& Right) -> auto
+	[[nodiscard]] constexpr auto CombineRotator(const UE::Math::TRotator<T>& Left, const UE::Math::TRotator<T>& Right) -> auto
 	{
 		return UE::Math::TRotator<T>{Right.Quaternion() * Left.Quaternion()};
 	}
