@@ -37,4 +37,10 @@ namespace Rem::Enum
 		Base,
 		Current,
 	};
+
+	enum class EYesOrNo : uint8
+	{
+		Yes,
+		No,
+	};
 }
