@@ -8,7 +8,7 @@
 #include "RemStringInterface.generated.h"
 
 /** Interface for printing a object in string format */
-UINTERFACE(BlueprintType, NotBlueprintable)
+UINTERFACE(MinimalAPI, NotBlueprintable)
 class UStringInterface : public UInterface
 {
 	GENERATED_BODY()
