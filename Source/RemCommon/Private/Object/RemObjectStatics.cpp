@@ -258,4 +258,5 @@ FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& Play
 	const auto ScreenSpaceDirection{GetScreenCenterToMouseDirection2F(PlayerController)};
 	return FVector2f{ForwardDirection * ScreenSpaceDirection.Y + RightDirection * ScreenSpaceDirection.X}.GetSafeNormal();
 }
+
 }
