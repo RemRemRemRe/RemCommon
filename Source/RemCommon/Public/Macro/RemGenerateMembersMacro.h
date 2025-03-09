@@ -4,32 +4,32 @@
 
 #pragma region Helpers
 
-#define REM_DEFINE_GETTERS_RETURN_TYPE(Type, NamePredicate, NameSuffix, Constness, ReturnValue) \
-	Type Get##NamePredicate##NameSuffix() Constness \
+#define REM_DEFINE_GETTERS_RETURN_TYPE(Type, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	Type Get##NamePredicate##NameSuffix() ConstKeyword \
 	{ \
 		return ReturnValue; \
 	}
 
-#define REM_DEFINE_GETTERS_RETURN_AUTO_REFERENCE(NamePredicate, NameSuffix, Constness, ReturnValue) \
-	REM_DEFINE_GETTERS_RETURN_TYPE(auto&&, NamePredicate, NameSuffix, Constness, ReturnValue)
+#define REM_DEFINE_GETTERS_RETURN_AUTO_REFERENCE(NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_GETTERS_RETURN_TYPE(auto&&, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
-#define REM_DEFINE_GETTERS_RETURN_AUTO(NamePredicate, NameSuffix, Constness, ReturnValue) \
-	REM_DEFINE_GETTERS_RETURN_TYPE(auto, NamePredicate, NameSuffix, Constness, ReturnValue)
+#define REM_DEFINE_GETTERS_RETURN_AUTO(NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_GETTERS_RETURN_TYPE(auto, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, Type, NamePredicate, NameSuffix, Constness, ReturnValue) \
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, Type, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
 	template<typename T> \
 	RequireStatement \
 	\
-	Type Get##NamePredicate##NameSuffix() Constness \
+	Type Get##NamePredicate##NameSuffix() ConstKeyword \
 	{ \
 		return ReturnValue; \
 	}
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, Constness, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto&&, NamePredicate, NameSuffix, Constness, ReturnValue)
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto&&, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(RequireStatement, NamePredicate, NameSuffix, Constness, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto, NamePredicate, NameSuffix, Constness, ReturnValue)
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(RequireStatement, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
 #pragma endregion Helpers
 
@@ -114,7 +114,7 @@
  */
 #define REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(RequireStatement, NamePredicate, NameSuffix, ReturnValue) \
 	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(RequireStatement, NamePredicate, NameSuffix, const, ReturnValue) \
-	
+
 /**
  * @brief Use this macro to help define getters --- "return reference", const only
  * @param RequireStatement required conditions for the template getter
@@ -131,11 +131,17 @@
 
 #pragma region Rule Of Five
 
-#define DEFINE_THE_RULE_OF_FIVE(Type)																\
-	Type(const Type&) = default;               														\
-	Type(Type&&) noexcept = default;           														\
-	Type& operator=(const Type&) = default;    														\
+#define REM_DEFINE_THE_RULE_OF_FIVE(Type)															\
+	Type(const Type&) = default;																	\
+	Type(Type&&) noexcept = default;																\
+	Type& operator=(const Type&) = default;															\
 	Type& operator=(Type&&) noexcept = default;														\
 	~Type() noexcept = default;
 
 #pragma endregion Rule Of Five
+
+#define REM_DEFINE_GET_SCRIPT_STRUCT_INTERFACE \
+	virtual UScriptStruct& GetScriptStruct() const override \
+	{ \
+		return *StaticStruct(); \
+	}
