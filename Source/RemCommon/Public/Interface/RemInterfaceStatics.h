@@ -12,6 +12,6 @@ class REMCOMMON_API URemInterfaceStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Rem|Utilities|Interface")
-	static bool IsValidInterface(const FScriptInterface Interface);
+	UFUNCTION(BlueprintPure, Category = "Rem|Utilities|Interface", meta = (AutoCreateRefTerm = Interface))
+	static bool IsValidInterface(const FScriptInterface& Interface);
 };
