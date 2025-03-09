@@ -38,6 +38,11 @@ FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath)
 	return {};
 }
 
+FString PointerToString(const void* Value)
+{
+	return FString::Printf(TEXT("%p"), Value);
+}
+
 FString ToString(const UScriptStruct& ScriptStruct, const void* Value)
 {
 	FString HumanReadableMessage;

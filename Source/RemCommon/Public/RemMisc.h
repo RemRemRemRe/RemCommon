@@ -131,6 +131,8 @@ namespace Rem
 
 	REMCOMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
 
+	REMCOMMON_API FString PointerToString(const void* Value);
+
 	REMCOMMON_API FString ToString(const UScriptStruct& ScriptStruct, const void* Value);
 
 	template<typename T>
