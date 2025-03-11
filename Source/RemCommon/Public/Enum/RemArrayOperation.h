@@ -22,36 +22,47 @@ enum class ERemArrayOperation : uint8
 
 namespace Rem::Object
 {
-	/**
-	 * InsertFront/PushBack the InArray at the index of ReferenceElementOfOutArray to OutArray
-	 *
-	 * if index couldn't be found, InArray will be added to front or end of OutArray respectively
-	 */
-	template<typename T>
-	void ApplyArrayOperation(TArray<T>& OutArray, const T& ReferenceElementOfOutArray, const ERemArrayOperation Operation, const TArray<T>& InArray)
+	template<ERemArrayOperation Operation, typename T>
+	void ApplyArrayOperation(TArray<T>& OutArray, const typename TArray<T>::ElementType& ReferenceElementOfOutArray,
+		TConstArrayView<typename TArray<T>::ElementType> InArray)
 	{
 		RemCheckCondition(!InArray.IsEmpty(), return;);
 
 		if (const auto Index = OutArray.Find(ReferenceElementOfOutArray);
 			Index != INDEX_NONE)
 		{
-			if (Operation == ERemArrayOperation::InsertFront)
+			if constexpr (Operation == ERemArrayOperation::InsertFront)
 			{
 				// in the front of reference asset
-				OutArray.Insert(InArray, Index);
+				OutArray.Insert(InArray.GetData(), InArray.Num(), Index);
 			}
 			else
 			{
 				// in the back of reference asset
-				OutArray.Insert(InArray, Index + 1);
+				const auto ReferenceIndexPlusOne = Index + 1;
+				if (ReferenceIndexPlusOne <= OutArray.Num() - 1)
+				{
+					OutArray.Insert(InArray.GetData(), InArray.Num(), ReferenceIndexPlusOne);
+				}
+				else
+				{
+					OutArray.Append(InArray);
+				}
 			}
 		}
 		else
 		{
-			if (Operation == ERemArrayOperation::InsertFront)
+			if constexpr (Operation == ERemArrayOperation::InsertFront)
 			{
 				// in the front
-				OutArray.Insert(InArray, 0);
+				if (!OutArray.IsEmpty())
+				{
+					OutArray.Insert(InArray.GetData(), InArray.Num(), 0);
+				}
+				else
+				{
+					OutArray.Append(InArray);
+				}
 			}
 			else
 			{
@@ -61,9 +72,19 @@ namespace Rem::Object
 		}
 	}
 
-	template<ERemArrayOperation Operation, typename T>
-	void ApplyArrayOperation(TArray<T>& OutArray, const T& ReferenceElementOfOutArray, const TArray<T>& InArray)
+	/**
+	 * InsertFront/PushBack the InArray at the index of ReferenceElementOfOutArray to OutArray
+	 *
+	 * if index couldn't be found, InArray will be added to front or end of OutArray respectively
+	 */
+	template<typename T>
+	void ApplyArrayOperation(TArray<T>& OutArray, const typename TArray<T>::ElementType& ReferenceElementOfOutArray,
+		const ERemArrayOperation Operation, TConstArrayView<typename TArray<T>::ElementType> InArray)
 	{
-		return ApplyArrayOperation(OutArray, ReferenceElementOfOutArray, Operation, InArray);
+		if (Operation == ERemArrayOperation::InsertFront)
+		{
+			return ApplyArrayOperation<ERemArrayOperation::InsertFront, T>(OutArray, ReferenceElementOfOutArray, InArray);
+		}
+		return ApplyArrayOperation<ERemArrayOperation::PushBack, T>(OutArray, ReferenceElementOfOutArray, InArray);
 	}
 }
