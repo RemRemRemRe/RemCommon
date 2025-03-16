@@ -52,7 +52,7 @@ namespace Rem::Math
 	{
 		return FMath::Clamp<T>(Value, 0.0f, 1.0f);
 	}
-	
+
 	template< class T >
 	requires std::is_floating_point_v<T>
 	[[nodiscard]] constexpr decltype(auto) Saturate(const T Value)
@@ -84,14 +84,14 @@ namespace Rem::Math
 		return Angle;
 	}
 
-	constexpr float Damp(const float DeltaTime, const float Smoothing)
+	inline float Damp(const float DeltaTime, const float Smoothing)
 	{
 		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
 
 		return 1.0f - FMath::Pow(Smoothing, DeltaTime);
 	}
 
-	constexpr float ExponentialDecay(const float DeltaTime, const float Lambda)
+	inline float ExponentialDecay(const float DeltaTime, const float Lambda)
 	{
 		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
 
