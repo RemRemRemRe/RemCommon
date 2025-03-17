@@ -113,7 +113,7 @@ template<Concepts::is_pawn T = APawn>
 T* GetFirstLocalPlayerPawn(const UObject& WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return PlayerController->GetPawn<T>();
 }
@@ -122,7 +122,7 @@ template<Concepts::is_player_state T = APlayerState>
 T* GetFirstLocalPlayerState(const UObject& WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return PlayerController->GetPlayerState<T>();
 }
@@ -131,7 +131,7 @@ template<Concepts::is_player_camera_manager T = APlayerCameraManager>
 T* GetFirstLocalPlayerCameraManager(const UObject& WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_OR_ASSERTION);
+	RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
 
 	return Cast<T>(PlayerController->PlayerCameraManager);
 }

@@ -101,7 +101,7 @@ APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return;, REM_NO_LOG_OR_ASSERTION);
+	RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
 
 	// Dedicated server dose not have "local" player controller
 	RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -112,7 +112,7 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-	RemCheckVariable(PlayerController, return;, REM_NO_LOG_OR_ASSERTION);
+	RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
 
 	// Dedicated server dose not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
