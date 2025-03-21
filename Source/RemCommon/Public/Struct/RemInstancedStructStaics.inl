@@ -38,7 +38,7 @@ namespace Rem::Struct
 
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-			if (auto* Ptr = BaseStruct.template GetPtr<StructType>())
+			if (auto* Ptr = BaseStruct.template GetPtr<const StructType>())
 			{
 				static_assert(sizeof(BaseStruct) == sizeof(TResult));
 
