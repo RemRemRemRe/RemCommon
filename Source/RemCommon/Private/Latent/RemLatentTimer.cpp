@@ -273,7 +273,7 @@ FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelega
 template<typename T>
 static FTimerHandle SetTimerHelper(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const T& DelayParameter)
 {
-	if constexpr (std::is_same_v<T, FTimerParameterHelper_Time>)
+	if constexpr (std::is_same_v<std::remove_cvref_t<T>, FTimerParameterHelper_Time>)
 	{
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 		if (!REM_ENSURE(DelayParameter.TimeToDelay >= 0.0f))

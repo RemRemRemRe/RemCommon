@@ -155,7 +155,7 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_stringable =
-		std::is_same_v<bool, T>
+		std::is_same_v<bool, std::remove_cvref_t<T>>
 		|| has_to_compact_string<T>
 		|| has_to_string_simple<T>
 		|| has_to_simple_string<T>
@@ -184,7 +184,7 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_uclass = std::is_base_of_v<UClass, T>;
-	
+
 	template<class T>
 	concept is_hud = std::is_base_of_v<AHUD, T>;
 

@@ -333,7 +333,8 @@ namespace Rem
 		template<typename F, typename... R>
 		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
 		{
-			if constexpr (!std::is_same_v<bool, F> && std::is_constructible_v<FStringFormatArg, F>)
+			if constexpr (!std::is_same_v<bool, std::remove_cvref_t<F>>
+				&& std::is_constructible_v<FStringFormatArg, F>)
 			{
 				Args.Add(std::forward<F>(First));
 			}
