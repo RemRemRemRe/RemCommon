@@ -18,10 +18,12 @@ namespace Rem::Struct
 		{
 			if (auto* Ptr = BaseStruct.template GetPtr<StructType>())
 			{
-				static_assert(sizeof(BaseStruct) == sizeof(TResult));
+				const FConstStructView Intermediate{BaseStruct.GetScriptStruct(), BaseStruct.GetMemory()};
+
+				static_assert(sizeof(FConstStructView) == sizeof(TResult));
 
 				// work around constructor issue of TStructView
-				FMemory::Memcpy(&Result, &BaseStruct, sizeof(TResult));
+				FMemory::Memcpy(&Result, &Intermediate, sizeof(FConstStructView));
 				break;
 			}
 		}
@@ -40,10 +42,12 @@ namespace Rem::Struct
 		{
 			if (auto* Ptr = BaseStruct.template GetPtr<const StructType>())
 			{
-				static_assert(sizeof(BaseStruct) == sizeof(TResult));
+				const FConstStructView Intermediate{BaseStruct.GetScriptStruct(), BaseStruct.GetMemory()};
 
-				// work around constructor issue of TConstStructView
-				FMemory::Memcpy(&Result, &BaseStruct, sizeof(TResult));
+				static_assert(sizeof(FConstStructView) == sizeof(TResult));
+
+				// work around constructor issue of TStructView
+				FMemory::Memcpy(&Result, &Intermediate, sizeof(FConstStructView));
 				break;
 			}
 		}
