@@ -61,9 +61,24 @@ namespace Rem::Struct
 	{
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-			if (auto* Ptr = BaseStruct.template GetPtr<StructType>())
+			if constexpr (!std::is_const_v<StructType> &&
+				requires(TStructUtils StructUtils, StructType* Struct)
+				{
+					// has GetMutablePtr
+					Struct = StructUtils.template GetMutablePtr<StructType>();
+				})
 			{
-				FunctionRef(*Ptr);
+				if (auto* Ptr = BaseStruct.template GetMutablePtr<StructType>())
+				{
+					FunctionRef(*Ptr);
+				}
+			}
+			else
+			{
+				if (auto* Ptr = BaseStruct.template GetPtr<StructType>())
+				{
+					FunctionRef(*Ptr);
+				}
 			}
 		}
 	}
