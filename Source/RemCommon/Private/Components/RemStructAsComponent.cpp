@@ -2,10 +2,11 @@
 
 
 #include "Components/RemStructAsComponent.h"
+#include "Components/RemStructAsComponent.inl"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemStructAsComponent)
 
-void FRemStructAsComponentBase::BeginPlay(UObject& Owner)
+void FRemStructAsComponentBase::Initialize(UObject& Owner)
 {
 }
 
@@ -18,6 +19,24 @@ void FRemStructAsComponentBase::Tick(UObject& Owner, float)
 {
 }
 
-void FRemStructAsComponentBase::EndPlay(UObject& Owner)
+void FRemStructAsComponentBase::Uninitialize(UObject& Owner)
 {
+}
+
+void FRemStructAsComponents::Initialize(UObject& Owner)
+{
+	ForEachComponent<FRemStructAsComponentBase>(
+		[&] (FRemStructAsComponentBase& Component)
+	 {
+		 Component.Initialize(Owner);
+	 });
+}
+
+void FRemStructAsComponents::Uninitialize(UObject& Owner)
+{
+	ForEachComponent<FRemStructAsComponentBase>(
+		[&] (FRemStructAsComponentBase& Component)
+	 {
+		 Component.Uninitialize(Owner);
+	 });
 }
