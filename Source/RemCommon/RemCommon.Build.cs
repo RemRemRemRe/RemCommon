@@ -11,19 +11,19 @@ public class RemCommon : ModuleRules
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		CppStandard = CppStandardVersion.EngineDefault;
 		UnsafeTypeCastWarningLevel = WarningLevel.Warning;
-		
+
 		bEnableNonInlinedGenCppWarnings = true;
 		bUseUnity = false;
-		
+
 		PrivateDependencyModuleNames.AddRange(
-			new [] {
+			[
 				"Core",
 				"CoreUObject",
 				"Engine",
-				
+
 				"DeveloperSettings",
 				"GameplayTags"
-			}
+			]
 		);
 	}
 }
