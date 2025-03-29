@@ -16,7 +16,7 @@ namespace Rem::Struct
 
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-			if (BaseStruct.template GetPtr<StructType>())
+			if (BaseStruct.template GetPtr<const StructType>())
 			{
 				const FConstStructView Intermediate{BaseStruct.GetScriptStruct(), BaseStruct.GetMemory()};
 

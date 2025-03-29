@@ -16,13 +16,13 @@ namespace Rem
 	TSharedPtr<FStreamableHandle> LoadAssets(const TConstArrayView<SoftType> SoftObjects,
 		const FStreamableDelegate DelegateToCall = {},
 		const TAsyncLoadPriority Priority = FStreamableManager::DefaultAsyncLoadPriority,
-		const FString& DebugName = FStreamableHandle::HandleDebugName_AssetList)
+		FString DebugName = FStreamableHandle::HandleDebugName_AssetList)
 	{
 		RemCheckCondition(SoftObjects.Num() > 0, return {});
 
 		if constexpr (std::is_base_of_v<FSoftObjectPath, SoftType>)
 		{
-			return UAssetManager::Get().LoadAssetList(TArray<FSoftObjectPath>{SoftObjects}, DelegateToCall, Priority, DebugName);
+			return UAssetManager::Get().LoadAssetList(TArray<FSoftObjectPath>{SoftObjects}, DelegateToCall, Priority, std::move(DebugName));
 		}
 		else
 		{
@@ -37,7 +37,7 @@ namespace Rem
 					AssetList.Add(SoftObject.ToSoftObjectPath());
 				}
 			}
-			return UAssetManager::Get().LoadAssetList(std::move(AssetList), DelegateToCall, Priority, DebugName);
+			return UAssetManager::Get().LoadAssetList(std::move(AssetList), DelegateToCall, Priority, std::move(DebugName));
 		}
 	}
 
@@ -46,7 +46,7 @@ namespace Rem
 	TSharedPtr<FStreamableHandle> LoadAsset(const SoftType& SoftObject,
 		const FStreamableDelegate DelegateToCall = {},
 		const TAsyncLoadPriority Priority = FStreamableManager::DefaultAsyncLoadPriority,
-		const FString& DebugName = FStreamableHandle::HandleDebugName_AssetList)
+		FString DebugName = FStreamableHandle::HandleDebugName_AssetList)
 	{
 		return LoadAssets<SoftType>({SoftObject}, DelegateToCall, Priority, DebugName);
 	}
@@ -82,12 +82,12 @@ namespace Rem
 
 	template<Concepts::is_primary_data_asset T>
 	const T* GetPrimaryAsset(const FPrimaryAssetId& AssetId)
-	{	
+	{
 		const auto& AssetPath = UAssetManager::Get().GetPrimaryAssetPath(AssetId);
 		const auto* AssetLoaded = Cast<T>(AssetPath.ResolveObject());
 		return AssetLoaded;
 	}
-	
+
 	template<Concepts::is_primary_data_asset T>
 	const T* GetPrimaryAsset(const FGameplayTag& AssetTag)
 	{
