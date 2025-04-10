@@ -9,4 +9,5 @@ URemActorComponent::URemActorComponent(const FObjectInitializer& ObjectInitializ
 	: Super(ObjectInitializer)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
+	bAutoActivate = false;
 }
