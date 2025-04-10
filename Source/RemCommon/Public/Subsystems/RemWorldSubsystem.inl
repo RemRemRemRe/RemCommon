@@ -12,8 +12,7 @@ class UWorldSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<typename T>
-	requires std::is_base_of_v<UWorldSubsystem, T>
+	template<std::derived_from<UWorldSubsystem> T>
 	T* GetWorldSubsystem(const UObject& Object)
 	{
 		const auto* World = Object.GetWorld();
@@ -22,8 +21,7 @@ namespace Rem::Subsystem
 		return World->GetSubsystem<T>();
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UWorldSubsystem, T>
+	template<std::derived_from<UWorldSubsystem> T>
 	T& GetWorldSubsystemRef(const UObject& Object)
 	{
 		return *GetWorldSubsystem<T>(Object);

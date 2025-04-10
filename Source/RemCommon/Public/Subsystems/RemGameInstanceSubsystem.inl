@@ -15,8 +15,7 @@ class UGameInstanceSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<typename T>
-	requires std::is_base_of_v<UGameInstanceSubsystem, T>
+	template<std::derived_from<UGameInstanceSubsystem> T>
 	T* GetGameInstanceSubsystem(const UObject& Object)
 	{
 		const auto* GameInstance = Object::GetGameInstance(Object);
@@ -25,8 +24,7 @@ namespace Rem::Subsystem
 		return GameInstance->GetSubsystem<T>();
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UGameInstanceSubsystem, T>
+	template<std::derived_from<UGameInstanceSubsystem> T>
 	T& GetGameInstanceSubsystemRef()
 	{
 		return *GetGameInstanceSubsystem<T>();

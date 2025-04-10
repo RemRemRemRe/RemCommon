@@ -31,7 +31,7 @@ namespace Rem
 			{
 				using Type = std::remove_pointer_t<RawType>;
 
-				if constexpr (std::is_base_of_v<UObject, Type>)
+				if constexpr (std::derived_from<Type, UObject>)
 				{
 					return Rem::IsValid(*Object);
 				}
@@ -44,7 +44,7 @@ namespace Rem
 		}
 		else
 		{
-			if constexpr (std::is_base_of_v<UObject, RawType>)
+			if constexpr (std::derived_from<RawType, UObject>)
 			{
 				return ::IsValidChecked(&Object);
 			}

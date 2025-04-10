@@ -13,8 +13,7 @@ class UAudioEngineSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<typename T>
-	requires std::is_base_of_v<UAudioEngineSubsystem, T>
+	template<std::derived_from<UAudioEngineSubsystem> T>
 	T* GetAudioEngineSubsystem(const UObject& Object)
 	{
 		const auto AudioDevice = Object::GetAudioDevice(Object);
@@ -23,8 +22,7 @@ namespace Rem::Subsystem
 		return AudioDevice->GetSubsystem<T>();
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UAudioEngineSubsystem, T>
+	template<std::derived_from<UAudioEngineSubsystem> T>
 	T& GetAudioEngineSubsystemRef(const UObject& Object)
 	{
 		return *GetAudioEngineSubsystem<T>(Object);

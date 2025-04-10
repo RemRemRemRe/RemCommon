@@ -8,7 +8,7 @@ namespace Rem
 {
 
 	template <typename StringBuilder, typename T>
-	requires std::is_base_of_v<TStringBuilderBase<typename StringBuilder::ElementType>, StringBuilder>
+	requires std::derived_from<StringBuilder, TStringBuilderBase<typename StringBuilder::ElementType>>
 	typename StringBuilder::BuilderType& AppendValueString(StringBuilder& Builder, const T& Value)
 	{
 		if constexpr (is_instance_v<T, UE::Math::TVector>)

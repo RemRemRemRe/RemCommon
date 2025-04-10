@@ -13,8 +13,7 @@ class ULocalPlayerSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<typename T>
-	requires std::is_base_of_v<ULocalPlayerSubsystem, T>
+	template<std::derived_from<ULocalPlayerSubsystem> T>
 	T* GetLocalPlayerSubsystem(const UObject& Object)
 	{
 		const auto* LocalPlayer = Object::GetFirstLocalPlayer(Object);
@@ -23,8 +22,7 @@ namespace Rem::Subsystem
 		return LocalPlayer->GetSubsystem<T>();
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<ULocalPlayerSubsystem, T>
+	template<std::derived_from<ULocalPlayerSubsystem> T>
 	T& GetLocalPlayerSubsystemRef(const UObject& Object)
 	{
 		return *GetLocalPlayerSubsystem<T>(Object);

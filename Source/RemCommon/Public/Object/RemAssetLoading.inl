@@ -11,16 +11,16 @@ struct FStreamableHandle;
 
 namespace Rem
 {
-	template<typename SoftType>
-	requires Concepts::has_to_soft_object_path<SoftType> || std::is_base_of_v<FSoftObjectPath, SoftType>
-	TSharedPtr<FStreamableHandle> LoadAssets(const TConstArrayView<SoftType> SoftObjects,
+	template<typename TSoftType>
+	requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+	TSharedPtr<FStreamableHandle> LoadAssets(const TConstArrayView<TSoftType> SoftObjects,
 		const FStreamableDelegate DelegateToCall = {},
 		const TAsyncLoadPriority Priority = FStreamableManager::DefaultAsyncLoadPriority,
 		FString DebugName = FStreamableHandle::HandleDebugName_AssetList)
 	{
 		RemCheckCondition(SoftObjects.Num() > 0, return {});
 
-		if constexpr (std::is_base_of_v<FSoftObjectPath, SoftType>)
+		if constexpr (std::derived_from<TSoftType, FSoftObjectPath>)
 		{
 			return UAssetManager::Get().LoadAssetList(TArray<FSoftObjectPath>{SoftObjects}, DelegateToCall, Priority, std::move(DebugName));
 		}
@@ -30,7 +30,7 @@ namespace Rem
 			{
 				AssetList.Reserve(SoftObjects.Num());
 
-				for (const SoftType& SoftObject : SoftObjects)
+				for (const TSoftType& SoftObject : SoftObjects)
 				{
 					RemCheckCondition(!SoftObject.IsNull(), continue;);
 
@@ -41,21 +41,21 @@ namespace Rem
 		}
 	}
 
-	template<typename SoftType>
-	requires Concepts::has_to_soft_object_path<SoftType> || std::is_base_of_v<FSoftObjectPath, SoftType>
-	TSharedPtr<FStreamableHandle> LoadAsset(const SoftType& SoftObject,
+	template<typename TSoftType>
+	requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+	TSharedPtr<FStreamableHandle> LoadAsset(const TSoftType& SoftObject,
 		const FStreamableDelegate DelegateToCall = {},
 		const TAsyncLoadPriority Priority = FStreamableManager::DefaultAsyncLoadPriority,
 		FString DebugName = FStreamableHandle::HandleDebugName_AssetList)
 	{
-		return LoadAssets<SoftType>({SoftObject}, DelegateToCall, Priority, DebugName);
+		return LoadAssets<TSoftType>({SoftObject}, DelegateToCall, Priority, DebugName);
 	}
 
-	template<typename SoftType>
-	requires Concepts::has_to_soft_object_path<SoftType> || std::is_base_of_v<FSoftObjectPath, SoftType>
-	bool IsLoaded(const SoftType& SoftObject)
+	template<typename TSoftType>
+	requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+	bool IsLoaded(const TSoftType& SoftObject)
 	{
-		if constexpr (std::is_base_of_v<FSoftObjectPath, SoftType>)
+		if constexpr (std::derived_from<TSoftType, FSoftObjectPath>)
 		{
 			return !!SoftObject.ResolveObject();
 		}
@@ -65,9 +65,9 @@ namespace Rem
 		}
 	}
 
-	template<typename SoftType>
-	requires Concepts::has_to_soft_object_path<SoftType> || std::is_base_of_v<FSoftObjectPath, SoftType>
-	bool IsLoaded(const TConstArrayView<SoftType> SoftObjects)
+	template<typename TSoftType>
+	requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+	bool IsLoaded(const TConstArrayView<TSoftType> SoftObjects)
 	{
 		for (auto& Path : SoftObjects)
 		{

@@ -10,8 +10,7 @@ class UEngineSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<typename T>
-	requires std::is_base_of_v<UEngineSubsystem, T>
+	template<std::derived_from<UEngineSubsystem> T>
 	T* GetEngineSubsystem()
 	{
 		if (GEngine)
@@ -22,8 +21,7 @@ namespace Rem::Subsystem
 		return nullptr;
 	}
 
-	template<typename T>
-	requires std::is_base_of_v<UEngineSubsystem, T>
+	template<std::derived_from<UEngineSubsystem> T>
 	T& GetEngineSubsystemRef()
 	{
 		return *GetEngineSubsystem<T>();

@@ -5,6 +5,7 @@
 #include <type_traits>
 #include "Engine/EngineBaseTypes.h"
 
+class UGameInstance;
 class UCurveLinearColor;
 class UCurveVector;
 class UCurveFloat;
@@ -180,122 +181,128 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept is_uobject = std::is_base_of_v<UObject, T>;
+	concept is_world = std::derived_from<T, UWorld>;
 
 	template<class T>
-	concept is_uclass = std::is_base_of_v<UClass, T>;
+	concept is_game_instance = std::derived_from<T, UGameInstance>;
 
 	template<class T>
-	concept is_hud = std::is_base_of_v<AHUD, T>;
+	concept is_uobject = std::derived_from<T, UObject>;
 
 	template<class T>
-	concept is_actor = std::is_base_of_v<AActor, T>;
+	concept is_uclass = std::derived_from<T, UClass>;
 
 	template<class T>
-	concept is_actor_component = std::is_base_of_v<UActorComponent, T>;
+	concept is_hud = std::derived_from<T, AHUD>;
 
 	template<class T>
-	concept is_player_state = std::is_base_of_v<APlayerState, T>;
+	concept is_actor = std::derived_from<T, AActor>;
 
 	template<class T>
-	concept is_pawn = std::is_base_of_v<APawn, T>;
+	concept is_actor_component = std::derived_from<T, UActorComponent>;
 
 	template<class T>
-	concept is_controller = std::is_base_of_v<AController, T>;
+	concept is_player_state = std::derived_from<T, APlayerState>;
 
 	template<class T>
-	concept is_player_controller = std::is_base_of_v<APlayerController, T>;
+	concept is_pawn = std::derived_from<T, APawn>;
 
 	template<class T>
-	concept is_player_camera_manager = std::is_base_of_v<APlayerCameraManager, T>;
+	concept is_controller = std::derived_from<T, AController>;
 
 	template<class T>
-	concept is_local_player = std::is_base_of_v<ULocalPlayer, T>;
+	concept is_player_controller = std::derived_from<T, APlayerController>;
 
 	template<class T>
-	concept is_ai_controller = std::is_base_of_v<AAIController, T>;
+	concept is_player_camera_manager = std::derived_from<T, APlayerCameraManager>;
 
 	template<class T>
-	concept is_game_state = std::is_base_of_v<AGameStateBase, T>;
+	concept is_local_player = std::derived_from<T, ULocalPlayer>;
 
 	template<class T>
-	concept is_game_mode = std::is_base_of_v<AGameModeBase, T>;
+	concept is_ai_controller = std::derived_from<T, AAIController>;
 
 	template<class T>
-	concept is_data_asset = std::is_base_of_v<UDataAsset, T>;
+	concept is_game_state = std::derived_from<T, AGameStateBase>;
 
 	template<class T>
-	concept is_curve_base = std::is_base_of_v<UCurveBase, T>;
+	concept is_game_mode = std::derived_from<T, AGameModeBase>;
 
 	template<class T>
-	concept is_curve_float = std::is_base_of_v<UCurveFloat, T>;
+	concept is_data_asset = std::derived_from<T, UDataAsset>;
 
 	template<class T>
-	concept is_curve_vector = std::is_base_of_v<UCurveVector, T>;
+	concept is_curve_base = std::derived_from<T, UCurveBase>;
 
 	template<class T>
-	concept is_curve_linear_color = std::is_base_of_v<UCurveLinearColor, T>;
+	concept is_curve_float = std::derived_from<T, UCurveFloat>;
 
 	template<class T>
-	concept is_primary_data_asset = std::is_base_of_v<UPrimaryDataAsset, T>;
+	concept is_curve_vector = std::derived_from<T, UCurveVector>;
 
 	template<class T>
-	concept is_anim_instance = std::is_base_of_v<UAnimInstance, T>;
+	concept is_curve_linear_color = std::derived_from<T, UCurveLinearColor>;
 
 	template<class T>
-	concept is_material_interface = std::is_base_of_v<UMaterialInterface, T>;
+	concept is_primary_data_asset = std::derived_from<T, UPrimaryDataAsset>;
 
 	template<class T>
-	concept is_streamable_render_asset = std::is_base_of_v<UStreamableRenderAsset, T>;
+	concept is_anim_instance = std::derived_from<T, UAnimInstance>;
 
 	template<class T>
-	concept is_meadia_texture = std::is_base_of_v<UMediaTexture, T>;
+	concept is_material_interface = std::derived_from<T, UMaterialInterface>;
 
 	template<class T>
-	concept is_slate_texture_atlas_interface = std::is_base_of_v<ISlateTextureAtlasInterface, T>;
+	concept is_streamable_render_asset = std::derived_from<T, UStreamableRenderAsset>;
+
+	template<class T>
+	concept is_meadia_texture = std::derived_from<T, UMediaTexture>;
+
+	template<class T>
+	concept is_slate_texture_atlas_interface = std::derived_from<T, ISlateTextureAtlasInterface>;
 
 	template<class T>
 	concept is_image = !is_meadia_texture<T> && (is_material_interface<T> || is_slate_texture_atlas_interface<T>);
 
 	template<class T>
-	concept is_property = std::is_base_of_v<FProperty, T>;
+	concept is_property = std::derived_from<T, FProperty>;
 
 	template<class T>
-	concept is_object_property_base = std::is_base_of_v<FObjectPropertyBase, T>;
+	concept is_object_property_base = std::derived_from<T, FObjectPropertyBase>;
 
 	template<class T>
-	concept is_soft_object_property = std::is_base_of_v<FSoftObjectProperty, T>;
+	concept is_soft_object_property = std::derived_from<T, FSoftObjectProperty>;
 
 	template<class T>
-	concept is_table_row = std::is_base_of_v<FTableRowBase, T>;
+	concept is_table_row = std::derived_from<T, FTableRowBase>;
 
 	template<class T>
-	concept is_animation_asset = std::is_base_of_v<UAnimationAsset, T>;
+	concept is_animation_asset = std::derived_from<T, UAnimationAsset>;
 
 	template<class T>
-	concept is_anim_sequence_base = std::is_base_of_v<UAnimSequenceBase, T>;
+	concept is_anim_sequence_base = std::derived_from<T, UAnimSequenceBase>;
 
 	template<class T>
-	concept is_anim_sequence = std::is_base_of_v<UAnimSequence, T>;
+	concept is_anim_sequence = std::derived_from<T, UAnimSequence>;
 
 	template<class T>
-	concept is_anim_montage = std::is_base_of_v<UAnimMontage, T>;
+	concept is_anim_montage = std::derived_from<T, UAnimMontage>;
 
 	template<class T>
-	concept is_blend_space = std::is_base_of_v<UBlendSpace, T>;
+	concept is_blend_space = std::derived_from<T, UBlendSpace>;
 
 	template<class T>
-	concept is_aim_offset = std::is_base_of_v<UAimOffsetBlendSpace, T>;
+	concept is_aim_offset = std::derived_from<T, UAimOffsetBlendSpace>;
 
 	template<class T>
-	concept is_aim_composite = std::is_base_of_v<UAnimComposite, T>;
+	concept is_aim_composite = std::derived_from<T, UAnimComposite>;
 
 	template<class T>
-	concept is_aim_streamable = std::is_base_of_v<UAnimStreamable, T>;
+	concept is_aim_streamable = std::derived_from<T, UAnimStreamable>;
 
 	template<class T>
-	concept is_pose_asset = std::is_base_of_v<UPoseAsset, T>;
+	concept is_pose_asset = std::derived_from<T, UPoseAsset>;
 
 	template<class T>
-	concept is_camera_modifier = std::is_base_of_v<UCameraModifier, T>;
+	concept is_camera_modifier = std::derived_from<T, UCameraModifier>;
 }

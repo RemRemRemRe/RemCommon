@@ -13,8 +13,7 @@ class UMovementComponent;
 namespace Rem::Object
 {
 
-template<typename T = UGameInstance>
-requires std::is_base_of_v<UGameInstance, T>
+template<std::derived_from<UGameInstance> T = UGameInstance>
 T* GetGameInstance(const UObject& Object)
 {
 	auto* World = Object.GetWorld();
@@ -149,8 +148,7 @@ template<Concepts::is_uobject T>
 	return HashResult;
 }
 
-template<typename T = UMovementComponent>
-requires std::is_base_of_v<UMovementComponent, T>
+template<std::derived_from<UMovementComponent> T = UMovementComponent>
 T* FindMovementComponent(const AActor& Actor)
 {
 	if (auto* Pawn = Cast<APawn>(&Actor))
