@@ -120,6 +120,13 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 	PlayerController->ServerViewNextPlayer();
 }
 
+bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* NewRootComponent)
+{
+	RemCheckVariable(Actor, return false;, REM_NO_LOG_BUT_ENSURE);
+
+	return Actor->SetRootComponent(NewRootComponent);
+}
+
 FAudioDeviceHandle Rem::Object::GetAudioDevice(const UObject& Object)
 {
 	auto* World = Object.GetWorld();

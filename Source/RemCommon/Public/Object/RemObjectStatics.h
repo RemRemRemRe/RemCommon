@@ -79,6 +79,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
 	static void ServerViewNextPlayer(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Rem|Actor", meta = (DefaultToSelf = "Actor"))
+	static bool SetActorRootComponent(AActor* Actor, USceneComponent* NewRootComponent);
 };
 
 namespace Rem::Object
