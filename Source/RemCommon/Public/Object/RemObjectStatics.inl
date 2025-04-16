@@ -159,4 +159,16 @@ T* FindMovementComponent(const AActor& Actor)
 	return Actor.FindComponentByClass<T>();
 }
 
+template<Concepts::is_uobject TObject>
+[[nodiscard]] TArray<TObject*>& ObjectPtrDecay(TArray<TObjectPtr<TObject>>& Array)
+{
+	auto& RawObjectArrayMutable = const_cast<TArray<TObject*>&>(::ObjectPtrDecay(Array));
+	return RawObjectArrayMutable;
+}
+
+template<Concepts::is_uobject TObject>
+[[nodiscard]] TArrayView<TObject*> MakeArrayView(TArray<TObjectPtr<TObject>>& Array)
+{
+	return Object::ObjectPtrDecay(Array);
+}
 }
