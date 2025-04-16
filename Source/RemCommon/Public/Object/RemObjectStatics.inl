@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "Enum/RemHelperEnum.h"
 #include "GameFramework/Pawn.h"
 
 class UMovementComponent;
@@ -159,6 +160,40 @@ T* FindMovementComponent(const AActor& Actor)
 	return Actor.FindComponentByClass<T>();
 }
 
+template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn::Yes>
+[[nodiscard]] TActor* SpawnActor(UWorld& World, const TSubclassOf<TActor> Class, const FTransform& SpawnTransform,
+	const ESpawnActorCollisionHandlingMethod CollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::Undefined,
+	AActor* OwnerActor = nullptr,
+	APawn* Instigator = nullptr,
+	const ESpawnActorScaleMethod ScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot
+	)
+{
+	auto* Actor = World.SpawnActorDeferred<TActor>(Class, SpawnTransform, OwnerActor, Instigator, CollisionHandlingMethod, ScaleMethod);
+
+	if constexpr (CallFinishSpawn == Enum::ECallFinishSpawn::Yes)
+	{
+		if (Actor)
+		{
+			Actor->FinishSpawning(SpawnTransform, false, nullptr, ScaleMethod);
+		}
+	}
+
+	return Actor;
+}
+
+template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn::Yes>
+[[nodiscard]] TActor* SpawnActor(AActor& OwnerActor, const TSubclassOf<TActor> Class, const FTransform& SpawnTransform,
+	const ESpawnActorCollisionHandlingMethod CollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::Undefined,
+	APawn* Instigator = nullptr,
+	const ESpawnActorScaleMethod ScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot
+	)
+{
+	auto* World = OwnerActor.GetWorld();
+	RemCheckVariable(World, return nullptr;);
+
+	return Object::SpawnActor<TActor, CallFinishSpawn>(*World, Class, SpawnTransform, CollisionHandlingMethod, &OwnerActor, Instigator, ScaleMethod);
+}
+
 template<Concepts::is_uobject TObject>
 [[nodiscard]] TArray<TObject*>& ObjectPtrDecay(TArray<TObjectPtr<TObject>>& Array)
 {
@@ -171,4 +206,5 @@ template<Concepts::is_uobject TObject>
 {
 	return Object::ObjectPtrDecay(Array);
 }
+
 }
