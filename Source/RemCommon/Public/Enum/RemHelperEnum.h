@@ -43,4 +43,6 @@ namespace Rem::Enum
 		Yes,
 		No,
 	};
+
+	using ECallFinishSpawn = EYesOrNo;
 }
