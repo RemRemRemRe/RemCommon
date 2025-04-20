@@ -1,41 +1,41 @@
 // Copyright RemRemRemRe. 2025. All Rights Reserved.
 
 
-#include "Components/RemStructAsComponent.h"
-#include "Components/RemStructAsComponent.inl"
+#include "Components/RemComponentContainer.h"
+#include "Components/RemComponentContainer.inl"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(RemStructAsComponent)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(RemComponentContainer)
 
-void FRemStructAsComponentBase::Initialize(UObject& Owner)
+void FRemComponentBase::Initialize(UObject& Owner)
 {
 }
 
-bool FRemStructAsComponentBase::ShouldTick(UObject& Owner) const
+bool FRemComponentBase::ShouldTick(UObject& Owner) const
 {
 	return false;
 }
 
-void FRemStructAsComponentBase::Tick(UObject& Owner, float)
+void FRemComponentBase::Tick(UObject& Owner, float)
 {
 }
 
-void FRemStructAsComponentBase::Uninitialize(UObject& Owner)
+void FRemComponentBase::Uninitialize(UObject& Owner)
 {
 }
 
-void FRemStructAsComponents::Initialize(UObject& Owner)
+void FRemComponentContainer::Initialize(UObject& Owner)
 {
-	ForEachComponent<FRemStructAsComponentBase>(
-		[&] (FRemStructAsComponentBase& Component)
+	ForEachComponent<FRemComponentBase>(
+		[&] (FRemComponentBase& Component)
 	 {
 		 Component.Initialize(Owner);
 	 });
 }
 
-void FRemStructAsComponents::Uninitialize(UObject& Owner)
+void FRemComponentContainer::Uninitialize(UObject& Owner)
 {
-	ForEachComponent<FRemStructAsComponentBase>(
-		[&] (FRemStructAsComponentBase& Component)
+	ForEachComponent<FRemComponentBase>(
+		[&] (FRemComponentBase& Component)
 	 {
 		 Component.Uninitialize(Owner);
 	 });
