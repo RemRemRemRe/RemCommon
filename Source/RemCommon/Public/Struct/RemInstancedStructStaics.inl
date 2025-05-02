@@ -7,9 +7,8 @@
 
 namespace Rem::Struct
 {
-	template <typename StructType, typename TStructUtils>
-	requires Concepts::is_struct_utils<TStructUtils>
-	auto GetStructView(TArrayView<TStructUtils> BaseStructsArrayView)
+	template <typename StructType, Concepts::is_struct_utils TStructUtils>
+	auto FindStructView(TArrayView<TStructUtils> BaseStructsArrayView)
 	{
 		using TResult = TStructView<StructType>;
 		TResult Result{};
@@ -31,9 +30,8 @@ namespace Rem::Struct
 		return Result;
 	}
 
-	template <typename StructType, typename TStructUtils>
-	requires Concepts::is_struct_utils<TStructUtils>
-	auto GetConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
+	template <typename StructType, Concepts::is_struct_utils TStructUtils>
+	auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
 	{
 		using TResult = TConstStructView<StructType>;
 		TResult Result{};
@@ -55,8 +53,7 @@ namespace Rem::Struct
 		return Result;
 	}
 
-	template <typename StructType, typename TStructUtils>
-	requires Concepts::is_struct_utils<TStructUtils>
+	template <typename StructType, Concepts::is_struct_utils TStructUtils>
 	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView, TFunctionRef<void(StructType&)> FunctionRef)
 	{
 		for (auto& BaseStruct : BaseStructsArrayView)

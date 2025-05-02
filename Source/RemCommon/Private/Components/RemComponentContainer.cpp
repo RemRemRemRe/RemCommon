@@ -6,20 +6,20 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemComponentContainer)
 
-void FRemComponentBase::Initialize(UObject& Owner)
+void FRemComponentBase::Initialize(UObject& OwnerRef)
 {
 }
 
-bool FRemComponentBase::ShouldTick(UObject& Owner) const
+bool FRemComponentBase::ShouldTick(UObject& OwnerRef) const
 {
 	return false;
 }
 
-void FRemComponentBase::Tick(UObject& Owner, float)
+void FRemComponentBase::Tick(UObject& OwnerRef, float)
 {
 }
 
-void FRemComponentBase::Uninitialize(UObject& Owner)
+void FRemComponentBase::Uninitialize(UObject& OwnerRef)
 {
 }
 

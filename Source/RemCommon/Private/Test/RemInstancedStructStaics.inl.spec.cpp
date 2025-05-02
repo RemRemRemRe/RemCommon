@@ -13,7 +13,7 @@ DEFINE_SPEC(FRemInstancedStructStaicsInlineTest, "Rem.Struct.Statics.Inline",
 
 void FRemInstancedStructStaicsInlineTest::Define()
 {
-	Describe(TEXT("Test API GetStructView"), [this]
+	Describe(TEXT("Test API FindStructView"), [this]
 	{
 		It(TEXT("should pass for empty array of struct utils type"), [this]
 		{
@@ -28,24 +28,24 @@ void FRemInstancedStructStaicsInlineTest::Define()
 			TArray<FConstStructView> H{};
 
 			constexpr TStructView<FRemEmptyStruct> EmptyView{};
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(A)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(B)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(C)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(D)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(E)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(F)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(G)), EmptyView);
-			TestEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(H)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(A)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(B)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(C)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(D)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(E)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(F)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(G)), EmptyView);
+			TestEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(H)), EmptyView);
 
 			constexpr TConstStructView<FRemEmptyStruct> ConstEmptyView{};
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(B)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(C)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(D)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(E)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(F)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(G)), ConstEmptyView);
-			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(H)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(B)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(C)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(D)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(E)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(F)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(G)), ConstEmptyView);
+			TestEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(H)), ConstEmptyView);
 		});
 
 		It(TEXT("should pass for non empty array of struct utils type"), [this]
@@ -63,24 +63,24 @@ void FRemInstancedStructStaicsInlineTest::Define()
 			TArray H{FConstStructView::Make<FRemEmptyStruct>(EmptyStruct)};
 
 			constexpr TStructView<FRemEmptyStruct> EmptyView{};
-			//TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(A)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(B)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(C)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(D)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(E)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(F)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(G)), EmptyView);
-			TestNotEqual(TEXT("EmptyView"), Rem::Struct::GetStructView<FRemEmptyStruct>(MakeArrayView(H)), EmptyView);
+			//TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(A)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(B)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(C)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(D)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(E)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(F)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(G)), EmptyView);
+			TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(H)), EmptyView);
 
 			constexpr TConstStructView<FRemEmptyStruct> ConstEmptyView{};
-			//TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(B)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(C)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(D)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(E)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(F)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(G)), ConstEmptyView);
-			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::GetConstStructView<FRemEmptyStruct>(MakeConstArrayView(H)), ConstEmptyView);
+			//TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(B)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(C)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(D)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(E)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(F)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(G)), ConstEmptyView);
+			TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(H)), ConstEmptyView);
 		});
 	});
 }

@@ -20,12 +20,12 @@ struct REMCOMMON_API FRemComponentBase
 {
 	GENERATED_BODY()
 
-	virtual void Initialize(UObject& Owner);
+	virtual void Initialize(UObject& OwnerRef);
 
-	virtual bool ShouldTick(UObject& Owner) const;
-	virtual void Tick(UObject& Owner, float DeltaSeconds);
+	virtual bool ShouldTick(UObject& OwnerRef) const;
+	virtual void Tick(UObject& OwnerRef, float DeltaSeconds);
 
-	virtual void Uninitialize(UObject& Owner);
+	virtual void Uninitialize(UObject& OwnerRef);
 };
 
 USTRUCT(BlueprintType)
@@ -37,22 +37,22 @@ struct REMCOMMON_API FRemComponentContainer
 	TArray<TInstancedStruct<FRemComponentBase>> Components;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	T* GetComponent();
+	T* FindComponent();
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	const T* GetComponent() const;
+	const T* FindComponent() const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	T* GetComponent(int32 Index);
+	T* FindComponent(int32 Index);
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	const T* GetComponent(int32 Index) const;
+	const T* FindComponent(int32 Index) const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	T* GetComponent(EnumClass Enum);
+	T* FindComponent(EnumClass Enum);
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	const T* GetComponent(EnumClass Enum) const;
+	const T* FindComponent(EnumClass Enum) const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
 	void ForEachComponent(TFunctionRef<void(T&)> FunctionRef);
@@ -60,8 +60,8 @@ struct REMCOMMON_API FRemComponentContainer
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
 	void ForEachComponent(TFunctionRef<void(const T&)> FunctionRef) const;
 
-	void Initialize(UObject& Owner);
-	void Uninitialize(UObject& Owner);
+	void Initialize(UObject& OwnerRef);
+	void Uninitialize();
 
 	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Components)
 };

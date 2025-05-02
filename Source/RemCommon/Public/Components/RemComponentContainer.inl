@@ -7,19 +7,19 @@
 #include "Struct/RemInstancedStructStaics.inl"
 
 template<std::derived_from<FRemComponentBase> T>
-T* FRemComponentContainer::GetComponent()
+T* FRemComponentContainer::FindComponent()
 {
-	return Rem::Struct::GetStructView<T>(MakeArrayView(Components)).GetPtr();
+	return Rem::Struct::FindStructView<T>(MakeArrayView(Components)).GetPtr();
 }
 
 template<std::derived_from<FRemComponentBase> T>
-const T* FRemComponentContainer::GetComponent() const
+const T* FRemComponentContainer::FindComponent() const
 {
-	return Rem::Struct::GetConstStructView<T>(MakeConstArrayView(Components)).GetPtr();
+	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).GetPtr();
 }
 
 template<std::derived_from<FRemComponentBase> T>
-T* FRemComponentContainer::GetComponent(const int32 Index)
+T* FRemComponentContainer::FindComponent(const int32 Index)
 {
 	RemCheckCondition(Components.IsValidIndex(Index), return {});
 
@@ -27,7 +27,7 @@ T* FRemComponentContainer::GetComponent(const int32 Index)
 }
 
 template<std::derived_from<FRemComponentBase> T>
-const T* FRemComponentContainer::GetComponent(const int32 Index) const
+const T* FRemComponentContainer::FindComponent(const int32 Index) const
 {
 	RemCheckCondition(Components.IsValidIndex(Index), return {});
 
@@ -35,15 +35,15 @@ const T* FRemComponentContainer::GetComponent(const int32 Index) const
 }
 
 template<std::derived_from<FRemComponentBase> T, Rem::Concepts::is_scoped_enum EnumClass>
-T* FRemComponentContainer::GetComponent(EnumClass Enum)
+T* FRemComponentContainer::FindComponent(EnumClass Enum)
 {
-	return GetComponent<T>(static_cast<int32>(Enum));
+	return FindComponent<T>(static_cast<int32>(Enum));
 }
 
 template<std::derived_from<FRemComponentBase> T, Rem::Concepts::is_scoped_enum EnumClass>
-const T* FRemComponentContainer::GetComponent(EnumClass Enum) const
+const T* FRemComponentContainer::FindComponent(EnumClass Enum) const
 {
-	return GetComponent<T>(static_cast<int32>(Enum));
+	return FindComponent<T>(static_cast<int32>(Enum));
 }
 
 template<std::derived_from<FRemComponentBase> T>

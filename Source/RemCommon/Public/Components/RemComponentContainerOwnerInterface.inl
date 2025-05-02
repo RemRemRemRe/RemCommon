@@ -13,20 +13,20 @@ namespace Rem::Component
 {
 
 template <std::derived_from<FRemComponentBase> T = FRemComponentBase, std::derived_from<IRemComponentContainerOwnerInterface> TInterface = IRemComponentContainerOwnerInterface>
-auto GetComponent(TInterface& Interface) -> decltype(auto)
+auto FindComponent(TInterface& Interface) -> decltype(auto)
 {
-	return Interface.GetComponentContainer().template GetComponent<T>();
+	return Interface.GetComponentContainer().template FindComponent<T>();
 }
 
 template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
-auto GetComponent(TObject& Object) -> decltype(auto)
+auto FindComponent(TObject& Object) -> decltype(auto)
 {
 	auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(Object);
 
-	using TResult = decltype(GetComponent<T>(*Interface));
+	using TResult = decltype(FindComponent<T>(*Interface));
 	if (Interface)
 	{
-		return GetComponent<T>(*Interface);
+		return FindComponent<T>(*Interface);
 	}
 
 	return TResult{};
