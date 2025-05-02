@@ -12,6 +12,9 @@
 template<typename BaseStructT>
 struct TInstancedStruct;
 
+template<typename BaseStructT>
+struct TConstStructView;
+
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemComponentBase
 #if CPP
@@ -33,9 +36,23 @@ struct REMCOMMON_API FRemComponentContainer
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
 	TArray<TInstancedStruct<FRemComponentBase>> Components;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UObject> Owner{};
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+	uint8 bInitialized : 1{false};
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+	uint8 bInitializing : 1{false};
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+	uint8 bUnInitializing : 1{false};
+
+public:
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
 	T* FindComponent();
 
@@ -63,5 +80,20 @@ struct REMCOMMON_API FRemComponentContainer
 	void Initialize(UObject& OwnerRef);
 	void Uninitialize();
 
-	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Components)
+	bool IsInitialized() const;
+
+	void TryInitialize(UObject& OwnerRef);
+	void TryUninitialize();
+
+	void CopyComponents(TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView);
+	void CopyComponents(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
+	void MoveComponents(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
+
+	REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
+
+	FRemComponentContainer() = default;
+	FRemComponentContainer(const FRemComponentContainer& Other);
+	FRemComponentContainer& operator=(const FRemComponentContainer& Other);
+	FRemComponentContainer(FRemComponentContainer&& Other);
+	FRemComponentContainer& operator=(FRemComponentContainer&& Other);
 };
