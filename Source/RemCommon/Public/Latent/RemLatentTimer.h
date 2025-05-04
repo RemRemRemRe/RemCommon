@@ -4,10 +4,13 @@
 
 #include "LatentActions.h"
 
+namespace Rem
+{
+using FTimerDelegate = TDelegate<void()>;
+}
+
 namespace Rem::Latent
 {
-	using FTimerDelegate = TDelegate<void(), FNotThreadSafeNotCheckedDelegateUserPolicy>;
-
 	/**
 	 * 0 means invalid handle (default to 0)
 	 */
