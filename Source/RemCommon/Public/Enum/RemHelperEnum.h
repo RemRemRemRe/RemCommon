@@ -45,4 +45,29 @@ namespace Rem::Enum
 	};
 
 	using ECallFinishSpawn = EYesOrNo;
+
+	enum class ETransitionType : uint8
+	{
+		ToNext,
+		ToPrevious,
+		ToSpecified,
+	};
+
+	template<typename T>
+	void ApplyTransition(T& InOutValue, const ETransitionType Transition, const T& OptionalSpecifiedValue)
+	{
+		switch (Transition) {
+		default:
+		case ETransitionType::ToNext:
+			++InOutValue;
+			break;
+		case ETransitionType::ToPrevious:
+			--InOutValue;
+			break;
+		case ETransitionType::ToSpecified:
+			InOutValue = OptionalSpecifiedValue;
+			break;
+		}
+
+	}
 }
