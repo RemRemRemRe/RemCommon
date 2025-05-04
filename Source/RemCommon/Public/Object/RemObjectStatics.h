@@ -12,8 +12,12 @@ class APlayerCameraManager;
 class APlayerState;
 class APlayerController;
 class ULocalPlayer;
-using FTimerDelegate = TDelegate<void(), FNotThreadSafeNotCheckedDelegateUserPolicy>;
 struct FTimerManagerTimerParameters;
+
+namespace Rem
+{
+using FTimerDelegate = TDelegate<void()>;
+}
 
 struct FTimerHandle;
 

@@ -200,13 +200,19 @@ FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimer
 
 FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate)
 {
-	return World.GetTimerManager().SetTimerForNextTick(Delegate);
+	return World.GetTimerManager().SetTimerForNextTick([=]
+	{
+		Delegate.Execute();
+	});
 }
 
 FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate)
 {
 	FTimerHandle Handle;
-	World.GetTimerManager().SetTimer(Handle, Delegate, UE_SMALL_NUMBER, {});
+	World.GetTimerManager().SetTimer(Handle, [=]
+	{
+		Delegate.Execute();
+	}, UE_SMALL_NUMBER, {});
 
 	return Handle;
 }
