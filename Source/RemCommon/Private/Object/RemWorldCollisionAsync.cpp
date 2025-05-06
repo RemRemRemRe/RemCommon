@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemPrivateMemberAccessor.h"
+#include "Enum/RemHelperEnum.h"
 
 namespace
 {
@@ -58,43 +59,71 @@ struct FBufferIndexPair
 
 REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GWorldAsyncTraceStateAccessor, &UWorld::AsyncTraceState, FWorldAsyncTraceState UWorld::*);
 
+using EUseCurrentFrameBuffer = Rem::Enum::EYesOrNo;
+using EQueryTraceData = Rem::Enum::EYesOrNo;
+
+template <EUseCurrentFrameBuffer UseCurrentFrameBuffer = EUseCurrentFrameBuffer::Yes,
+	EQueryTraceData QueryTraceData = EQueryTraceData::Yes>
+std::conditional_t<QueryTraceData == EQueryTraceData::Yes, FTraceDatum*, FOverlapDatum*>
+	QueryDataInternal(const UObject& WorldContext, const FTraceHandle& Handle)
+{
+	RemCheckVariable(Handle, return {});
+
+	auto* World = WorldContext.GetWorld();
+	RemCheckVariable(World, return {});
+
+	auto& AsyncTrace = GWorldAsyncTraceStateAccessor::Access(*World);
+
+	AsyncTraceData* DataBuffer;
+	if constexpr (UseCurrentFrameBuffer == EUseCurrentFrameBuffer::Yes)
+	{
+		DataBuffer = &AsyncTrace.GetBufferForCurrentFrame();
+	}
+	else
+	{
+		DataBuffer = &AsyncTrace.GetBufferForPreviousFrame();
+	}
+
+	if constexpr (QueryTraceData == EQueryTraceData::Yes)
+	{
+		if (auto* Data = FBufferIndexPair(Handle._Data.Index).DatumLookup(DataBuffer->TraceData))
+		{
+			return Data;
+		}
+	}
+	else
+	{
+		if (auto* Data = FBufferIndexPair(Handle._Data.Index).DatumLookup(DataBuffer->OverlapData))
+		{
+			return Data;
+		}
+	}
+
+	return {};
+}
+
 }
 
 namespace Rem::Collision
 {
 
-FTraceDatum* QueryTraceData(const UObject& WorldContext, const FTraceHandle& Handle)
+FTraceDatum* QueryTraceDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle)
 {
-	RemCheckVariable(Handle, return {});
-
-	auto* World = WorldContext.GetWorld();
-	RemCheckVariable(World, return {});
-
-	auto& AsyncTrace = GWorldAsyncTraceStateAccessor::Access(*World);
-	auto& DataBuffer = AsyncTrace.GetBufferForCurrentFrame();
-	if (auto* Data = FBufferIndexPair(Handle._Data.Index).DatumLookup(DataBuffer.TraceData))
-	{
-		return Data;
-	}
-
-	return nullptr;
+	return QueryDataInternal<EUseCurrentFrameBuffer::Yes, EQueryTraceData::Yes>(WorldContext, Handle);
 }
 
-FOverlapDatum* QueryOverlapData(const UObject& WorldContext, const FTraceHandle& Handle)
+FTraceDatum* QueryTraceDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle)
 {
-	RemCheckVariable(Handle, return {});
-
-	auto* World = WorldContext.GetWorld();
-	RemCheckVariable(World, return {});
-
-	auto& AsyncTrace = GWorldAsyncTraceStateAccessor::Access(*World);
-	auto& DataBuffer = AsyncTrace.GetBufferForCurrentFrame();
-	if (auto* Data = FBufferIndexPair(Handle._Data.Index).DatumLookup(DataBuffer.OverlapData))
-	{
-		return Data;
-	}
-
-	return nullptr;
+	return QueryDataInternal<EUseCurrentFrameBuffer::No, EQueryTraceData::Yes>(WorldContext, Handle);
 }
 
+FOverlapDatum* QueryOverlapDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+{
+	return QueryDataInternal<EUseCurrentFrameBuffer::Yes, EQueryTraceData::No>(WorldContext, Handle);
+}
+
+FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+{
+	return QueryDataInternal<EUseCurrentFrameBuffer::No, EQueryTraceData::No>(WorldContext, Handle);
+}
 }
