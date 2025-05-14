@@ -37,7 +37,7 @@ struct REMCOMMON_API FRemComponentContainer
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component", meta = (ExcludeBaseStruct))
 	TArray<TInstancedStruct<FRemComponentBase>> Components;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
