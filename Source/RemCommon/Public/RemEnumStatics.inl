@@ -15,7 +15,7 @@ enum class ETransitionType : uint8;
 
 template<typename T>
 requires std::is_signed_v<T>
-T ApplyTransition(T CurrentValue, TTuple<ETransitionType, T> TransitionData, T End, T Start = 0)
+T ApplyTransition(T CurrentValue, const ETransitionType TransitionType, T Step, T End, T Start = 0)
 {
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
@@ -24,10 +24,7 @@ T ApplyTransition(T CurrentValue, TTuple<ETransitionType, T> TransitionData, T E
 
 #endif
 
-	auto&& TransitionTYpe = TransitionData.template Get<0>();
-	auto&& Step = TransitionData.template Get<1>();
-
-	switch (TransitionTYpe)
+	switch (TransitionType)
 	{
 	default:
 	case ETransitionType::ToNext:
@@ -58,6 +55,13 @@ T ApplyTransition(T CurrentValue, TTuple<ETransitionType, T> TransitionData, T E
 	}
 
 	return CurrentValue;
+}
+
+template<typename T>
+requires std::is_signed_v<T>
+T ApplyTransition(T CurrentValue, TTuple<ETransitionType, T> TransitionData, T End, T Start = 0)
+{
+	return ApplyTransition(CurrentValue, TransitionData.template Get<0>(), TransitionData.template Get<1>(), End, Start);
 }
 
 }
