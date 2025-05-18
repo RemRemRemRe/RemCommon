@@ -4,11 +4,11 @@
 
 #include "UObject/WeakObjectPtr.h"
 
-#define REM_ON_SCOPE_EXIT_WEAK auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
+#define REM_ON_SCOPE_EXIT_WEAK auto UE_JOIN(_weakScopeExit_, __LINE__) = \
 	Rem::ScopeExit::FOperatorHelper(this) += [&]
 
 #define REM_ON_SCOPE_EXIT_WEAK_OBJECT(Object) \
-	auto PREPROCESSOR_JOIN(_weakScopeExit_, __LINE__) = \
+	auto UE_JOIN(_weakScopeExit_, __LINE__) = \
 	Rem::ScopeExit::FOperatorHelper(Object) += [&]
 
 class UObject;
