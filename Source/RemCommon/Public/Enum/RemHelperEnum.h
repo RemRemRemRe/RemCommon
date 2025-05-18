@@ -52,22 +52,4 @@ namespace Rem::Enum
 		ToPrevious,
 		ToSpecified,
 	};
-
-	template<typename T>
-	void ApplyTransition(T& InOutValue, const ETransitionType Transition, const T& OptionalSpecifiedValue)
-	{
-		switch (Transition) {
-		default:
-		case ETransitionType::ToNext:
-			++InOutValue;
-			break;
-		case ETransitionType::ToPrevious:
-			--InOutValue;
-			break;
-		case ETransitionType::ToSpecified:
-			InOutValue = OptionalSpecifiedValue;
-			break;
-		}
-
-	}
 }
