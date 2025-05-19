@@ -248,7 +248,7 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 }
 
 template<Enum::EYesOrNo NextTick>
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject)
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject)
 {
 	auto* World = WorldContextObject.GetWorld();
 	RemCheckVariable(World, return {});
@@ -270,12 +270,12 @@ TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& W
 }
 
 template<Enum::EYesOrNo NextTick>
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	auto Tuple = SetTimerForTickHelper<NextTick>(WorldContextObject);
 
-	auto* TimerAction = Tuple.template Get<1>();
+	auto* TimerAction = std::get<FTimerLatentAction_Delay*>(Tuple);
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
@@ -290,38 +290,38 @@ TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& W
 
 FTimerHandle SetTimerForThisTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate)
 {
-	return SetTimerForThisTickX(WorldContextObject, InDelegate).Get<0>();
+	return std::get<FTimerHandle>(SetTimerForThisTickX(WorldContextObject, InDelegate));
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::No>(WorldContextObject, InDelegate);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject)
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::No>(WorldContextObject);
 }
 
 FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate)
 {
-	return SetTimerForNextTickX(WorldContextObject, InDelegate).Get<0>();
+	return std::get<FTimerHandle>(SetTimerForNextTickX(WorldContextObject, InDelegate));
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::Yes>(WorldContextObject, InDelegate);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject)
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::Yes>(WorldContextObject);
 }
 
 template<typename T>
-static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const T& DelayParameter)
+static std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const T& DelayParameter)
 {
 	if constexpr (std::is_same_v<std::remove_cvref_t<T>, FTimerParameterHelper_Time>)
 	{
@@ -348,11 +348,11 @@ static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& W
 }
 
 template<typename T>
-static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const T& DelayParameter)
+static std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const T& DelayParameter)
 {
 	auto Tuple = SetTimerHelper(WorldContextObject, DelayParameter);
 
-	auto* TimerAction = Tuple.template Get<1>();
+	auto* TimerAction = std::get<FTimerLatentAction_Delay*>(Tuple);
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
@@ -368,34 +368,34 @@ static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& W
 FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate,
 	const FTimerParameterHelper_Time& DelayParameter)
 {
-	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter).Get<0>();
+	return std::get<FTimerHandle>(SetTimerHelper(WorldContextObject, InDelegate, DelayParameter));
 }
 
 FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate,
 	const FTimerParameterHelper_Frame& DelayParameter)
 {
-	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter).Get<0>();
+	return std::get<FTimerHandle>(SetTimerHelper(WorldContextObject, InDelegate, DelayParameter));
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
 	const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
 	const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
 	const FTimerParameterHelper_Time& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
+std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
 	const FTimerParameterHelper_Frame& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, DelayParameter);

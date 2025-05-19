@@ -150,26 +150,26 @@ namespace Rem::Latent
 	 * consider using FTimerManager if you do need do it this frame (before the end of this frame)
 	 */
 	REMCOMMON_API FTimerHandle SetTimerForThisTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
 		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject);
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject);
 
 	/**
 	 * This is preferred and safer to call than the one above
 	 */
 	REMCOMMON_API FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
 		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject);
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject);
 
 	REMCOMMON_API FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
 	REMCOMMON_API FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
 		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
 		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Frame& DelayParameter);
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Time& DelayParameter);
+	REMCOMMON_API std::tuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Frame& DelayParameter);
 
 	REMCOMMON_API void PauseTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
 	REMCOMMON_API void UnpauseTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
