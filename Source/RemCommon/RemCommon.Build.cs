@@ -6,13 +6,13 @@ public class RemCommon : ModuleRules
 {
 	public RemCommon(ReadOnlyTargetRules target) : base(target)
 	{
-		ShadowVariableWarningLevel = WarningLevel.Error;
+		CppCompileWarningSettings.ShadowVariableWarningLevel = WarningLevel.Error;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		CppStandard = CppStandardVersion.EngineDefault;
-		UnsafeTypeCastWarningLevel = WarningLevel.Warning;
+		CppCompileWarningSettings.UnsafeTypeCastWarningLevel = WarningLevel.Warning;
 
-		bEnableNonInlinedGenCppWarnings = true;
+		CppCompileWarningSettings.NonInlinedGenCppWarningLevel = WarningLevel.Warning;
 		bUseUnity = false;
 
 		PrivateDependencyModuleNames.AddRange(
