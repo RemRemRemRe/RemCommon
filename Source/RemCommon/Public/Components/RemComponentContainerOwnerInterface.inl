@@ -21,7 +21,7 @@ auto FindComponent(TInterface& Interface) -> decltype(auto)
 template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
 auto FindComponent(TObject& Object) -> decltype(auto)
 {
-	auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(Object);
+	auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(&Object);
 
 	using TResult = decltype(FindComponent<T>(*Interface));
 	if (Interface)
