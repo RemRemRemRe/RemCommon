@@ -39,7 +39,7 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
 		bInitializing = false;
 	};
 
-	Owner = OwnerRef;
+	Owner = &OwnerRef;
 
 	// make sure Initialize can't be called by TryInitialize
 	bInitialized = true;
