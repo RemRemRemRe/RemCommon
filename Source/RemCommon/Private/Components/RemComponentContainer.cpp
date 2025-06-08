@@ -5,7 +5,6 @@
 #include "Components/RemComponentContainer.inl"
 
 #include "RemCommonLog.h"
-#include "Interfaces/IPluginManager.h"
 #include "Macro/RemLogMacros.h"
 #include "Misc/ScopeExit.h"
 
