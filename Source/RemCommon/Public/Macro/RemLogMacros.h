@@ -37,7 +37,7 @@
 
 #define REM_LOGGER_INTERNAL(Prefix, Suffix, CategoryName, Verbosity, FormatString, ...) \
 	{ \
-		constexpr auto Delimiter = TEXT(' '); \
+		constexpr WIDECHAR Delimiter = TEXT(' '); \
 		TStringBuilder<256> FinalString{}; \
 		 \
 		FinalString<<TEXT("Frame:"); \
