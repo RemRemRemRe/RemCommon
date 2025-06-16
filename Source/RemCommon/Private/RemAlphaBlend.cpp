@@ -11,7 +11,7 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemAlphaBlend)
 
 FVector3f FRemAlphaBlendCurveAndOption::GetAlpha(const float Time, const float BlendTime,
-	const EAlphaBlendOption BlendOption, const FRemCurveBaseWrapper CurveWrapper, bool& bOutVectorAlpha)
+	const EAlphaBlendOption BlendOption, const FRemCurveBaseWrapper& CurveWrapper, bool& bOutVectorAlpha)
 {
 	RemCheckCondition(BlendTime > 0.0f, return FVector3f::OneVector;, REM_NO_LOG_BUT_ENSURE);
 

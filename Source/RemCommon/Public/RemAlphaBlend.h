@@ -13,7 +13,7 @@ USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemAlphaBlend
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend", meta = (ClampMin = "0", ForceUnits = "s"))
 	float BlendTime{1.0f};
 };
@@ -22,7 +22,7 @@ USTRUCT(Blueprintable)
 struct REMCOMMON_API FRemAlphaBlendOption : public FRemAlphaBlend
 {
 	GENERATED_BODY()
-	
+
 	/** Type of blending used (Linear, Cubic, etc.) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
 	EAlphaBlendOption BlendOption{};
@@ -51,6 +51,6 @@ struct REMCOMMON_API FRemAlphaBlendCurveAndOption : public FRemAlphaBlendOption
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
 	FRemCurveBaseWrapper Curve;
 
-	static FVector3f GetAlpha(float Time, float BlendTime,
-		EAlphaBlendOption BlendOption, const FRemCurveBaseWrapper CurveWrapper, bool& bOutVectorAlpha);
+	static FVector3f GetAlpha(float Time, float BlendTime, EAlphaBlendOption BlendOption,
+		const FRemCurveBaseWrapper& CurveWrapper, bool& bOutVectorAlpha);
 };
