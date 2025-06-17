@@ -16,20 +16,18 @@
 #define REM_DEFINE_GETTERS_RETURN_AUTO(NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
 	REM_DEFINE_GETTERS_RETURN_TYPE(auto, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, Type, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
-	template<typename T> \
-	RequireStatement \
-	\
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(YourConcept, Type, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	template<YourConcept T> \
 	Type Get##NamePredicate##NameSuffix() ConstKeyword \
 	{ \
 		return ReturnValue; \
 	}
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto&&, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(YourConcept, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(YourConcept, auto&&, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
-#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(RequireStatement, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(RequireStatement, auto, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
+#define REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(YourConcept, NamePredicate, NameSuffix, ConstKeyword, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_TYPE(YourConcept, auto, NamePredicate, NameSuffix, ConstKeyword, ReturnValue)
 
 #pragma endregion Helpers
 
@@ -96,34 +94,34 @@
 
 /**
  * @brief Use this macro to help define getter --- "return reference", const and no cost
- * @param RequireStatement required conditions for the template getter
+ * @param YourConcept required concept for the template getter
  * @param NamePredicate getter's meaningful name part
  * @param NameSuffix suffix of the getter's name
  * @param ReturnValue statement without the "return" keyword
  */
-#define REM_DEFINE_TEMPLATE_GETTER_RETURN_REFERENCE(RequireStatement, NamePredicate, NameSuffix, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, const, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, /*no const*/, ReturnValue)
+#define REM_DEFINE_TEMPLATE_GETTER_RETURN_REFERENCE(YourConcept, NamePredicate, NameSuffix, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(YourConcept, NamePredicate, NameSuffix, const, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(YourConcept, NamePredicate, NameSuffix, /*no const*/, ReturnValue)
 
 /**
  * @brief Use this macro to help define getter --- "return value", const only
- * @param RequireStatement required conditions for the template getter
+ * @param YourConcept required concept for the template getter
  * @param NamePredicate getter's meaningful name part
  * @param NameSuffix suffix of the getter's name
  * @param ReturnValue statement without the "return" keyword
  */
-#define REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(RequireStatement, NamePredicate, NameSuffix, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(RequireStatement, NamePredicate, NameSuffix, const, ReturnValue) \
+#define REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(YourConcept, NamePredicate, NameSuffix, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(YourConcept, NamePredicate, NameSuffix, const, ReturnValue) \
 
 /**
  * @brief Use this macro to help define getters --- "return reference", const only
- * @param RequireStatement required conditions for the template getter
+ * @param YourConcept required concept for the template getter
  * @param NamePredicate getter's meaningful name part
  * @param NameSuffix suffix of the getter's name
  * @param ReturnValue statement without the "return" keyword
  */
-#define REM_DEFINE_CONST_ONLY_TEMPLATE_GETTER_RETURN_REFERENCE(RequireStatement, NamePredicate, NameSuffix, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(RequireStatement, NamePredicate, NameSuffix, const, ReturnValue)
+#define REM_DEFINE_CONST_ONLY_TEMPLATE_GETTER_RETURN_REFERENCE(YourConcept, NamePredicate, NameSuffix, ReturnValue) \
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(YourConcept, NamePredicate, NameSuffix, const, ReturnValue)
 
 #pragma endregion Getter template
 

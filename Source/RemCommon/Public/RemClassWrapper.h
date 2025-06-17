@@ -21,12 +21,12 @@ struct REMCOMMON_API FRemClassWrapper
 
 	using IsObjectWrapper = std::true_type;
 	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Class.Get())
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Object, /*no suffix*/, TSubclassOf<T>{Class}.Get())
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Object, /*no suffix*/, TSubclassOf<T>{Class}.Get())
 
 	REM_DEFINE_GETTERS_RETURN_VALUE(Class, /* no suffix */, Class.Get())
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, Class, /*no suffix*/, TSubclassOf<T>{Class}.Get())
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Class, /*no suffix*/, TSubclassOf<T>{Class}.Get())
 
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(requires Rem::Concepts::is_uobject<T>, ClassT, /*no suffix*/, TSubclassOf<T>{Class})
+	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, ClassT, /*no suffix*/, TSubclassOf<T>{Class})
 
 	REM_DEFINE_GETTERS_RETURN_VALUE(/*no predicate*/, /*no suffix*/, Class.Get())
 };
