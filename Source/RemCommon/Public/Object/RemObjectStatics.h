@@ -21,8 +21,10 @@ using FTimerDelegate = TDelegate<void()>;
 
 struct FTimerHandle;
 
+#define REM_API REMCOMMON_API
+
 UCLASS()
-class REMCOMMON_API URemObjectStatics : public UBlueprintFunctionLibrary
+class REM_API URemObjectStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -33,7 +35,7 @@ public:
 	/**
 	 * @brief Is Object a blueprint object
 	 */
-	UFUNCTION(BlueprintPure, Category = "Rem|Object")
+	UFUNCTION(BlueprintPure, Category = "Rem|Object", meta = (ExpandBoolAsExecs = "ReturnValue"))
 	static bool IsBlueprintObject(const UObject* Object);
 
 	UFUNCTION(BlueprintPure, Category = "Rem|Object")
@@ -44,7 +46,7 @@ public:
 	/**
 	 * @brief Dose the class of the object is blueprint class
 	 */
-	UFUNCTION(BlueprintPure, Category = "Rem|Object")
+	UFUNCTION(BlueprintPure, Category = "Rem|Object", meta = (ExpandBoolAsExecs = "ReturnValue"))
 	static bool IsObjectValidForBlueprint(const UObject* Object);
 
 	UFUNCTION(BlueprintPure, Category = "Rem|PlayerState")
@@ -84,18 +86,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Rem|PlayerController", meta = (WorldContext = "WorldContextObject"))
 	static void ServerViewNextPlayer(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintCallable, Category = "Rem|Actor", meta = (DefaultToSelf = "Actor"))
+	UFUNCTION(BlueprintCallable, Category = "Rem|Actor", meta = (DefaultToSelf = "Actor", ExpandBoolAsExecs = "ReturnValue"))
 	static bool SetActorRootComponent(AActor* Actor, USceneComponent* NewRootComponent);
 };
 
 namespace Rem::Object
 {
-	REMCOMMON_API FAudioDeviceHandle GetAudioDevice(const UObject& Object);
+	REM_API FAudioDeviceHandle GetAudioDevice(const UObject& Object);
 
-	REMCOMMON_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
+	REM_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
 		const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate);
 
-	REMCOMMON_API bool IsImplementedInBlueprint(const UFunction* Function);
+	REM_API bool IsImplementedInBlueprint(const UFunction* Function);
 
 	inline bool IsClassDefaultObject(const UObject& Object)
 	{
@@ -117,7 +119,7 @@ namespace Rem::Object
 			|| ChangeType & EPropertyChangeType::Redirected;
 	}
 
-	REMCOMMON_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
+	REM_API bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TArray<FName>& PropertyNamePath, bool bShouldHaveNextNode = false);
 
 	///
 	///
@@ -125,15 +127,17 @@ namespace Rem::Object
 	///
 	///
 
-	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REMCOMMON_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
-	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REMCOMMON_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
-	REMCOMMON_API FVector GetActorFeetLocation(const AActor& Actor);
+	REM_API FVector GetActorFeetLocation(const AActor& Actor);
 
-	REMCOMMON_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
-	REMCOMMON_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);
-	REMCOMMON_API FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController);
+	REM_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
+	REM_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);
+	REM_API FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController);
 }
+
+#undef REM_API
