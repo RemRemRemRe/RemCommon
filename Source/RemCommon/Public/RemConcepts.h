@@ -83,6 +83,18 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
+	concept has_get_owner = requires (const T Object)
+	{
+		Object.GetOwner();
+	};
+
+	template<class T>
+	concept has_get = requires (const T Object)
+	{
+		Object.Get();
+	};
+
+	template<class T>
 	concept has_tag = requires (FGameplayTag& Tag, const T Object)
 	{
 		Tag = T::Tag;

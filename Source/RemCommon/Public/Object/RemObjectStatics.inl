@@ -207,4 +207,27 @@ template<Concepts::is_uobject TObject>
 	return Object::ObjectPtrDecay(Array);
 }
 
+bool IsNetworkedClient(const auto& Object)
+{
+	return !IsNetMode(Object, NM_DedicatedServer);
+}
+
+template<Concepts::is_uobject TReturnType, Concepts::has_get_owner TObject>
+auto GetOwner(const TObject& Object)
+{
+	using FReturnTypeOfGetOwner = decltype(Object.GetOwner());
+	if constexpr (std::is_pointer_v<FReturnTypeOfGetOwner>)
+	{
+		return ::Cast<TReturnType>(Object.GetOwner());
+	}
+	else if constexpr (Concepts::has_get<FReturnTypeOfGetOwner>)
+	{
+		return ::Cast<TReturnType>(Object.GetOwner().Get());
+	}
+	else
+	{
+		static_assert(always_false<TObject>::value, "Object is not return pointer or has Get()");
+		return static_cast<TReturnType*>(nullptr);
+	}
+}
 }
