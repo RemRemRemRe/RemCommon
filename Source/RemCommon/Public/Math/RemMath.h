@@ -95,21 +95,26 @@ namespace Rem::Math
 		return 1.0f - FMath::InvExpApprox(Ln2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
 	}
 
-	template<typename ValueType>
-	requires std::is_floating_point_v<ValueType>
+	template<typename TValue>
+	requires std::is_floating_point_v<TValue>
 	struct TAngle
 	{
-		ValueType Angle;
-		explicit constexpr TAngle(const ValueType Angle) : Angle(Angle) {}
+		TValue Angle;
+		explicit constexpr TAngle(const TValue Angle) : Angle(Angle) {}
 
-		const ValueType& operator*() const
+		const TValue& operator*() const
 		{
 			return Angle;
 		}
 
-		ValueType& operator*()
+		TValue& operator*()
 		{
 			return Angle;
+		}
+
+		bool Equals(const TAngle& V, TValue Tolerance = UE_KINDA_SMALL_NUMBER) const
+		{
+			return FMath::IsNearlyEqual(*this, V, Tolerance);
 		}
 	};
 
