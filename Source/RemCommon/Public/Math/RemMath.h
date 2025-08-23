@@ -161,7 +161,7 @@ namespace Rem::Math
 	/**
 	 * @param Current
 	 * @param Target
-	 * @param HalfLife half of the time it takes from Current to Target
+	 * @param HalfLife half of the time it takes from Current to Target / half of the time it takes to complete interpolation
 	 * @param DeltaTime
 	 *
 	 * @see https://theorangeduck.com/page/spring-roll-call#exactdamper
