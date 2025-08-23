@@ -212,7 +212,7 @@ FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Dele
 	World.GetTimerManager().SetTimer(Handle, [=]
 	{
 		Delegate.Execute();
-	}, UE_SMALL_NUMBER, {});
+	}, UE_KINDA_SMALL_NUMBER, {});
 
 	return Handle;
 }

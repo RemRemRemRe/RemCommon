@@ -20,7 +20,7 @@ enum class ERemComparisonOperator : uint8
 namespace Rem::Math
 {
 	template<ERemComparisonOperator ComparisonOperator, typename T = float>
-	bool CompareValue(const T& Left, const T& Right, float ErrorTolerance = UE_SMALL_NUMBER)
+	bool CompareValue(const T& Left, const T& Right, float ErrorTolerance = UE_KINDA_SMALL_NUMBER)
 	{
 		if constexpr (ComparisonOperator == ERemComparisonOperator::Equals)
 		{
