@@ -12,6 +12,10 @@ namespace Rem::Math
 {
 	constexpr auto CounterClockwiseRotationAngleThreshold{5.0f};
 
+	constexpr auto Ln2{0.6931471805599453f}; // FMath::Loge(2.0f).
+
+	constexpr auto FiveDigitsAfterDecimalPoint{1.e-5f}; // Five digits after the decimal point
+
 	template<typename T>
 	requires (!std::is_signed_v<T>)
 	[[nodiscard]] T GetBitsNeeded(const T Value)
@@ -84,18 +88,11 @@ namespace Rem::Math
 		return Angle;
 	}
 
-	inline float Damp(const float DeltaTime, const float Smoothing)
+	inline float DamperExact(const float DeltaTime, const float HalfLife)
 	{
-		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
+		// https://theorangeduck.com/page/spring-roll-call#exactdamper
 
-		return 1.0f - FMath::Pow(Smoothing, DeltaTime);
-	}
-
-	inline float ExponentialDecay(const float DeltaTime, const float Lambda)
-	{
-		// https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
-
-		return 1.0f - FMath::InvExpApprox(Lambda * DeltaTime);
+		return 1.0f - FMath::InvExpApprox(Ln2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
 	}
 
 	template<typename ValueType>
@@ -117,7 +114,7 @@ namespace Rem::Math
 	};
 
 	template <typename T>
-	[[nodiscard]] constexpr T Interpolate(const T& From, const T& To, float Ratio)
+	[[nodiscard]] constexpr T Lerp(const T& From, const T& To, float Ratio)
 	{
 		if (CompareValue<ERemComparisonOperator::Equals>(From, To))
 		{
@@ -156,33 +153,25 @@ namespace Rem::Math
 		}
 	}
 
+	/**
+	 * @param Current
+	 * @param Target
+	 * @param HalfLife half of the time it takes from Current to Target
+	 * @param DeltaTime
+	 *
+	 * @see https://theorangeduck.com/page/spring-roll-call#exactdamper
+	 */
 	template <typename T>
-	[[nodiscard]] constexpr T ExponentialDecay(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
+	[[nodiscard]] constexpr T DamperExact(const T& Current, const T& Target, const float DeltaTime, const float HalfLife)
 	{
-		if (Lambda <= 0.0f)
-		{
-			return Target;
-		}
-
-		return Interpolate(Current, Target, ExponentialDecay(DeltaTime, Lambda));
-	}
-
-	template <typename T>
-	[[nodiscard]] constexpr T Damp(const T& Current, const T& Target, const float DeltaTime, const float Lambda)
-	{
-		if (Lambda <= 0.0f)
-		{
-			return Target;
-		}
-
-		return Interpolate(Current, Target, Damp(DeltaTime, Lambda));
+		return Lerp(Current, Target, DamperExact(DeltaTime, HalfLife));
 	}
 
 	template <typename ValueType, typename StateType>
-	[[nodiscard]] constexpr ValueType SpringDamp(StateType& SpringState, const ValueType& Current, const ValueType& Target, const float DeltaTime,
+	[[nodiscard]] constexpr ValueType SpringDamper(StateType& SpringState, const ValueType& Current, const ValueType& Target, const float DeltaTime,
 		const float Frequency, const float DampingRatio, const float TargetVelocityAmount)
 	{
-		if (DeltaTime <= UE_SMALL_NUMBER)
+		if (DeltaTime <= FiveDigitsAfterDecimalPoint)
 		{
 			return Current;
 		}
