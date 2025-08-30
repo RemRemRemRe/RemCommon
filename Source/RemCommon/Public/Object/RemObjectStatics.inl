@@ -7,6 +7,7 @@
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Enum/RemHelperEnum.h"
+#include "Enum/RemHelperEnumAlias.h"
 #include "GameFramework/Pawn.h"
 
 class UMovementComponent;
@@ -160,7 +161,7 @@ T* FindMovementComponent(const AActor& Actor)
 	return Actor.FindComponentByClass<T>();
 }
 
-template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn::Yes>
+template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn{Enum::EYesOrNo::Yes}>
 [[nodiscard]] TActor* SpawnActor(UWorld& World, const TSubclassOf<TActor> Class, const FTransform& SpawnTransform,
 	const ESpawnActorCollisionHandlingMethod CollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::Undefined,
 	AActor* OwnerActor = nullptr,
@@ -170,7 +171,7 @@ template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSp
 {
 	auto* Actor = World.SpawnActorDeferred<TActor>(Class, SpawnTransform, OwnerActor, Instigator, CollisionHandlingMethod, ScaleMethod);
 
-	if constexpr (CallFinishSpawn == Enum::ECallFinishSpawn::Yes)
+	if constexpr (CallFinishSpawn == Enum::EYesOrNo::Yes)
 	{
 		if (Actor)
 		{
@@ -181,7 +182,7 @@ template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSp
 	return Actor;
 }
 
-template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn::Yes>
+template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn{Enum::EYesOrNo::Yes}>
 [[nodiscard]] TActor* SpawnActor(AActor& OwnerActor, const TSubclassOf<TActor> Class, const FTransform& SpawnTransform,
 	const ESpawnActorCollisionHandlingMethod CollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::Undefined,
 	APawn* Instigator = nullptr,

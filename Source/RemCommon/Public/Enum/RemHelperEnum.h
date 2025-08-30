@@ -44,8 +44,6 @@ namespace Rem::Enum
 		No,
 	};
 
-	using ECallFinishSpawn = EYesOrNo;
-
 	enum class ETransitionType : uint8
 	{
 		ToNext,

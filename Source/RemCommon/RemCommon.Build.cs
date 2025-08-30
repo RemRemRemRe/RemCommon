@@ -22,7 +22,9 @@ public class RemCommon : ModuleRules
 				"Engine",
 
 				"DeveloperSettings",
-				"GameplayTags"
+				"GameplayTags",
+                
+				"strong_alias",
 			]
 		);
 	}
