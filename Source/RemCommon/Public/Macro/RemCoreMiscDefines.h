@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Macro/RemMacroUtilities.h"
+#include "Macro/RemLogMacros.h"
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
