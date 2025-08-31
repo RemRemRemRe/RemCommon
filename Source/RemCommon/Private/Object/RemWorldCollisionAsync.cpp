@@ -1,4 +1,4 @@
-﻿// Copyright RemRemRemRe. 2025. All Rights Reserved.
+// Copyright RemRemRemRe. 2025. All Rights Reserved.
 
 
 #include "Object/RemWorldCollisionAsync.h"
@@ -8,6 +8,10 @@
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemPrivateMemberAccessor.h"
 #include "Enum/RemHelperEnum.h"
+#include "Engine/OverlapResult.h"
+#include "Engine/HitResult.h"
+
+#define REM_API REMCOMMON_API
 
 namespace
 {
@@ -126,4 +130,25 @@ FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext, const 
 {
 	return QueryDataInternal<EUseCurrentFrameBuffer::No, EQueryTraceData::No>(WorldContext, Handle);
 }
+
+template <typename TTraceType>
+REM_API AActor* GetTraceActor(const TTraceType& TraceData)
+{
+    return TraceData.GetActor();
 }
+
+template REM_API AActor* GetTraceActor<FOverlapResult>(const FOverlapResult& TraceData);
+template REM_API AActor* GetTraceActor<FHitResult>(const FHitResult& TraceData);
+
+template <typename TTraceType>
+REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData)
+{
+    return TraceData.GetComponent();
+}
+
+template REM_API UPrimitiveComponent* GetTracePrimitive<FOverlapResult>(const FOverlapResult& TraceData);
+template REM_API UPrimitiveComponent* GetTracePrimitive<FHitResult>(const FHitResult& TraceData);
+
+}
+
+#undef REM_API
