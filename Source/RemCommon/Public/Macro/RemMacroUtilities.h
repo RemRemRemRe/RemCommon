@@ -12,9 +12,15 @@
 		return; \
 	}
 
+#define REM_DEFAULT_LOG_VERBOSITY Log
+#define REM_MAX_LOG_VERBOSITY All
+
 #else
 
 #define REM_RETURN_IF_NOT_GAME_WORLD
+
+#define REM_DEFAULT_LOG_VERBOSITY Display
+#define REM_MAX_LOG_VERBOSITY All
 
 #endif
 
