@@ -24,6 +24,15 @@ T* GetGameInstance(const UObject& Object)
 	return World->GetGameInstance<T>();
 }
 
+template<std::derived_from<AGameStateBase> T = AGameStateBase>
+T* GetGameState(const UObject& Object)
+{
+    auto* World = Object.GetWorld();
+    RemCheckVariable(World, return nullptr);
+
+    return World->GetGameState<T>();
+}
+    
 template<Concepts::is_player_state T = APlayerState>
 T* GetPlayerStateFromPawnOwner(const UActorComponent& Component)
 {
