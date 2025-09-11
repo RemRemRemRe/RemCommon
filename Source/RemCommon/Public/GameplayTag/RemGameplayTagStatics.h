@@ -64,6 +64,5 @@ namespace Rem::GameplayTag
 	 */
 	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch);
 
-	REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch);
 	[[nodiscard]] REMCOMMON_API const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag);
 }
