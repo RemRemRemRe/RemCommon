@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
+
 class UObject;
 struct FOverlapDatum;
 struct FTraceHandle;
