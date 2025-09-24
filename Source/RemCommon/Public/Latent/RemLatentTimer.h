@@ -33,7 +33,7 @@ namespace Rem::Latent
 	/**
 	 * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
 	 *
-	 * @note do set bSkipCountingThisFrame to TRUE if you're set timer WITHIN a latent timer callback
+	 * @note do set bSkipCountingThisFrame to TRUE if you're set timer WITHIN a latent timer callback,
 	 * or it may cause infinite loop when delta time is larger enough than your TimeToDelay
 	 *
 	 * @LoopCount 0 means loop forever
@@ -107,7 +107,7 @@ namespace Rem::Latent
 		FTimeOrFrame32 CurrentTimeOrFrame{1};
 
 		/**
-		 * "format" of TimeOrFrameToDelay, default to frame. 1 is time, 0 is frame
+		 * "format" of TimeOrFrameToDelay, default to frame. 1 for time, 0 for frame
 		 */
 		uint32 bTimeOrFrame : 1{0};
 
@@ -143,7 +143,7 @@ namespace Rem::Latent
 
 	/**
 	 * @note if you are writing something like "retry every frame" or "retry next frame", use SetTimerForNextTick
-	 * or infinite loop happens if this called within FLatentActionManager::ProcessLatentActions
+	 * or infinite loop happens if this called within FLatentActionManager::ProcessLatentActions,
 	 *
 	 * and it will call back in next frame if FLatentActionManager::ProcessLatentActions is called on WorldContextObject this frame
 	 *
@@ -185,7 +185,7 @@ namespace Rem::Latent
 	/**
 	 * this could mimic re triggerable timer, won't affect loop count though
 	 *
-	 * @return true if found the timer and reset it's delay, time or frame
+	 * @return true if found the timer and reset its delay, time or frame
 	 */
 	REMCOMMON_API bool ResetTimerDelay(UObject& WorldContextObject, FTimerHandle TimerHandle);
 	REMCOMMON_API void ResetTimerDelay(FTimerLatentAction_Delay& TimerAction);
