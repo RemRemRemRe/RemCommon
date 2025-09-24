@@ -13,6 +13,8 @@
 
 #define REM_API REMCOMMON_API
 
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GWorldAsyncTraceStateAccessor, &UWorld::AsyncTraceState, FWorldAsyncTraceState UWorld::*);
+
 namespace
 {
 
@@ -60,8 +62,6 @@ struct FBufferIndexPair
 		return Array[Block]->Buffer[Index];
 	}
 };
-
-REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GWorldAsyncTraceStateAccessor, &UWorld::AsyncTraceState, FWorldAsyncTraceState UWorld::*);
 
 using EUseCurrentFrameBuffer = Rem::Enum::EYesOrNo;
 using EQueryTraceData = Rem::Enum::EYesOrNo;
