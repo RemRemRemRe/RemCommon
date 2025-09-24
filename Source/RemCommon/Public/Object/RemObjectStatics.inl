@@ -225,18 +225,21 @@ bool IsNetworkedClient(const auto& Object)
 template<Concepts::is_uobject TReturnType, Concepts::has_get_owner TObject>
 auto GetOwner(const TObject& Object)
 {
-	using FReturnTypeOfGetOwner = decltype(Object.GetOwner());
-	if constexpr (std::is_pointer_v<FReturnTypeOfGetOwner>)
-	{
-		return ::Cast<TReturnType>(Object.GetOwner());
-	}
-	else if constexpr (Concepts::has_get<FReturnTypeOfGetOwner>)
-	{
-		return ::Cast<TReturnType>(Object.GetOwner().Get());
-	}
+    if constexpr (Concepts::has_get_owner<TObject>)
+    {
+        using FReturnTypeOfGetOwner = decltype(Object.GetOwner());
+        if constexpr (Concepts::has_get<FReturnTypeOfGetOwner>)
+        {
+            return ::Cast<TReturnType>(Object.GetOwner().Get());
+        }
+        else
+        {
+            return ::Cast<TReturnType>(Object.GetOwner());
+        }
+    }
 	else
 	{
-		static_assert(always_false<TObject>::value, "Object is not return pointer or has Get()");
+		static_assert(always_false<TObject>::value, "Object don't has member - GetOwner");
 		return static_cast<TReturnType*>(nullptr);
 	}
 }
