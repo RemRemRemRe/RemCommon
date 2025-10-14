@@ -10,12 +10,12 @@ UENUM(BlueprintType)
 enum class ERemArrayOperation : uint8
 {
 	/**
-	 * try put elements in the end of the array
+	 * try putting elements in the end of the array
 	 */
 	PushBack,
 
 	/**
-	 * try put elements in the front of the array
+	 * try putting elements in the front of the array
 	 */
 	InsertFront,
 };

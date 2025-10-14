@@ -9,6 +9,5 @@ URemMetaTags::URemMetaTags(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	// Put it under game section of project setting
-	CategoryName = FName(TEXT("Game"));
+	CategoryName = FName(TEXTVIEW("Game"));
 }
-
