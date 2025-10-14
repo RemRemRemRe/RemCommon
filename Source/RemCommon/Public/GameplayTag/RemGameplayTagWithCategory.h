@@ -11,10 +11,10 @@ struct REMCOMMON_API FRemGameplayTagWithCategory
 {
 	GENERATED_BODY()
 
-private:
 	UPROPERTY(EditAnywhere, Category = "Rem")
 	FGameplayTag Tag;
 
+private:
 #if WITH_EDITORONLY_DATA
 
 	UPROPERTY(EditAnywhere, Category = "Rem")
