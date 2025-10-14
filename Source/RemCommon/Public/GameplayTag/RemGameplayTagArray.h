@@ -12,6 +12,13 @@ struct REMCOMMON_API FRemGameplayTagArray
 {
 	GENERATED_BODY()
 
+#if WITH_EDITORONLY_DATA
+
+	UPROPERTY(EditAnywhere, Category = "Rem")
+    FGameplayTag OptionalCategory;
+    
+#endif
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (EditInline, TitleProperty = TagName))
 	TArray<FGameplayTag> Tags;
 
