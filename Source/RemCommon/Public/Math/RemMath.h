@@ -11,9 +11,7 @@
 namespace Rem::Math
 {
 	constexpr auto CounterClockwiseRotationAngleThreshold{5.0f};
-
-	constexpr auto Ln2{0.6931471805599453f}; // FMath::Loge(2.0f).
-
+    
 	constexpr auto FiveDigitsAfterDecimalPoint{1.e-5f}; // Five digits after the decimal point
 
 	template<typename T>
@@ -92,7 +90,7 @@ namespace Rem::Math
 	{
 		// https://theorangeduck.com/page/spring-roll-call#exactdamper
 
-		return 1.0f - FMath::InvExpApprox(Ln2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
+		return 1.0f - FMath::InvExpApprox(UE_LN2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
 	}
 
 	template<typename TValue>
@@ -118,6 +116,54 @@ namespace Rem::Math
 		}
 	};
 
+    template<typename T>
+    requires std::is_floating_point_v<T>
+    auto&& GetKindSmallNumber()
+    {
+        if constexpr (std::is_same_v<float, T>)
+        {
+            return GlobalVectorConstants::KindaSmallNumber;
+        }
+        else
+        {
+            static_assert(std::is_same_v<double, T>);
+            return GlobalVectorConstants::DoubleKindaSmallNumber;
+        }
+    }
+
+    template<typename T>
+    requires std::is_floating_point_v<T>
+    auto&& GetSmallNumber()
+    {
+        if constexpr (std::is_same_v<float, T>)
+        {
+            return GlobalVectorConstants::SmallNumber;
+        }
+        else
+        {
+            static_assert(std::is_same_v<double, T>);
+            return GlobalVectorConstants::DoubleSmallNumber;
+        }
+    }
+
+    template <typename T>
+    requires (std::is_same_v<VectorRegister4Double, T> || std::is_same_v<VectorRegister4Float, T>)
+    T RemapRotationForCounterClockwiseRotation(const T& Rotation)
+    {
+        static constexpr auto RemapThreshold{
+            MakeVectorRegisterConstant(180.0f - CounterClockwiseRotationAngleThreshold, 180.0f - CounterClockwiseRotationAngleThreshold,
+                                        180.0f - CounterClockwiseRotationAngleThreshold, 180.0f - CounterClockwiseRotationAngleThreshold)
+        };
+
+        static constexpr auto RemapAngles{MakeVectorRegisterConstant(360.0f, 360.0f, 360.0f, 0.0f)};
+
+        const auto ReverseRotationMask{VectorCompareGE(Rotation, RemapThreshold)};
+
+        const auto ReversedRotation{VectorSubtract(Rotation, RemapAngles)};
+
+        return VectorSelect(ReverseRotationMask, ReversedRotation, Rotation);
+    }
+    
 	template <typename T>
 	[[nodiscard]] constexpr T Lerp(const T& From, const T& To, float Ratio)
 	{
@@ -132,18 +178,41 @@ namespace Rem::Math
 		}
 		else if constexpr (is_instance_v<T, UE::Math::TRotator>)
 		{
-			auto Result{To - From};
-			Result.Normalize();
+#if PLATFORM_ENABLE_VECTORINTRINSICS
+		    const auto FromRegister{VectorLoadFloat3_W0(&From)};
+		    const auto ToRegister{VectorLoadFloat3_W0(&To)};
 
-			Result.Pitch = RemapAngleForCounterClockwiseRotation(Result.Pitch);
-			Result.Yaw = RemapAngleForCounterClockwiseRotation(Result.Yaw);
-			Result.Roll = RemapAngleForCounterClockwiseRotation(Result.Roll);
+		    auto Delta{VectorSubtract(ToRegister, FromRegister)};
+		    Delta = VectorNormalizeRotator(Delta);
 
-			Result *= Ratio;
-			Result += From;
-			Result.Normalize();
+		    if (!VectorAnyGreaterThan(VectorAbs(Delta), GetKindSmallNumber<typename T::FReal>()))
+		    {
+		        return To;
+		    }
 
-			return Result;
+		    Delta = RemapRotationForCounterClockwiseRotation(Delta);
+
+		    auto ResultRegister{VectorMultiplyAdd(Delta, VectorLoadFloat1(&Ratio), FromRegister)};
+		    ResultRegister = VectorNormalizeRotator(ResultRegister);
+
+		    T Result;
+		    VectorStoreFloat3(ResultRegister, &Result);
+
+		    return Result;
+#else
+		    auto Result{To - From};
+		    Result.Normalize();
+
+		    Result.Pitch = RemapAngleForCounterClockwiseRotation(Result.Pitch);
+		    Result.Yaw = RemapAngleForCounterClockwiseRotation(Result.Yaw);
+		    Result.Roll = RemapAngleForCounterClockwiseRotation(Result.Roll);
+
+		    Result *= Ratio;
+		    Result += From;
+		    Result.Normalize();
+
+		    return Result;
+#endif
 		}
 		else if constexpr (is_instance_v<T, TAngle>)
 		{
