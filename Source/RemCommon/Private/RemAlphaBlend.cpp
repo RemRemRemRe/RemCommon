@@ -24,7 +24,8 @@ FVector3f FRemAlphaBlendCurveAndOption::GetAlpha(const float Time, const float B
 		return FVector3f{FAlphaBlend::AlphaToBlendOption(Alpha, BlendOption)};
 	}
 
-	const auto& Curves = Curve->GetCurves();
+    TArray<FRichCurveEditInfoConst, TInlineAllocator<4>> Curves;
+    Curve->GetCurves(Curves);
 
 	RemCheckCondition(Curves.Num() > 0, return FVector3f::OneVector;, REM_NO_LOG_BUT_ENSURE);
 	bOutVectorAlpha = Curves.Num() >= 3;
