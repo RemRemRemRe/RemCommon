@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-// import from https://github.com/Sixze/FabulousUtility/blob/main/Source/FabulousUtility/Public/FuPrivateMemberAccessor.h
+// import from https://github.com/Sixze/ALS-Refactored/blob/main/Source/ALS/Public/Utility/AlsPrivateMemberAccessor.h
 
 namespace Rem::PrivateMemberAccessor
 {
@@ -34,11 +34,11 @@ namespace Rem::PrivateMemberAccessor
 	{
 	    if constexpr (std::is_pointer_v<ThisType>)
 	    {
-	        return This->*TMemberPointer<AccessorName>;
+			return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
 	    }
 	    else
 	    {
-	        return This.*TMemberPointer<AccessorName>;
+			return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
 	    }
 	}
 
@@ -48,11 +48,11 @@ namespace Rem::PrivateMemberAccessor
 	{
 	    if constexpr (std::is_pointer_v<ThisType>)
 	    {
-	        return (This->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+			return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
 	    }
 	    else
 	    {
-	        return (This.*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+			return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
 	    }
 	}
 }
