@@ -165,24 +165,24 @@ namespace Rem::Math
     }
     
 	template <typename T>
-	[[nodiscard]] constexpr T Lerp(const T& From, const T& To, float Ratio)
+	[[nodiscard]] constexpr T Lerp(const T& Current, const T& Target, float Ratio)
 	{
 		if constexpr (is_instance_v<T, UE::Math::TQuat>)
 		{
-			return T::FastLerp(From, To, Ratio).GetNormalized();
+			return T::FastLerp(Current, Target, Ratio).GetNormalized();
 		}
 		else if constexpr (is_instance_v<T, UE::Math::TRotator>)
 		{
 #if PLATFORM_ENABLE_VECTORINTRINSICS
-		    const auto FromRegister{VectorLoadFloat3_W0(&From)};
-		    const auto ToRegister{VectorLoadFloat3_W0(&To)};
+		    const auto CurrentRegister{VectorLoadFloat3_W0(&Current)};
+		    const auto TargetRegister{VectorLoadFloat3_W0(&Target)};
 
-		    auto Delta{VectorSubtract(ToRegister, FromRegister)};
+		    auto Delta{VectorSubtract(TargetRegister, CurrentRegister)};
 		    Delta = VectorNormalizeRotator(Delta);
 
 		    Delta = RemapRotationForCounterClockwiseRotation(Delta);
 
-		    auto ResultRegister{VectorMultiplyAdd(Delta, VectorLoadFloat1(&Ratio), FromRegister)};
+		    auto ResultRegister{VectorMultiplyAdd(Delta, VectorLoadFloat1(&Ratio), CurrentRegister)};
 		    ResultRegister = VectorNormalizeRotator(ResultRegister);
 
 		    T Result;
@@ -190,7 +190,7 @@ namespace Rem::Math
 
 		    return Result;
 #else
-		    auto Result{To - From};
+		    auto Result{Target - Current};
 		    Result.Normalize();
 
 		    Result.Pitch = RemapAngleForCounterClockwiseRotation(Result.Pitch);
@@ -198,7 +198,7 @@ namespace Rem::Math
 		    Result.Roll = RemapAngleForCounterClockwiseRotation(Result.Roll);
 
 		    Result *= Ratio;
-		    Result += From;
+		    Result += Current;
 		    Result.Normalize();
 
 		    return Result;
@@ -206,14 +206,14 @@ namespace Rem::Math
 		}
 		else if constexpr (is_instance_v<T, TAngle>)
 		{
-			auto Delta{FMath::UnwindDegrees(*To - *From)};
+			auto Delta{FMath::UnwindDegrees(*Target - *Current)};
 			Delta = RemapAngleForCounterClockwiseRotation(*Delta);
 
-			return FMath::UnwindDegrees(*From + *Delta * Ratio);
+			return FMath::UnwindDegrees(*Current + *Delta * Ratio);
 		}
 		else
 		{
-			return FMath::Lerp(From, To, Ratio);
+			return FMath::Lerp(Current, Target, Ratio);
 		}
 	}
 
