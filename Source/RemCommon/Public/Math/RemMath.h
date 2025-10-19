@@ -180,11 +180,6 @@ namespace Rem::Math
 		    auto Delta{VectorSubtract(ToRegister, FromRegister)};
 		    Delta = VectorNormalizeRotator(Delta);
 
-		    if (!VectorAnyGreaterThan(VectorAbs(Delta), GetKindSmallNumber<typename T::FReal>()))
-		    {
-		        return To;
-		    }
-
 		    Delta = RemapRotationForCounterClockwiseRotation(Delta);
 
 		    auto ResultRegister{VectorMultiplyAdd(Delta, VectorLoadFloat1(&Ratio), FromRegister)};
