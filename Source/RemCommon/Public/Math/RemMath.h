@@ -167,11 +167,6 @@ namespace Rem::Math
 	template <typename T>
 	[[nodiscard]] constexpr T Lerp(const T& From, const T& To, float Ratio)
 	{
-		if (CompareValue<ERemComparisonOperator::Equals>(From, To))
-		{
-			return To;
-		}
-
 		if constexpr (is_instance_v<T, UE::Math::TQuat>)
 		{
 			return T::FastLerp(From, To, Ratio).GetNormalized();
@@ -238,6 +233,11 @@ namespace Rem::Math
 	template <typename T>
 	[[nodiscard]] constexpr T DamperExact(const T& Current, const T& Target, const float DeltaTime, const float HalfLife)
 	{
+        if (CompareValue<ERemComparisonOperator::Equals>(Current, Target))
+        {
+            return Target;
+        }
+        
 		return Lerp(Current, Target, DamperExact(DeltaTime, HalfLife));
 	}
 
