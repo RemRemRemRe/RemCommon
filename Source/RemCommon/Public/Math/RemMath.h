@@ -334,4 +334,13 @@ namespace Rem::Math
 		Private::PerpendicularCounterClockwiseXY(Result.X, Result.Y);
 		return Result;
 	}
+
+    template <typename T>
+	requires (std::is_floating_point_v<T> || std::is_integral_v<T>)
+    constexpr T GetWrappedValueInRange(const T Value, UE::Math::TVector2<T> ValueRange)
+    {
+        const auto Range = ValueRange.Y - ValueRange.X;
+    
+        return ValueRange.X + FMath::Modulo(Value, Range);
+    }
 }
