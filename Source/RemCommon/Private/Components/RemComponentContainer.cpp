@@ -127,33 +127,3 @@ void FRemComponentContainer::MoveComponents(TArray<TInstancedStruct<FRemComponen
 
 	Components = std::move(InComponents);
 }
-
-FRemComponentContainer& FRemComponentContainer::operator=(const FRemComponentContainer& Other)
-{
-	if (LIKELY(&Other != this))
-	{
-		CopyComponents(Other.GetComponents());
-	}
-
-	return *this;
-}
-
-FRemComponentContainer::FRemComponentContainer(const FRemComponentContainer& Other)
-{
-	CopyComponents(Other.GetComponents());
-}
-
-FRemComponentContainer::FRemComponentContainer(FRemComponentContainer&& Other)
-{
-	MoveComponents(std::move(Other.Components));
-}
-
-FRemComponentContainer& FRemComponentContainer::operator=(FRemComponentContainer&& Other)
-{
-	if (LIKELY(&Other != this))
-	{
-		MoveComponents(std::move(Other.Components));
-	}
-
-	return *this;
-}

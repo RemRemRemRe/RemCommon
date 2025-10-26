@@ -89,11 +89,21 @@ public:
 	void CopyComponents(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
 	void MoveComponents(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
 
-	REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
+    REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
+    
+    FRemComponentContainer() = default;
+    FRemComponentContainer(const FRemComponentContainer&) = delete;
+    FRemComponentContainer(FRemComponentContainer&&) noexcept = delete;
+    FRemComponentContainer& operator=(const FRemComponentContainer&) = delete;
+    FRemComponentContainer& operator=(FRemComponentContainer&&) noexcept = delete;
+    ~FRemComponentContainer() noexcept = default;
+};
 
-	FRemComponentContainer() = default;
-	FRemComponentContainer(const FRemComponentContainer& Other);
-	FRemComponentContainer& operator=(const FRemComponentContainer& Other);
-	FRemComponentContainer(FRemComponentContainer&& Other);
-	FRemComponentContainer& operator=(FRemComponentContainer&& Other);
+template<>
+struct TStructOpsTypeTraits<FRemComponentContainer> : TStructOpsTypeTraitsBase2<FRemComponentContainer>
+{
+    enum
+    {
+        WithCopy = false
+    };
 };
