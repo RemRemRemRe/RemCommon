@@ -62,7 +62,8 @@ void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRe
 
 uint8* AllocateStructMemory(const UStruct& Struct)
 {
-	uint8* StructMemory = static_cast<uint8*>(FMemory::Malloc(Struct.GetStructureSize()));
+	uint8* StructMemory = static_cast<uint8*>(
+	    FMemory::Malloc(Struct.GetStructureSize(), Struct.GetMinAlignment()));
 	RemCheckVariable(StructMemory, return {});
 
 	Struct.InitializeStruct(StructMemory);
