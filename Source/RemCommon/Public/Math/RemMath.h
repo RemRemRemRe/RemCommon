@@ -92,30 +92,7 @@ namespace Rem::Math
 
 		return 1.0f - FMath::InvExpApprox(UE_LN2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
 	}
-
-	template<typename TValue>
-	requires std::is_floating_point_v<TValue>
-	struct TAngle
-	{
-		TValue Angle;
-		explicit constexpr TAngle(const TValue Angle) : Angle(Angle) {}
-
-		const TValue& operator*() const
-		{
-			return Angle;
-		}
-
-		TValue& operator*()
-		{
-			return Angle;
-		}
-
-		bool Equals(const TAngle& V, TValue Tolerance = UE_KINDA_SMALL_NUMBER) const
-		{
-			return FMath::IsNearlyEqual(*this, V, Tolerance);
-		}
-	};
-
+    
     template<typename T>
     requires std::is_floating_point_v<T>
     auto&& GetKindSmallNumber()
@@ -146,6 +123,31 @@ namespace Rem::Math
         }
     }
 
+	template<typename TValue>
+	requires std::is_floating_point_v<TValue>
+	struct TAngle
+	{
+	    using FReal = TValue;
+	    
+		TValue Angle;
+		explicit constexpr TAngle(const TValue Angle) : Angle(Angle) {}
+
+		const TValue& operator*() const
+		{
+			return Angle;
+		}
+
+		TValue& operator*()
+		{
+			return Angle;
+		}
+
+		bool Equals(const TAngle& V, TValue Tolerance = GetKindSmallNumber<TValue>()) const
+		{
+			return FMath::IsNearlyEqual(Angle, V.Angle, Tolerance);
+		}
+	};
+    
     template <typename T>
     requires (std::is_same_v<VectorRegister4Double, T> || std::is_same_v<VectorRegister4Float, T>)
     T RemapRotationForCounterClockwiseRotation(const T& Rotation)
@@ -207,9 +209,9 @@ namespace Rem::Math
 		else if constexpr (is_instance_v<T, TAngle>)
 		{
 			auto Delta{FMath::UnwindDegrees(*Target - *Current)};
-			Delta = RemapAngleForCounterClockwiseRotation(*Delta);
+			Delta = RemapAngleForCounterClockwiseRotation(Delta);
 
-			return FMath::UnwindDegrees(*Current + *Delta * Ratio);
+			return T{FMath::UnwindDegrees(*Current + Delta * Ratio)};
 		}
 		else
 		{
@@ -234,6 +236,78 @@ namespace Rem::Math
         }
         
 		return Lerp(Current, Target, DamperExact(DeltaTime, HalfLife));
+	}
+
+namespace Private
+{
+        
+    template <typename T>
+    requires std::is_floating_point_v<T>
+    UE::Math::TRotator<T> DampRotatorWithHalfLife3(const UE::Math::TRotator<T>& Current, const UE::Math::TRotator<T>& Target,
+        const float DeltaTime, const FVector3f HalfLife3)
+    {
+        TAngle<T> CurrentPitch{Current.Pitch}, CurrentYaw{Current.Pitch}, CurrentRoll{Current.Roll};
+        TAngle<T> TargetPitch{Target.Pitch}, TargetYaw{Target.Pitch}, TargetRoll{Target.Roll};
+
+        TAngle<T> ResultPitch = Math::DamperExact(CurrentPitch, TargetPitch, DeltaTime, HalfLife3.X);
+        TAngle<T> ResultYaw = Math::DamperExact(CurrentYaw, TargetYaw, DeltaTime, HalfLife3.Y);
+        TAngle<T> ResultRoll = Math::DamperExact(CurrentRoll, TargetRoll, DeltaTime, HalfLife3.Z);
+
+        UE::Math::TRotator<T> Result = {*ResultPitch, *ResultYaw, *ResultRoll};
+        Result.Normalize();
+        
+        return Result;
+    }
+
+}
+    
+    template <typename T>
+    requires (Rem::is_instance_v<T, UE::Math::TRotator>
+        || Rem::is_instance_v<T, UE::Math::TQuat>
+        || Rem::is_instance_v<T, UE::Math::TVector>
+        )
+	[[nodiscard]] constexpr T DamperExact(const T& Current, const T& Target, const float DeltaTime, const FVector3f HalfLife3)
+	{
+        if (CompareValue<ERemComparisonOperator::Equals>(Current, Target))
+        {
+            return Target;
+        }
+
+        if (HalfLife3.AllComponentsEqual())
+        {
+            return Lerp(Current, Target, DamperExact(DeltaTime, HalfLife3.X));
+        }
+        
+        T Result;
+        if constexpr (Rem::is_instance_v<T, UE::Math::TRotator>)
+        {
+            Result = Private::DampRotatorWithHalfLife3(Current, Target, DeltaTime, HalfLife3);
+        }
+        else if constexpr (Rem::is_instance_v<T, UE::Math::TQuat>)
+        {
+            auto CurrentRotator{Current.Rotator()};
+            auto TargetRotator{Target.Rotator()};
+
+            auto ResultRotator{Private::DampRotatorWithHalfLife3(CurrentRotator, TargetRotator, DeltaTime, HalfLife3)};
+            
+            Result = ResultRotator.Quaternion();
+        }
+        else if constexpr (Rem::is_instance_v<T, UE::Math::TVector>)
+        {
+            Result = {
+                Math::DamperExact(Current.X, Target.X, DeltaTime, HalfLife3.X),
+                Math::DamperExact(Current.Y, Target.Y, DeltaTime, HalfLife3.Y),
+                Math::DamperExact(Current.Z, Target.Z, DeltaTime, HalfLife3.Z),
+            };
+        }
+        else
+        {
+            static_assert(Rem::always_false<T>::value, "there might be a better way to handle it");
+            
+            Result = Lerp(Current, Target, DamperExact(DeltaTime, HalfLife3.X));
+        }
+        
+        return Result;
 	}
 
 	template <typename ValueType, typename StateType>
