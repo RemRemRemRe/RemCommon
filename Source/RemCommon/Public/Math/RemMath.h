@@ -16,7 +16,7 @@ namespace Rem::Math
 
 	template<typename T>
 	requires (!std::is_signed_v<T>)
-	[[nodiscard]] T GetBitsNeeded(const T Value)
+	[[nodiscard]] constexpr T GetBitsNeeded(const T Value)
 	{
 		if constexpr (std::is_same_v<T, uint8>)
 		{
@@ -86,7 +86,7 @@ namespace Rem::Math
 		return Angle;
 	}
 
-	inline float DamperExact(const float DeltaTime, const float HalfLife)
+	[[nodiscard]] constexpr float DamperExact(const float DeltaTime, const float HalfLife)
 	{
 		// https://theorangeduck.com/page/spring-roll-call#exactdamper
 
@@ -95,7 +95,7 @@ namespace Rem::Math
     
     template<typename T>
     requires std::is_floating_point_v<T>
-    auto&& GetKindSmallNumber()
+    [[nodiscard]] constexpr auto&& GetKindSmallNumber()
     {
         if constexpr (std::is_same_v<float, T>)
         {
@@ -110,7 +110,7 @@ namespace Rem::Math
 
     template<typename T>
     requires std::is_floating_point_v<T>
-    auto&& GetSmallNumber()
+    [[nodiscard]] constexpr auto&& GetSmallNumber()
     {
         if constexpr (std::is_same_v<float, T>)
         {
@@ -150,7 +150,7 @@ namespace Rem::Math
     
     template <typename T>
     requires (std::is_same_v<VectorRegister4Double, T> || std::is_same_v<VectorRegister4Float, T>)
-    T RemapRotationForCounterClockwiseRotation(const T& Rotation)
+    [[nodiscard]] constexpr T RemapRotationForCounterClockwiseRotation(const T& Rotation)
     {
         static constexpr auto RemapThreshold{
             MakeVectorRegisterConstant(180.0f - CounterClockwiseRotationAngleThreshold, 180.0f - CounterClockwiseRotationAngleThreshold,
@@ -243,7 +243,7 @@ namespace Private
         
     template <typename T>
     requires std::is_floating_point_v<T>
-    UE::Math::TRotator<T> DampRotatorWithHalfLife3(const UE::Math::TRotator<T>& Current, const UE::Math::TRotator<T>& Target,
+    [[nodiscard]] constexpr UE::Math::TRotator<T> DampRotatorWithHalfLife3(const UE::Math::TRotator<T>& Current, const UE::Math::TRotator<T>& Target,
         const float DeltaTime, const FVector3f HalfLife3)
     {
         TAngle<T> CurrentPitch{Current.Pitch}, CurrentYaw{Current.Pitch}, CurrentRoll{Current.Roll};
@@ -411,7 +411,7 @@ namespace Private
 
     template <typename T>
 	requires (std::is_floating_point_v<T> || std::is_integral_v<T>)
-    constexpr T GetWrappedValueInRange(const T Value, UE::Math::TVector2<T> ValueRange)
+    [[nodiscard]] constexpr T GetWrappedValueInRange(const T Value, UE::Math::TVector2<T> ValueRange)
     {
         const auto Range = ValueRange.Y - ValueRange.X;
     
