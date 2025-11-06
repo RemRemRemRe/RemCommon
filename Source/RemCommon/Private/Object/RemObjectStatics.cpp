@@ -227,10 +227,22 @@ FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimer
 
 FVector GetActorFeetLocation(const AActor& Actor)
 {
-	if (const auto* MovementComponent = FindMovementComponent<UNavMovementComponent>(Actor))
-	{
-		return MovementComponent->GetActorFeetLocation();
-	}
+    const UNavMovementComponent* MovementComponent;
+    
+    if (auto* Pawn = Cast<APawn>(&Actor))
+    {
+        MovementComponent = Pawn->GetMovementComponent();
+        if (MovementComponent)
+        {
+		    return MovementComponent->GetActorFeetLocation();
+        }
+    }
+    
+    MovementComponent = FindMovementComponent<UNavMovementComponent>(Actor);
+    if (MovementComponent)
+    {
+        return MovementComponent->GetActorFeetLocation();
+    }
 
 	RemCheckCondition(Actor.GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
 	return Actor.GetRootComponent()->GetComponentLocation() - FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z};
