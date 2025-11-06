@@ -9,10 +9,10 @@
 
 namespace Rem::Struct
 {
-    template <Rem::Concepts::has_static_struct StructType>
-    TStructView<StructType> MakeView(const FStructView View)
+    template <Rem::Concepts::has_static_struct TStructType>
+    TStructView<TStructType> MakeView(const FStructView View)
     {
-        using FTResult = TStructView<StructType>;
+        using FTResult = TStructView<TStructType>;
         FTResult Result{};
         
         static_assert(sizeof(FStructView) == sizeof(FTResult));
@@ -23,21 +23,21 @@ namespace Rem::Struct
         return Result;
     }
 
-    template <Rem::Concepts::has_static_struct StructType>
-    TStructView<StructType> TryMakeView(const FStructView View)
+    template <Rem::Concepts::has_static_struct TStructType>
+    TStructView<TStructType> TryMakeView(const FStructView View)
     {
-        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
+        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(TStructType::StaticStruct()))
         {
-            return MakeView<StructType>(View);
+            return MakeView<TStructType>(View);
         }
 
-        return TStructView<StructType>{};
+        return TStructView<TStructType>{};
     }
 
-    template <Rem::Concepts::has_static_struct StructType>
-    TConstStructView<StructType> MakeView(const FConstStructView View)
+    template <Rem::Concepts::has_static_struct TStructType>
+    TConstStructView<TStructType> MakeView(const FConstStructView View)
     {
-        using FTResult = TConstStructView<StructType>;
+        using FTResult = TConstStructView<TStructType>;
         FTResult Result{};
         
         static_assert(sizeof(FConstStructView) == sizeof(FTResult));
@@ -48,26 +48,26 @@ namespace Rem::Struct
         return Result;
     }
 
-    template <Rem::Concepts::has_static_struct StructType>
-    TConstStructView<StructType> TryMakeView(const FConstStructView View)
+    template <Rem::Concepts::has_static_struct TStructType>
+    TConstStructView<TStructType> TryMakeView(const FConstStructView View)
     {
-        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
+        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(TStructType::StaticStruct()))
         {
-            return MakeView<StructType>(View);
+            return MakeView<TStructType>(View);
         }
 
-        return TConstStructView<StructType>{};
+        return TConstStructView<TStructType>{};
     }
     
-	template <typename StructType, Concepts::is_struct_utils TStructUtils>
+	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
 	auto FindStructView(TArrayView<TStructUtils> BaseStructsArrayView)
 	{
-		using TResult = TStructView<StructType>;
-		TResult Result{};
+		using FResult = TStructView<TStructType>;
+		FResult Result{};
 
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-		    Result = TryMakeView<StructType>(FStructView(
+		    Result = TryMakeView<TStructType>(FStructView(
 		        BaseStruct.GetScriptStruct(), const_cast<uint8*>(BaseStruct.GetMemory())));
 		    
 			if (Result.IsValid())
@@ -79,15 +79,15 @@ namespace Rem::Struct
 		return Result;
 	}
 
-	template <typename StructType, Concepts::is_struct_utils TStructUtils>
+	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
 	auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
 	{
-		using TResult = TConstStructView<StructType>;
-		TResult Result{};
+		using FResult = TConstStructView<TStructType>;
+		FResult Result{};
 
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-		    Result = TryMakeView<StructType>(FConstStructView(
+		    Result = TryMakeView<TStructType>(FConstStructView(
 		        BaseStruct.GetScriptStruct(), BaseStruct.GetMemory()));
 		    
 		    if (Result.IsValid())
@@ -99,26 +99,26 @@ namespace Rem::Struct
 		return Result;
 	}
 
-	template <typename StructType, Concepts::is_struct_utils TStructUtils>
-	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView, TFunctionRef<void(StructType&)> FunctionRef)
+	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView, TFunctionRef<void(TStructType&)> FunctionRef)
 	{
 		for (auto& BaseStruct : BaseStructsArrayView)
 		{
-			if constexpr (!std::is_const_v<StructType> &&
-				requires(TStructUtils StructUtils, StructType* Struct)
+			if constexpr (!std::is_const_v<TStructType> &&
+				requires(TStructUtils StructUtils, TStructType* Struct)
 				{
 					// has GetMutablePtr
-					Struct = StructUtils.template GetMutablePtr<StructType>();
+					Struct = StructUtils.template GetMutablePtr<TStructType>();
 				})
 			{
-				if (auto* Ptr = BaseStruct.template GetMutablePtr<StructType>())
+				if (auto* Ptr = BaseStruct.template GetMutablePtr<TStructType>())
 				{
 					FunctionRef(*Ptr);
 				}
 			}
 			else
 			{
-				if (auto* Ptr = BaseStruct.template GetPtr<StructType>())
+				if (auto* Ptr = BaseStruct.template GetPtr<TStructType>())
 				{
 					FunctionRef(*Ptr);
 				}
