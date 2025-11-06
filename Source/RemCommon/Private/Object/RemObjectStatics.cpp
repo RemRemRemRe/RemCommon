@@ -245,7 +245,9 @@ FVector GetActorFeetLocation(const AActor& Actor)
     }
 
 	RemCheckCondition(Actor.GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
-	return Actor.GetRootComponent()->GetComponentLocation() - FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z};
+    
+	return Actor.GetRootComponent()->GetComponentTransform().TransformPosition(
+	    FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z});
 }
 
 FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController)
