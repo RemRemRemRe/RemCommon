@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RemInstancedStructStaics.inl"
 #include "Macro/RemAssertionMacros.h"
 #include "StructUtils/InstancedStructContainer.h"
 
@@ -34,8 +35,34 @@ struct FRemInstancedStructContainer
 
     REM_API FStructView TryGetView(const FKeyType Key);
     REM_API FConstStructView TryGetView(const FKeyType Key) const;
+
+    template <Rem::Concepts::has_static_struct T>
+    TStructView<T> TryGetView(const FKeyType Key)
+    {
+        const auto View = TryGetView(Key);
+
+        if (!View.IsValid() || !View.GetScriptStruct()->IsChildOf(T::StaticStruct()))
+        {
+            return TStructView<T>{};
+        }
+        
+        return Rem::Struct::TryMakeView<T>(View);
+    }
+
+    template <Rem::Concepts::has_static_struct T>
+    TConstStructView<T> TryGetView(const FKeyType Key) const
+    {
+        const auto View = TryGetView(Key);
+
+        if (!View.IsValid() || !View.GetScriptStruct()->IsChildOf(T::StaticStruct()))
+        {
+            return TConstStructView<T>{};
+        }
+        
+        return Rem::Struct::TryMakeView<T>(View);
+    }
     
-    template <typename T>
+    template <Rem::Concepts::has_static_struct T>
     T* TryGetPtr(const FKeyType Key) const
     {
         const auto View = TryGetView(Key);
@@ -43,7 +70,7 @@ struct FRemInstancedStructContainer
         return const_cast<T*>(Ptr);
     }
 
-    template <typename T>
+    template <Rem::Concepts::has_static_struct T>
     T& Get(const FKeyType Key) const
     {
         const auto View = TryGetView(Key);
