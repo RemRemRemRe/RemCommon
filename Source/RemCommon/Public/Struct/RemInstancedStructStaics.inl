@@ -26,7 +26,7 @@ namespace Rem::Struct
     template <Rem::Concepts::has_static_struct StructType>
     TStructView<StructType> TryMakeView(const FStructView View)
     {
-        if (View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
+        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
         {
             return MakeView<StructType>(View);
         }
@@ -51,7 +51,7 @@ namespace Rem::Struct
     template <Rem::Concepts::has_static_struct StructType>
     TConstStructView<StructType> TryMakeView(const FConstStructView View)
     {
-        if (View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
+        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(StructType::StaticStruct()))
         {
             return MakeView<StructType>(View);
         }
