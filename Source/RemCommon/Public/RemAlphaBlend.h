@@ -38,7 +38,7 @@ struct REMCOMMON_API FRemAlphaBlendCurve : public FRemAlphaBlend
 };
 
 /**
- * It has the same size as FRemAlphaBlendCurve, but could serve as an all in one alternative where selection by type is not needed
+ * It has the same size as FRemAlphaBlendCurve, but could serve as an all-in-one alternative where selection by type is not needed
  */
 USTRUCT(Blueprintable)
 struct REMCOMMON_API FRemAlphaBlendCurveAndOption : public FRemAlphaBlendOption

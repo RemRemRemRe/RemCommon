@@ -98,6 +98,28 @@ struct REMCOMMON_API FRemDoubleArrayWrapper
 };
 
 USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemVector3FWrapper
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    FVector3f Vector{ForceInitToZero};
+
+    REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Vector)
+};
+
+USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemVector3FArrayWrapper
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    TArray<FVector3f> Vectors{};
+
+    REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Vectors)
+};
+
+USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemTextWrapper
 {
 	GENERATED_BODY()
