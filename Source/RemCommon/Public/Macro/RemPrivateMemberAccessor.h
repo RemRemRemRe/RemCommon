@@ -8,53 +8,53 @@
 
 namespace Rem::PrivateMemberAccessor
 {
-	// Global pointer to a field or method.
-	template <typename AccessorName>
-	typename AccessorName::MemberType TMemberPointer;
+    // Global pointer to a field or method.
+    template <typename AccessorName>
+    AccessorName::MemberType TMemberPointer;
 
-	// Struct that is used to initialize TPointer.
-	template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
-	struct TPointerInitializer
-	{
-		TPointerInitializer()
-		{
-			TMemberPointer<AccessorName> = MemberPointer;
-		}
+    // Struct that is used to initialize TPointer.
+    template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
+    struct TPointerInitializer
+    {
+        TPointerInitializer()
+        {
+            TMemberPointer<AccessorName> = MemberPointer;
+        }
 
-		static TPointerInitializer Instance;
-	};
+        static TPointerInitializer Instance;
+    };
 
-	// Declaration of a TPointerInitializer instance.
-	template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
-	TPointerInitializer<AccessorName, MemberPointer> TPointerInitializer<AccessorName, MemberPointer>::Instance;
+    // Declaration of a TPointerInitializer instance.
+    template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
+    TPointerInitializer<AccessorName, MemberPointer> TPointerInitializer<AccessorName, MemberPointer>::Instance;
 
-    // Returns the value of the data member referenced by this accessor.
-	template <typename AccessorName, typename ThisType>
-    decltype(auto) Access(ThisType&& This)
-	{
-	    if constexpr (std::is_pointer_v<ThisType>)
-	    {
-			return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
-	    }
-	    else
-	    {
-			return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
-	    }
-	}
-
-    // Invokes the member function referenced by this accessor.
+    // Returns the value of the data member or invokes the member function referenced by this accessor.
     template <typename AccessorName, typename ThisType, typename... ArgumentsType>
-    decltype(auto) Invoke(ThisType&& This, ArgumentsType&&... Arguments)
-	{
-	    if constexpr (std::is_pointer_v<ThisType>)
-	    {
-			return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
-	    }
-	    else
-	    {
-			return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
-	    }
-	}
+    decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
+    {
+        if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
+        {
+            if constexpr (sizeof...(ArgumentsType) > 0)
+            {
+                return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            }
+            else
+            {
+                return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
+            }
+        }
+        else
+        {
+            if constexpr (sizeof...(ArgumentsType) > 0)
+            {
+                return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            }
+            else
+            {
+                return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
+            }
+        }
+    }
 }
 
 /**
@@ -70,7 +70,7 @@ namespace Rem::PrivateMemberAccessor
  * REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GOnTagUpdatedAccessor, &UAbilitySystemComponent::OnTagUpdated,
     void (UAbilitySystemComponent::*)(const FGameplayTag& Tag, bool bTagExists));
  *
- * GOnTagUpdatedAccessor::Invoke(AbilitySystem, Tag, bTagExists);
+ * GOnTagUpdatedAccessor::Access(AbilitySystem, Tag, bTagExists);
  *
  */
 #define REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(AccessorName, MemberPointer, ...) \
@@ -78,19 +78,13 @@ namespace Rem::PrivateMemberAccessor
     { \
 	    struct AccessorName \
 	    { \
-		    using MemberType = __VA_ARGS__; \
-		    \
-		    template <typename ThisType> \
-		    static decltype(auto) Access(ThisType&& This) \
-		    { \
-			    return Rem::PrivateMemberAccessor::Access<AccessorName>(Forward<ThisType>(This)); \
-		    } \
-		    \
-		    template <typename ThisType, typename... ArgumentsType> \
-		    static decltype(auto) Invoke(ThisType&& This, ArgumentsType&&... Arguments) \
-		    { \
-			    return Rem::PrivateMemberAccessor::Invoke<AccessorName>(Forward<ThisType>(This), Forward<ArgumentsType>(Arguments)...); \
-		    } \
+            using MemberType = __VA_ARGS__; \
+            \
+            template <typename ThisType, typename... ArgumentsType> \
+            static decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments) \
+            { \
+                return Rem::PrivateMemberAccessor::Access<AccessorName>(Forward<ThisType>(This), Forward<ArgumentsType>(Arguments)...); \
+            } \
 	    }; \
     } \
 	\
