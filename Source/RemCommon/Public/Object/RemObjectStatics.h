@@ -6,6 +6,7 @@
 
 #include "RemObjectStatics.generated.h"
 
+class ACharacter;
 class FAudioDeviceHandle;
 class UGameInstance;
 class APlayerCameraManager;
@@ -92,6 +93,8 @@ public:
 
 namespace Rem::Object
 {
+    REM_API extern const FName RootBone;
+    
 	REM_API FAudioDeviceHandle GetAudioDevice(const UObject& Object);
 
 	REM_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
@@ -134,6 +137,8 @@ namespace Rem::Object
 	REM_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
 	REM_API FVector GetActorFeetLocation(const AActor& Actor);
+	REM_API FTransform GetRootTransform(const ACharacter& Character);
+	REM_API FVector GetRootLocation(const ACharacter& Character);
 
 	REM_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
 	REM_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);

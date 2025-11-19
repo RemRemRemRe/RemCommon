@@ -15,6 +15,8 @@
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
 #include "AudioDeviceHandle.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
 #include "Math/RemMath.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
@@ -127,16 +129,19 @@ bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* Ne
 	return Actor->SetRootComponent(NewRootComponent);
 }
 
-FAudioDeviceHandle Rem::Object::GetAudioDevice(const UObject& Object)
+
+namespace Rem::Object
+{
+    
+const FName RootBone{TEXTVIEW("root")};
+    
+FAudioDeviceHandle GetAudioDevice(const UObject& Object)
 {
 	auto* World = Object.GetWorld();
 	RemCheckVariable(World, return {});
 
 	return World->GetAudioDevice();
 }
-
-namespace Rem::Object
-{
 
 void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
 	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate)
@@ -248,6 +253,19 @@ FVector GetActorFeetLocation(const AActor& Actor)
     
 	return Actor.GetRootComponent()->GetComponentTransform().TransformPosition(
 	    FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z});
+}
+
+FTransform GetRootTransform(const ACharacter& Character)
+{
+    auto* Mesh = Character.GetMesh();
+    RemEnsureVariable(Mesh, return FTransform::Identity, REM_NO_LOG_BUT_ENSURE);
+
+    return Mesh->GetSocketTransform(RootBone);
+}
+
+FVector GetRootLocation(const ACharacter& Character)
+{
+    return GetRootTransform(Character).GetLocation();
 }
 
 FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController)
