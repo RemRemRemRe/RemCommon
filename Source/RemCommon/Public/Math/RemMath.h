@@ -246,8 +246,8 @@ namespace Private
     [[nodiscard]] constexpr UE::Math::TRotator<T> DampRotatorWithHalfLife3(const UE::Math::TRotator<T>& Current, const UE::Math::TRotator<T>& Target,
         const float DeltaTime, const FVector3f HalfLife3)
     {
-        TAngle<T> CurrentPitch{Current.Pitch}, CurrentYaw{Current.Pitch}, CurrentRoll{Current.Roll};
-        TAngle<T> TargetPitch{Target.Pitch}, TargetYaw{Target.Pitch}, TargetRoll{Target.Roll};
+        TAngle<T> CurrentPitch{Current.Pitch}, CurrentYaw{Current.Yaw}, CurrentRoll{Current.Roll};
+        TAngle<T> TargetPitch{Target.Pitch}, TargetYaw{Target.Yaw}, TargetRoll{Target.Roll};
 
         TAngle<T> ResultPitch = Math::DamperExact(CurrentPitch, TargetPitch, DeltaTime, HalfLife3.X);
         TAngle<T> ResultYaw = Math::DamperExact(CurrentYaw, TargetYaw, DeltaTime, HalfLife3.Y);
