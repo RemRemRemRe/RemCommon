@@ -171,7 +171,7 @@ namespace Rem::Math
 	{
 		if constexpr (is_instance_v<T, UE::Math::TQuat>)
 		{
-			return T::FastLerp(Current, Target, Ratio).GetNormalized();
+			return T::Slerp(Current, Target, Ratio).GetNormalized();
 		}
 		else if constexpr (is_instance_v<T, UE::Math::TRotator>)
 		{
