@@ -29,9 +29,9 @@ struct FRemInstancedStructContainer
     FInstancedStructContainer StructContainer{};
     
     UPROPERTY(EditAnywhere, Category = "Rem")
-    TMap<uint32, int32> IndexMap{};
+    TMap<uint64, int32> IndexMap{};
     
-    using FKeyType = uint32;
+    using FKeyType = uint64;
 
     REM_API FStructView TryGetView(const FKeyType Key);
     REM_API FConstStructView TryGetView(const FKeyType Key) const;
