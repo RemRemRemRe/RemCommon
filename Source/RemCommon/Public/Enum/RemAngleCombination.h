@@ -13,7 +13,8 @@ enum class ERemAngleCombination : uint8
 	Pitch	= 1 << 0,
 	Yaw		= 1 << 1,
 	Roll	= 1 << 2,
+    All     = Pitch | Yaw | Roll,
 };
 
 template<>
-struct Rem::Enum::BitOperation::TEnumClassBitOperationTraits<ERemAngleCombination> { using type = std::true_type;	};
+struct Rem::Enum::BitOperation::TEnumClassBitOperationTraits<ERemAngleCombination> { using type = std::true_type; };
