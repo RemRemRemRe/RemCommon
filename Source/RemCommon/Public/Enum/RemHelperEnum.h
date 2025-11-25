@@ -44,6 +44,12 @@ namespace Rem::Enum
 		No,
 	};
 
+    enum class EStartOrEnd : uint8
+	{
+		Start,
+		End,
+	};
+
 	enum class ETransitionType : uint8
 	{
 		ToNext,
