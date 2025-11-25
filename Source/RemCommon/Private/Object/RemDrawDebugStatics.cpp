@@ -8,6 +8,7 @@
 #include "Engine/World.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/PlayerController.h"
+#include "Math/RemMathCore.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemDrawDebugStatics)
 
@@ -330,11 +331,11 @@ void DrawDebugCrossHair(const UWorld& World, const float CrossHairLineLength, co
 		return FVector2f{Rotated};
 	};
 
-	const auto DirectionX = FMath::IsNearlyZero(AngleToRotate)
+	const auto DirectionX = Rem::Math::IsNearlyZero(AngleToRotate)
 		? FVector2f{1.0f, 0.0f}
 		: GetRotatedDirection(FVector2f{1.0f, 0.0f});
 
-	const auto DirectionY = FMath::IsNearlyZero(AngleToRotate)
+	const auto DirectionY = Rem::Math::IsNearlyZero(AngleToRotate)
 		? FVector2f{0.0f, 1.0f}
 		: GetRotatedDirection(FVector2f{0.0f, 1.0f});
 

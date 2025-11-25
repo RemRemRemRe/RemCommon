@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RemCppConcepts.h"
+#include "Math/RemMathCore.h"
 
 #include "RemComparisonOperator.generated.h"
 
@@ -19,14 +20,14 @@ enum class ERemComparisonOperator : uint8
 
 namespace Rem::Math
 {
-	template<ERemComparisonOperator ComparisonOperator, typename T = float>
-	bool CompareValue(const T& Left, const T& Right, float ErrorTolerance = UE_KINDA_SMALL_NUMBER)
+	template<ERemComparisonOperator ComparisonOperator, typename T = float, typename TErrorTolerance = float>
+	bool CompareValue(const T& Left, const T& Right, TErrorTolerance ErrorTolerance = Math::GetKindSmallNumber<TErrorTolerance>())
 	{
 		if constexpr (ComparisonOperator == ERemComparisonOperator::Equals)
 		{
 			if constexpr (std::is_floating_point_v<T>)
 			{
-				return FMath::IsNearlyEqual(Left, Right, ErrorTolerance);
+				return Math::IsNearlyEqual(Left, Right, ErrorTolerance);
 			}
 			else if constexpr (Concepts::has_equals_with_error_tolerance<T>)
 			{

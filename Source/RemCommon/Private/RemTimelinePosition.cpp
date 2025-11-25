@@ -6,12 +6,13 @@
 #include "Enum/RemRangeFormat.h"
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemMacroUtilities.h"
+#include "Math/RemMathCore.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemTimelinePosition)
 
 bool FRemTimelinePosition_TimeAndFrame::IsWithinInclusive(const FRemTimelinePosition_TimeAndFrame& TimeAndFrame) const
 {
-	return TimeAndFrame.Frame == Frame && FMath::IsNearlyEqual(TimeAndFrame.Time, Time);
+	return TimeAndFrame.Frame == Frame && Rem::Math::IsNearlyEqual(TimeAndFrame.Time, Time);
 }
 
 bool FRemTimelinePositionRange_Time::IsWithinInclusive(const FRemTimelinePosition_TimeAndFrame& TimeAndFrame) const

@@ -5,15 +5,12 @@
 #include <type_traits>
 
 #include "RemAlwaysFalse.h"
+#include "Math/RemMathCore.h"
 #include "Enum/RemComparisonOperator.h"
 #include "Templates/RemIsInstance.h"
 
 namespace Rem::Math
 {
-	constexpr auto CounterClockwiseRotationAngleThreshold{5.0f};
-    
-	constexpr auto FiveDigitsAfterDecimalPoint{1.e-5f}; // Five digits after the decimal point
-
 	template<typename T>
 	requires (!std::is_signed_v<T>)
 	[[nodiscard]] constexpr T GetBitsNeeded(const T Value)
@@ -92,36 +89,6 @@ namespace Rem::Math
 
 		return 1.0f - FMath::InvExpApprox(UE_LN2 / (HalfLife + FiveDigitsAfterDecimalPoint) * DeltaTime);
 	}
-    
-    template<typename T>
-    requires std::is_floating_point_v<T>
-    [[nodiscard]] constexpr auto&& GetKindSmallNumber()
-    {
-        if constexpr (std::is_same_v<float, T>)
-        {
-            return GlobalVectorConstants::KindaSmallNumber;
-        }
-        else
-        {
-            static_assert(std::is_same_v<double, T>);
-            return GlobalVectorConstants::DoubleKindaSmallNumber;
-        }
-    }
-
-    template<typename T>
-    requires std::is_floating_point_v<T>
-    [[nodiscard]] constexpr auto&& GetSmallNumber()
-    {
-        if constexpr (std::is_same_v<float, T>)
-        {
-            return GlobalVectorConstants::SmallNumber;
-        }
-        else
-        {
-            static_assert(std::is_same_v<double, T>);
-            return GlobalVectorConstants::DoubleSmallNumber;
-        }
-    }
 
 	template<typename TValue>
 	requires std::is_floating_point_v<TValue>
@@ -144,7 +111,7 @@ namespace Rem::Math
 
 		bool Equals(const TAngle& V, TValue Tolerance = GetKindSmallNumber<TValue>()) const
 		{
-			return FMath::IsNearlyEqual(Angle, V.Angle, Tolerance);
+			return Math::IsNearlyEqual(Angle, V.Angle, Tolerance);
 		}
 	};
     
