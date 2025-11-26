@@ -205,7 +205,7 @@ public:
      */
     bool IsFullCircle() const
     {
-        return FMath::IsNearlyZero(StartAngle) && FMath::IsNearlyZero(EndAngle);
+        return Rem::Math::IsNearlyZero(StartAngle) && Rem::Math::IsNearlyZero(EndAngle);
     }
     
     FString ToString() const
@@ -240,14 +240,14 @@ public:
         const auto ClampedA = FRotator3f::ClampAxis(A);
         const auto ClampedB = FRotator3f::ClampAxis(B);
         
-        if (!FMath::IsNearlyEqual(ClampedA, ClampedB))
+        if (!Rem::Math::IsNearlyEqual(ClampedA, ClampedB))
         {
             return false;
         }
         
         const auto RawDiff = FMath::Abs(A - B);
         
-        return FMath::IsNearlyEqual(FMath::Fmod(RawDiff, 360.0f), 0.0f) &&
-           !FMath::IsNearlyZero(RawDiff);
+        return Rem::Math::IsNearlyEqual(FMath::Fmod(RawDiff, 360.0f), 0.0f) &&
+           !Rem::Math::IsNearlyZero(RawDiff);
     }
 };
