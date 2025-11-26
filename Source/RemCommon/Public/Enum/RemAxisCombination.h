@@ -13,7 +13,11 @@ enum class ERemAxisCombination : uint8
 	X		= 1 << 0,
 	Y		= 1 << 1,
 	Z		= 1 << 2,
+	XY		= X | Y,
+	XZ		= X | Z,
+	YZ		= Y | Z,
+	XYZ		= X | Y | Z,
 };
 
 template<>
-struct Rem::Enum::BitOperation::TEnumClassBitOperationTraits<ERemAxisCombination> { using type = std::true_type;	};
+struct Rem::Enum::BitOperation::TEnumClassBitOperationTraits<ERemAxisCombination> { using type = std::true_type; };
