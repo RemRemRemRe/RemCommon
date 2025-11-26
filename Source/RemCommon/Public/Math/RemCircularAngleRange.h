@@ -143,8 +143,8 @@ public:
             return Angle;
         }
         
-        const float DistToStart = GetMinimalAngleDistance(Angle, StartAngle);
-        const float DistToEnd = GetMinimalAngleDistance(Angle, EndAngle);
+        const float DistToStart = GetShortestAngleDistance(Angle, StartAngle);
+        const float DistToEnd = GetShortestAngleDistance(Angle, EndAngle);
         return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
     }
     
@@ -229,9 +229,12 @@ public:
     }
     
     /**
-     * angle is supposed to be ClampAxis -ed
+     * @return angle distance of shortest path for two angles,
+     * always greater than 0
+     * 
+     * @note angle is supposed to be ClampAxis -ed
      */
-    static float GetMinimalAngleDistance(const float From, const float To)
+    static float GetShortestAngleDistance(const float From, const float To)
     {
         const float Diff = FMath::Abs(From - To);
         return FMath::Min(Diff, 360.0f - Diff);
