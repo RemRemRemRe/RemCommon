@@ -187,6 +187,11 @@ public:
         return (360.0f - StartAngle) + EndAngle;
     }
     
+    float GetRange() const
+    {
+        return GetSpan();
+    }
+    
     /**
      * @return true if the range contains the 0°
      */
@@ -230,6 +235,20 @@ public:
     {
         const float Diff = FMath::Abs(From - To);
         return FMath::Min(Diff, 360.0f - Diff);
+    }
+
+    /**
+     * @return shortest angle representation for the input angle, NOT ClampAxis -ed,
+     *  eg: input: 360.0f, output: 0.0f; input: 270.0f, output: -90.0f
+     */
+    static float GetShortestAngle(const float Angle)
+    {
+        const auto AngleOfOtherDirection = FMath::Modulo(Angle - 360.0f, 360.0f);
+
+        const auto Abs = FMath::Abs(Angle);
+        const auto AbsOfOtherDirection = FMath::Abs(AngleOfOtherDirection);
+        
+        return Abs < AbsOfOtherDirection ? Angle : AngleOfOtherDirection;
     }
 
     /**
