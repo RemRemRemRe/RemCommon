@@ -215,12 +215,12 @@ public:
             return FString("[0°-360°]");
         }
         
-        if (IsWrappingZero())
+        if (!IsWrappingZero())
         {
-            return FString::Printf(TEXT("[%.3f°-360°) and [0°-%.3f°]"), StartAngle, EndAngle);
+            return FString::Printf(TEXT("[%.3f°-%.3f°]"), StartAngle, EndAngle);
         }
         
-        return FString::Printf(TEXT("[%.3f°-%.3f°]"), StartAngle, EndAngle);
+        return FString::Printf(TEXT("[%.3f°-360°) and [0°-%.3f°]"), StartAngle, EndAngle);
     }
     
     /**
