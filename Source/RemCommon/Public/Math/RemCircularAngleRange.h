@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "RemMathCore.h"
+#include "Enum/RemHelperEnum.h"
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemMacroUtilities.h"
 
@@ -145,6 +147,105 @@ public:
         
         const float DistToStart = GetShortestAngleDistance(Angle, StartAngle);
         const float DistToEnd = GetShortestAngleDistance(Angle, EndAngle);
+        return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
+    }
+    
+    /**
+     * @param Angle arbitrary angle 
+     * @return the distance to the range bound, in [0, 360)
+     */
+    template<Rem::Enum::EStartOrEnd StartOrEnd>
+    float GetDistanceToBoundary(float Angle) const
+    {
+        Angle = FRotator3f::ClampAxis(Angle);
+
+        if (!Contains(Angle))
+        {
+            if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
+            {
+                return GetShortestAngleDistance(Angle, StartAngle);
+            }
+            else
+            {
+                return GetShortestAngleDistance(Angle, EndAngle);
+            }
+        }
+
+        if (!IsWrappingZero())
+        {
+            if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
+            {
+                return Angle - StartAngle;
+            }
+            else
+            {
+                return EndAngle - Angle;
+            }
+        }
+        
+        if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
+        {
+            // in [StartAngle, 360)
+            if (Angle >= StartAngle)
+            {
+                return Angle - StartAngle;
+            }
+            
+            // in [0, EndAngle]
+            return 360.0f - StartAngle + Angle;
+        }
+        else
+        {
+            // in [StartAngle, 360)
+            if (Angle >= StartAngle)
+            {
+                return 360.0f - Angle + EndAngle;
+            }
+            
+            // in [0, EndAngle]
+            return EndAngle - Angle;
+        }
+    }
+    
+    /**
+     * @param Angle arbitrary angle 
+     * @param bStart get distance to StartAngle or EndAngle
+     * @return the distance to the range bound, in [0, 360)
+     */
+    float GetDistanceToBoundary(const float Angle, const bool bStart) const
+    {
+        if (bStart)
+        {
+            return GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
+        }
+        
+        return GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+    }
+    
+    float GetMinimalAngleDistanceToBounds(float Angle) const
+    {
+        Angle = FRotator3f::ClampAxis(Angle);
+        
+        const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
+        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+        return FMath::Min(DistToStart, DistToEnd);
+    }
+
+    float GetMaximalAngleDistanceToBounds(float Angle) const
+    {
+        Angle = FRotator3f::ClampAxis(Angle);
+        
+        const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
+        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+        return FMath::Max(DistToStart, DistToEnd);
+    }
+    
+    float GetClosestBoundToAngle(float Angle) const
+    {
+        Angle = FRotator3f::ClampAxis(Angle);
+        
+        const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
+        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
     }
     
