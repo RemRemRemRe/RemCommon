@@ -148,6 +148,16 @@ public:
         return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
     }
     
+    float GetStartAngle() const
+    {
+        return StartAngle;
+    }
+
+    float GetEndAngle() const
+    {
+        return EndAngle;
+    }
+    
     /**
      * @return value in range : [0, 360)
      */
