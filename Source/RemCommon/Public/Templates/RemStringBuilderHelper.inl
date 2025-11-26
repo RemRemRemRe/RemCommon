@@ -17,7 +17,7 @@ namespace Rem
 		}
 		else if constexpr (is_instance_v<T, UE::Math::TRotator>)
 		{
-			return Builder.Appendf(TEXT("P:%.2f Y:%.2f R:%.2f"), Value.Pitch, Value.Yaw, Value.Roll);
+			return Builder.Appendf(TEXT("P:%.3f Y:%.3f R:%.3f"), Value.Pitch, Value.Yaw, Value.Roll);
 		}
 		else if constexpr (is_instance_v<T, UE::Math::TVector2>)
 		{
