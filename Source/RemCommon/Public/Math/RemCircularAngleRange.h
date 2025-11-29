@@ -152,13 +152,20 @@ public:
     
     /**
      * @param Angle arbitrary angle 
-     * @return the distance to the range bound, in [0, 360)
+     * @return the distance to the range bound,
+     *  if not full circle, value range: [0, 360)
+     *  else 360 is returned
      */
     template<Rem::Enum::EStartOrEnd StartOrEnd>
     float GetDistanceToBoundary(float Angle) const
     {
+        if (IsFullCircle())
+        {
+            return 360.0f;
+        }
+        
         Angle = FRotator3f::ClampAxis(Angle);
-
+        
         if (!Contains(Angle))
         {
             if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
@@ -222,28 +229,22 @@ public:
         return GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
     }
     
-    float GetMinimalAngleDistanceToBounds(float Angle) const
+    float GetMinimalAngleDistanceToBounds(const float Angle) const
     {
-        Angle = FRotator3f::ClampAxis(Angle);
-        
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
         const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return FMath::Min(DistToStart, DistToEnd);
     }
 
-    float GetMaximalAngleDistanceToBounds(float Angle) const
+    float GetMaximalAngleDistanceToBounds(const float Angle) const
     {
-        Angle = FRotator3f::ClampAxis(Angle);
-        
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
         const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return FMath::Max(DistToStart, DistToEnd);
     }
     
-    float GetClosestBoundToAngle(float Angle) const
+    float GetClosestBoundToAngle(const float Angle) const
     {
-        Angle = FRotator3f::ClampAxis(Angle);
-        
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
         const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
