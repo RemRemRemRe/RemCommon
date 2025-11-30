@@ -15,7 +15,7 @@ namespace Rem::Math
     
     template<typename T>
     requires std::is_floating_point_v<T>
-    [[nodiscard]] constexpr auto&& GetKindSmallNumber()
+    [[nodiscard]] constexpr auto GetKindSmallNumber()
     {
         if constexpr (std::is_same_v<float, T>)
         {
@@ -30,7 +30,7 @@ namespace Rem::Math
 
     template<typename T>
     requires std::is_floating_point_v<T>
-    [[nodiscard]] constexpr auto&& GetSmallNumber()
+    [[nodiscard]] constexpr auto GetSmallNumber()
     {
         if constexpr (std::is_same_v<float, T>)
         {
