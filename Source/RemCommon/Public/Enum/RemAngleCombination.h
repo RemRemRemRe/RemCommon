@@ -13,7 +13,11 @@ enum class ERemAngleCombination : uint8
 	Pitch	= 1 << 0,
 	Yaw		= 1 << 1,
 	Roll	= 1 << 2,
-    All     = Pitch | Yaw | Roll,
+    
+	PitchYaw    = Pitch | Yaw,
+	PitchRoll   = Pitch | Roll,
+	YawRoll     = Yaw | Roll,
+    All         = Pitch | Yaw | Roll,
 };
 
 template<>
