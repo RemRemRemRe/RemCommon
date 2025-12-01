@@ -119,12 +119,12 @@ namespace Rem::Math
     requires (std::is_same_v<VectorRegister4Double, T> || std::is_same_v<VectorRegister4Float, T>)
     [[nodiscard]] constexpr T RemapRotationForCounterClockwiseRotation(const T& Rotation)
     {
-        static constexpr auto RemapThreshold{
+        constexpr auto RemapThreshold{
             MakeVectorRegisterConstant(180.0f - CounterClockwiseRotationAngleThreshold, 180.0f - CounterClockwiseRotationAngleThreshold,
                                         180.0f - CounterClockwiseRotationAngleThreshold, 180.0f - CounterClockwiseRotationAngleThreshold)
         };
 
-        static constexpr auto RemapAngles{MakeVectorRegisterConstant(360.0f, 360.0f, 360.0f, 0.0f)};
+        constexpr auto RemapAngles{MakeVectorRegisterConstant(360.0f, 360.0f, 360.0f, 0.0f)};
 
         const auto ReverseRotationMask{VectorCompareGE(Rotation, RemapThreshold)};
 
