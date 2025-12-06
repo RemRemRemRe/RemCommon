@@ -5,10 +5,17 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemDrawDebugStatics.generated.h"
 
+struct FTraceDatum;
 struct FHitResult;
+namespace EDrawDebugTrace
+{
+    enum Type : int;
+}
+
+#define REM_API REMCOMMON_API
 
 UCLASS()
-class REMCOMMON_API URemDrawDebugStatics : public UBlueprintFunctionLibrary
+class REM_API URemDrawDebugStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -51,14 +58,14 @@ public:
 		float Radius, bool bHit, const FHitResult& Hit, const FLinearColor& SweepColor, const FLinearColor& HitColor,
 		float Duration = 0.0f, float Thickness = 1.0f, uint8 DepthPriority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "ALS|Debug Utility",
+	UFUNCTION(BlueprintCallable, Category = "Rem|Debug Utility",
 	Meta = (WorldContext = "WorldContext", DevelopmentOnly, AutoCreateRefTerm = "Start, End, Rotation, SweepColor, HitColor"))
 	static void DrawSweepSingleCapsule(const UObject* WorldContext, const FVector& Start, const FVector& End,
 		const FRotator& Rotation, float Radius, float HalfHeight, bool bHit,
 		const FHitResult& Hit, const FLinearColor& SweepColor, const FLinearColor& HitColor,
 		float Duration = 0.0f, float Thickness = 1.0f, uint8 DepthPriority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "ALS|Debug Utility",
+	UFUNCTION(BlueprintCallable, Category = "Rem|Debug Utility",
 		Meta = (WorldContext = "WorldContext", DevelopmentOnly, AutoCreateRefTerm = "Start, End, SweepColor, HitColor"))
 	static void DrawSweepSingleCapsuleAlternative(const UObject* WorldContext, const FVector& Start, const FVector& End,
 		float Radius, float HalfHeight, bool bHit, const FHitResult& Hit,
@@ -74,9 +81,15 @@ namespace Rem::DrawDebug
 	constexpr auto DrawCircleSidesCount{16};
 
 	/**
-	 * Draw a crosshair on the screen. By default, it draw the crosshair at center of the screen
+	 * Draw a crosshair on the screen. By default, it draws the crosshair at center of the screen
 	 */
-	REMCOMMON_API void DrawDebugCrossHair(const UWorld& World, float CrossHairLineLength = 20.0f,
+	REM_API void DrawDebugCrossHair(const UWorld& World, float CrossHairLineLength = 20.0f,
 			float LineThickness = 2.f, float AngleToRotate = 0.0f, const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f},
 		const FLinearColor& LineColor = FLinearColor::White);
+    
+    REM_API void DrawDebugTraceData(const UWorld& World, const FTraceDatum& TraceDatum, EDrawDebugTrace::Type DrawDebugType,
+        const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
+    
 }
+
+#undef REM_API
