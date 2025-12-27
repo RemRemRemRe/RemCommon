@@ -64,6 +64,16 @@ namespace Rem
 		}
 	}
 
+    template<typename T>
+    // ReSharper disable once CppUE4CodingStandardNamingViolationWarning
+    struct IsValid_Fn
+    {
+	    [[nodiscard]] constexpr bool operator()(const T& X) const
+	    {
+	        return Rem::IsValid(X);
+	    }
+	};
+    
 	template<typename T>
 	ENetMode GetNetMode(const T& Object)
 	{
