@@ -6,7 +6,7 @@
 
 namespace Rem
 {
-using FTimerDelegate = TDelegate<void()>;
+    using FTimerDelegate = TDelegate<void()>;
 }
 
 namespace Rem::Latent
@@ -28,6 +28,24 @@ namespace Rem::Latent
 		const FHandleType& operator*() const { return Handle; }
 
 		static FTimerHandle NewHandle();
+	    
+	    FTimerHandle() = default;
+	    explicit FTimerHandle(const FHandleType NewHandle) : Handle(NewHandle) {}
+	    
+	    //////////////////////////////////////////////////////
+	    // Start - intrusive TOptional<FTimerHandle> state ///
+	    //////////////////////////////////////////////////////
+	    constexpr static bool bHasIntrusiveUnsetOptionalState = true;
+	    using IntrusiveUnsetOptionalStateType = FTimerHandle;
+
+	    UE_NODEBUG [[nodiscard]] explicit FTimerHandle(FIntrusiveUnsetOptionalState) {}
+	    UE_NODEBUG [[nodiscard]] bool operator==(FIntrusiveUnsetOptionalState) const
+	    {
+	        return !IsValid();
+	    }
+	    //////////////////////////////////////////////////////
+	    // End - intrusive TOptional<FTimerHandle> state /////
+	    //////////////////////////////////////////////////////
 	};
 
 	/**
