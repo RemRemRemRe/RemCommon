@@ -45,14 +45,14 @@ namespace Rem::Private
 		{
 			std::string_view FunctionSignature = FunctionSignatureRaw;
 
-			const auto LeftParenthesisPosition = [&]{
+			const auto LeftParenthesisPosition = std::invoke([&]{
 				size_t Position = FunctionSignature.find('(');
 				return Position != std::string_view::npos ? Position : FunctionSignature.size();
-			}();
+			});
 
 			std::string_view FunctionSignatureNoArgs = FunctionSignature.substr(0, LeftParenthesisPosition);
 
-			const auto PositionOfLastSpace = [&]{
+			const auto PositionOfLastSpace = std::invoke([&]{
 				const size_t Position = FunctionSignatureNoArgs.rfind(' ');
 
 #ifdef _MSC_VER
@@ -65,7 +65,7 @@ namespace Rem::Private
 #endif
 
 				return Position != std::string_view::npos ? Position + 1 : 0;
-			}();
+			});
 
 			const auto Result = FunctionSignatureNoArgs.substr(PositionOfLastSpace);
 			return Result;
