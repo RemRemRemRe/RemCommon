@@ -50,6 +50,12 @@ namespace Rem::Enum
 		End,
 	};
 
+    enum class EAddOrRemove : uint8
+    {
+        Add,
+        Remove,
+    };
+    
 	enum class ETransitionType : uint8
 	{
 		ToNext,
