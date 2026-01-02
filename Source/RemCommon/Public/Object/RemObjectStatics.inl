@@ -182,10 +182,8 @@ template<Concepts::is_actor TActor = AActor, Enum::ECallFinishSpawn CallFinishSp
 
 	if constexpr (CallFinishSpawn == Enum::EYesOrNo::Yes)
 	{
-		if (Actor)
-		{
-			Actor->FinishSpawning(SpawnTransform, false, nullptr, ScaleMethod);
-		}
+		RemCheckVariable(Actor, return nullptr;);
+		Actor->FinishSpawning(SpawnTransform, false, nullptr, ScaleMethod);
 	}
 
 	return Actor;
