@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "UObject/ObjectPtr.h"
+
 #include "RemReflectedFunctionData.generated.h"
 
 USTRUCT(BlueprintType)
