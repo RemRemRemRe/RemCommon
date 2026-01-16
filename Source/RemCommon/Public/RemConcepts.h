@@ -143,9 +143,9 @@ namespace Rem::Concepts
 	};
 
 	template<class T>
-	concept has_static_struct = requires (UScriptStruct*& StructRef)
+	concept has_static_struct = requires (const UScriptStruct* ScriptStruct)
 	{
-		StructRef = T::StaticStruct();
+		ScriptStruct = T::StaticStruct();
 	};
 
 	template<class T>
@@ -165,19 +165,26 @@ namespace Rem::Concepts
 	{
 		String = Object.GetFullName();
 	};
+    
+    template<class T>
+    concept is_uenum = std::is_enum_v<T> && requires (UEnum* Enum)
+    {
+        Enum = StaticEnum<T>();
+    };
 
 	template<class T>
-	concept is_stringable =
+	concept can_make_string_from =
 		std::is_same_v<bool, std::remove_cvref_t<T>>
 		|| has_to_compact_string<T>
 		|| has_to_string_simple<T>
 		|| has_to_simple_string<T>
 		|| has_to_string<T>
-		|| has_lex_to_string<T>
 		|| has_get_name<T>
 		|| std::is_same_v<FDelegateHandle, std::remove_cvref_t<T>>
-		|| TIsUEnumClass<T>::Value
+		|| is_uenum<T>
+		|| TIsUEnumClass<T>::Value == 1
 		|| has_static_struct<T>
+		|| has_lex_to_string<T>
 	;
 
 	template<class T>

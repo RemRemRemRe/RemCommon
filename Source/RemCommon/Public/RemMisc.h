@@ -10,6 +10,7 @@
 #include "UObject/Object.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/EngineBaseTypes.h"
+#include "Traits/IsCharType.h"
 
 struct FRealCurve;
 struct FGameplayTag;
@@ -148,7 +149,7 @@ namespace Rem
 	template<typename T>
 	FString ToString(const T& Data)
 	{
-		if constexpr (std::is_pointer_v<T>)
+        if constexpr (std::is_pointer_v<T>)
 		{
 			return Rem::ToString(*Data);
 		}
@@ -185,13 +186,13 @@ namespace Rem
 				// print FDelegateHandle as uint64
 				return FString::Format(TEXT("{0}"), {*reinterpret_cast<const uint64*>(&Data)});
 			}
-			else if constexpr (TIsUEnumClass<RawType>::Value)
+			else if constexpr (Concepts::is_uenum<T> || TIsUEnumClass<RawType>::Value)
 			{
 				return UEnum::GetValueAsString(Data);
 			}
 			else if constexpr (Concepts::has_static_struct<RawType>)
 			{
-				return ToString(*RawType::StaticStruct(), &Data);
+				return Rem::ToString(*RawType::StaticStruct(), &Data);
 			}
 			else if constexpr (Concepts::has_lex_to_string<RawType>)
 			{
@@ -204,7 +205,7 @@ namespace Rem
 			}
 		}
 	}
-
+    
 	template<typename T>
 	ENetRole GetNetRole(const T& Object)
 	{
@@ -343,14 +344,15 @@ namespace Rem
 		template<typename F, typename... R>
 		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
 		{
-			if constexpr (!std::is_same_v<bool, std::remove_cvref_t<F>>
-				&& std::is_constructible_v<FStringFormatArg, F>)
+		    using RawType = std::remove_cvref_t<F>;
+		    
+			if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>> && Concepts::can_make_string_from<RawType>)
 			{
-				Args.Add(std::forward<F>(First));
+				Args.Add(Rem::ToString(std::forward<F>(First)));
 			}
 			else
 			{
-				Args.Add(Rem::ToString(std::forward<F>(First)));
+				Args.Add(std::forward<F>(First));
 			}
 
 			Impl::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
