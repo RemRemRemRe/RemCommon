@@ -22,12 +22,17 @@ struct REMCOMMON_API FRemComponentBase
 {
 	GENERATED_BODY()
 
-	virtual void Initialize(UObject& OwnerRef);
+    struct FContext
+	{
+	    UObject& OwnerRef;
+	};
+    
+	virtual void Initialize(const FContext& Context);
 
-	virtual bool ShouldTick(UObject& OwnerRef) const;
-	virtual void Tick(UObject& OwnerRef, float DeltaSeconds);
+	virtual bool ShouldTick(const FContext& Context) const;
+	virtual void Tick(const FContext& Context, float DeltaSeconds);
 
-	virtual void Uninitialize(UObject& OwnerRef);
+	virtual void Uninitialize(const FContext& Context);
 };
 
 USTRUCT(BlueprintType)

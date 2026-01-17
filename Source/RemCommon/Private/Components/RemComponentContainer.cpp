@@ -10,20 +10,20 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemComponentContainer)
 
-void FRemComponentBase::Initialize(UObject& OwnerRef)
+void FRemComponentBase::Initialize(const FContext& Context)
 {
 }
 
-bool FRemComponentBase::ShouldTick(UObject& OwnerRef) const
+bool FRemComponentBase::ShouldTick(const FContext& Context) const
 {
 	return false;
 }
 
-void FRemComponentBase::Tick(UObject& OwnerRef, float)
+void FRemComponentBase::Tick(const FContext& Context, float)
 {
 }
 
-void FRemComponentBase::Uninitialize(UObject& OwnerRef)
+void FRemComponentBase::Uninitialize(const FContext& Context)
 {
 }
 
@@ -48,7 +48,7 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
 	ForEachComponent<FRemComponentBase>(
 		[&] (FRemComponentBase& Component)
 	 {
-		 Component.Initialize(OwnerRef);
+		 Component.Initialize({OwnerRef});
 	 });
 }
 
@@ -76,7 +76,7 @@ void FRemComponentContainer::Uninitialize()
 	ForEachComponent<FRemComponentBase>(
 		[&] (FRemComponentBase& Component)
 	 {
-		 Component.Uninitialize(*CopyOwner);
+		 Component.Uninitialize({*CopyOwner});
 	 });
 }
 
