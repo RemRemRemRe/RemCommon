@@ -6,12 +6,11 @@
 
 namespace Rem::Property
 {
-	using FIteratePropertiesFunction = TFunctionRef<void(const FProperty* InProperty, const void* InContainer)>;
-
 namespace Private
 {
-	template<Concepts::is_property PropertyType>
-	void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, const void* InContainer, const FIteratePropertiesFunction& InFunction)
+	template<Concepts::is_property PropertyType, typename TVoid, typename TFunctor>
+    requires std::is_void_v<TVoid>
+	void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InContainer, TFunctor InFunction)
 	{
 		// Handle container properties
 		if (const auto* ArrayProperty = CastField<FArrayProperty>(InProperty))
@@ -19,35 +18,41 @@ namespace Private
 			FScriptArrayHelper_InContainer Helper(ArrayProperty, InContainer);
 
 			// this property type or any property type
-			if constexpr (std::disjunction_v<
-				std::is_same<PropertyType, FArrayProperty>, std::is_same<PropertyType, FProperty>>)
+			if constexpr (std::is_same_v<PropertyType, FArrayProperty>)
 			{
-				InFunction(InProperty, InContainer);
+				InFunction(*ArrayProperty, InContainer);
+			}
+			else if constexpr (std::is_same_v<PropertyType, FProperty>)
+			{
+				InFunction(*InProperty, InContainer);
 			}
 
 			for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
 			{
-				const void* ValuePtr = Helper.GetRawPtr(DynamicIndex);
+				TVoid* ValuePtr = Helper.GetRawPtr(DynamicIndex);
 				IteratePropertiesOfTypeRecursive<PropertyType>(ArrayProperty->Inner, ValuePtr, InFunction);
 			}
 		}
 		else if (const auto* MapProperty = CastField<FMapProperty>(InProperty))
 		{
 			FScriptMapHelper_InContainer Helper(MapProperty, InContainer);
-
-			// this property type or any property type
-			if constexpr (std::disjunction_v<
-				std::is_same<PropertyType, FMapProperty>, std::is_same<PropertyType, FProperty>>)
-			{
-				InFunction(InProperty, InContainer);
-			}
+		    
+		    // this property type or any property type
+		    if constexpr (std::is_same_v<PropertyType, FMapProperty>)
+		    {
+		        InFunction(*MapProperty, InContainer);
+		    }
+		    else if constexpr (std::is_same_v<PropertyType, FProperty>)
+		    {
+		        InFunction(*InProperty, InContainer);
+		    }
 
 			int32 Num = Helper.Num();
 			for (int32 DynamicIndex = 0; Num; ++DynamicIndex)
 			{
 				if (Helper.IsValidIndex(DynamicIndex))
 				{
-					const void* PairPtr = Helper.GetPairPtr(DynamicIndex);
+					TVoid* PairPtr = Helper.GetPairPtr(DynamicIndex);
 					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->KeyProp, PairPtr, InFunction);
 					IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->ValueProp, PairPtr, InFunction);
 
@@ -58,20 +63,23 @@ namespace Private
 		else if (const auto* SetProperty = CastField<FSetProperty>(InProperty))
 		{
 			FScriptSetHelper_InContainer Helper(SetProperty, InContainer);
-
-			// this property type or any property type
-			if constexpr (std::disjunction_v<
-				std::is_same<PropertyType, FSetProperty>, std::is_same<PropertyType, FProperty>>)
-			{
-				InFunction(InProperty, InContainer);
-			}
+		    
+		    // this property type or any property type
+		    if constexpr (std::is_same_v<PropertyType, FSetProperty>)
+		    {
+		        InFunction(*SetProperty, InContainer);
+		    }
+		    else if constexpr (std::is_same_v<PropertyType, FProperty>)
+		    {
+		        InFunction(*InProperty, InContainer);
+		    }
 
 			int32 Num = Helper.Num();
 			for (int32 DynamicIndex = 0; Num; ++DynamicIndex)
 			{
 				if (Helper.IsValidIndex(DynamicIndex))
 				{
-					const void* ValuePtr = Helper.GetElementPtr(DynamicIndex);
+					TVoid* ValuePtr = Helper.GetElementPtr(DynamicIndex);
 					IteratePropertiesOfTypeRecursive<PropertyType>(SetProperty->ElementProp, ValuePtr, InFunction);
 
 					--Num;
@@ -80,22 +88,33 @@ namespace Private
 		}
 		else if (const auto* StructProperty = CastField<FStructProperty>(InProperty))
 		{
-			// this property type or any property type
-			if constexpr (std::disjunction_v<
-				std::is_same<PropertyType, FStructProperty>, std::is_same<PropertyType, FProperty>>)
-			{
-				InFunction(InProperty, InContainer);
-			}
+		    // this property type or any property type
+		    if constexpr (std::is_same_v<PropertyType, FStructProperty>)
+		    {
+		        InFunction(*StructProperty, InContainer);
+		    }
+		    else if constexpr (std::is_same_v<PropertyType, FProperty>)
+		    {
+		        InFunction(*InProperty, InContainer);
+		    }
 
-			const void* StructContainer;
+			TVoid* StructContainer;
 			const UScriptStruct* ScriptStruct = StructProperty->Struct;
 
 			if (FInstancedStruct::StaticStruct() == ScriptStruct)
 			{
 				// redirect it for instanced struct
-				if (const auto* InstancedStruct = StructProperty->ContainerPtrToValuePtr<FInstancedStruct>(InContainer))
+				if (auto* InstancedStruct = StructProperty->ContainerPtrToValuePtr<FInstancedStruct>(InContainer))
 				{
-					StructContainer = InstancedStruct->GetMemory();
+                    if constexpr (std::is_const_v<TVoid>)
+                    {
+					    StructContainer = static_cast<TVoid*>(InstancedStruct->GetMemory());
+                    }
+                    else
+                    {
+					    StructContainer = static_cast<TVoid*>(InstancedStruct->GetMutableMemory());
+                    }
+				    
 					ScriptStruct = InstancedStruct->GetScriptStruct();
 				}
 				else
@@ -106,7 +125,7 @@ namespace Private
 			}
 			else
 			{
-				StructContainer = StructProperty->ContainerPtrToValuePtr<void>(InContainer);
+				StructContainer = StructProperty->ContainerPtrToValuePtr<TVoid>(InContainer);
 			}
 
 			// type needs to be FProperty, to handle container properties
@@ -115,25 +134,56 @@ namespace Private
 				IteratePropertiesOfTypeRecursive<PropertyType>(*It, StructContainer, InFunction);
 			}
 		}
-		else if (InProperty->IsA<PropertyType>())
+		else
 		{
-			for (int32 StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
-			{
-				const void* ValuePtr = InProperty->ContainerPtrToValuePtr<const void>(InContainer, StaticIndex);
-				InFunction(InProperty, ValuePtr);
-			}
+		    if constexpr (std::is_same_v<PropertyType, FProperty>)
+		    {
+		        for (int32 StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
+		        {
+		            TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
+		            InFunction(*InProperty, ValuePtr);
+		        }
+		    }
+		    else
+		    {
+		        if (const auto* TargetProperty = CastField<PropertyType>(InProperty))
+		        {
+			        for (int32 StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
+			        {
+				        TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
+				        InFunction(*TargetProperty, ValuePtr);
+			        }
+		        }
+		    }
 		}
 	}
 }
-
-	template<Concepts::is_property PropertyType>
-	void IteratePropertiesOfType(const UStruct* InStruct, const void* InContainer, const FIteratePropertiesFunction& InFunction)
+    
+    template<Concepts::is_property PropertyType, typename TVoid, typename TFunctor>
+    requires std::is_void_v<TVoid>
+    void IteratePropertiesOfType(const UStruct* InStruct, TVoid* InContainer, TFunctor InFunction)
+    {
+        // type needs to be FProperty, to handle container properties
+        for (TFieldIterator<FProperty> It(InStruct); It; ++It)
+        {
+            Private::IteratePropertiesOfTypeRecursive<PropertyType>(*It, InContainer, InFunction);
+        }
+    }
+    
+	template<Concepts::is_property PropertyType, typename TObject, typename TFunctor>
+    requires Rem::Concepts::is_uobject<std::remove_cvref_t<TObject>> || Rem::Concepts::has_static_struct<std::remove_cvref_t<TObject>>
+	void IteratePropertiesOfType(const UStruct* Struct, TObject&& Object, TFunctor InFunction)
 	{
-		// type needs to be FProperty, to handle container properties
-		for(TFieldIterator<FProperty> It(InStruct); It; ++It)
-		{
-			Private::IteratePropertiesOfTypeRecursive<PropertyType>(*It, InContainer, InFunction);
-		}
+        if constexpr (std::is_const_v<TObject>)
+        {
+			IteratePropertiesOfType<PropertyType, const void, TFunctor>(Struct, static_cast<const void*>(&Object), InFunction);
+        }
+        else
+        {
+			IteratePropertiesOfType<PropertyType, void, TFunctor>(Struct, static_cast<void*>(&Object), InFunction);
+        }
 	}
+    
+    
 
 }
