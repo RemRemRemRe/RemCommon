@@ -73,5 +73,9 @@ int32 FRemComponentContainer::GetComponentIndex() const
     
     return INDEX_NONE;
 }
+
+template<Rem::Concepts::is_uobject TOwner>
+TOwner* FRemComponentContainer::GetOwner() const
 {
+    return Cast<TOwner>(Owner);
 }

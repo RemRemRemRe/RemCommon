@@ -110,6 +110,9 @@ public:
 	void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
 	void SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
 
+    template<Rem::Concepts::is_uobject TOwner>
+    TOwner* GetOwner() const;
+    
     REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
     
     FRemComponentContainer() = default;
