@@ -60,9 +60,9 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
 	REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("initializing components, Owner:{0}"), OwnerRef);
 
 	ForEachComponent<FRemComponentBase>(
-		[&] (FRemComponentBase& Component)
+		[&] (FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
 	 {
-		 Component.Initialize({OwnerRef});
+		 Component.Initialize({*this, Index});
 	 });
 }
 
@@ -88,9 +88,9 @@ void FRemComponentContainer::Uninitialize()
 	RemCheckVariable(CopyOwner, return;);
 
 	ForEachComponent<FRemComponentBase>(
-		[&] (FRemComponentBase& Component)
+		[&] (FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
 	 {
-		 Component.Uninitialize({*CopyOwner});
+		 Component.Uninitialize({*this, Index});
 	 });
 }
 

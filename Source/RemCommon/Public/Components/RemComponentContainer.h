@@ -2,9 +2,11 @@
 
 #pragma once
 
-#include "RemCppConcepts.h"
 #include "Interface/RemScriptStructInterface.h"
+#include "RemCppConcepts.h"
+#include "RemConcepts.h"
 #include "Macro/RemGenerateMembersMacro.h"
+#include "StructUtils/InstancedStructContainer.h"
 
 #include "RemComponentContainer.generated.h"
 
@@ -24,7 +26,8 @@ struct REMCOMMON_API FRemComponentBase
 
     struct FContext
 	{
-	    UObject& OwnerRef;
+	    FRemComponentContainer& OwnerInstance;
+	    const int32 ComponentIndex;
 	};
     
 	virtual void Initialize(const FContext& Context);
@@ -35,6 +38,9 @@ struct REMCOMMON_API FRemComponentBase
 	virtual void Uninitialize(const FContext& Context);
 };
 
+/**
+ * every component is writable
+ */
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemComponentContainer
 {
@@ -76,11 +82,10 @@ public:
 	auto FindComponent(EnumClass Enum) const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	void ForEachComponent(TFunctionRef<void(T&)> FunctionRef);
-
+	void ForEachComponent(TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef);
+    
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	void ForEachComponent(TFunctionRef<void(const T&)> FunctionRef) const;
-
+	void ForEachComponent(TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const;
     
     /**
      * @return index of first component that matches the class exactly

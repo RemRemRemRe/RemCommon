@@ -21,7 +21,7 @@ auto FRemComponentContainer::FindComponent() const
 template<std::derived_from<FRemComponentBase> T>
 auto FRemComponentContainer::FindComponent(const int32 Index)
 {
-	RemCheckCondition(Components.IsValidIndex(Index), return {});
+    RemCheckCondition(Components.IsValidIndex(Index), return {});
 
     return Rem::Struct::TryMakeView<T>(FStructView{Components[Index].GetScriptStruct(), Components[Index].GetMutableMemory()});
 }
@@ -47,13 +47,17 @@ auto FRemComponentContainer::FindComponent(EnumClass Enum) const
 }
 
 template<std::derived_from<FRemComponentBase> T>
-void FRemComponentContainer::ForEachComponent(TFunctionRef<void(T&)> FunctionRef)
+void FRemComponentContainer::ForEachComponent(TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
 {
 	Rem::Struct::ForEachStructView(MakeArrayView(Components), FunctionRef);
 }
 
-template<std::derived_from<FRemComponentBase> T>
-void FRemComponentContainer::ForEachComponent(TFunctionRef<void(const T&)> FunctionRef) const
+template <std::derived_from<FRemComponentBase> T>
+void FRemComponentContainer::ForEachComponent(TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const
+{
+    Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
+}
+
 template<std::derived_from<FRemComponentBase> TComponentType>
 int32 FRemComponentContainer::GetComponentIndex() const
 {
@@ -70,5 +74,4 @@ int32 FRemComponentContainer::GetComponentIndex() const
     return INDEX_NONE;
 }
 {
-	Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
 }
