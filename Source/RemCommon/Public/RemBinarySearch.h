@@ -102,7 +102,7 @@ namespace Private
     template <typename RangeType, typename ValueType, typename ProjectionType, typename SortPredicateType>
 	[[nodiscard]] auto BinarySearch(const RangeType& Range, const ValueType& Value, ProjectionType Projection, SortPredicateType SortPredicate) -> decltype(GetNum(Range))
 	{
-		auto CheckIndex = LowerBoundBy(Range, Value, Projection, SortPredicate);
+		auto CheckIndex = LowerBound(Range, Value, Projection, SortPredicate);
 		if (CheckIndex < GetNum(Range))
 		{
 			auto&& CheckValue = Invoke(Projection, GetData(Range)[CheckIndex]);
