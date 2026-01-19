@@ -10,6 +10,7 @@
 
 #include "RemComponentContainer.generated.h"
 
+struct FRemComponentContainer;
 template<typename BaseStructT>
 struct TInstancedStruct;
 
