@@ -27,6 +27,20 @@ void FRemComponentBase::Uninitialize(const FContext& Context)
 {
 }
 
+
+int32 FRemComponentContainer::GetComponentIndex(const FRemComponentBase& InComponent) const
+{
+    for (int32 Index = 0; Index < Components.Num(); ++Index)
+    {
+        if (reinterpret_cast<const uint8*>(&InComponent) == Components[Index].GetMemory())
+        {
+            return Index;
+        }
+    }
+    
+    return INDEX_NONE;
+}
+
 void FRemComponentContainer::Initialize(UObject& OwnerRef)
 {
 	// make sure not calling this during UnInitializing

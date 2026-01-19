@@ -81,6 +81,18 @@ public:
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
 	void ForEachComponent(TFunctionRef<void(const T&)> FunctionRef) const;
 
+    
+    /**
+     * @return index of first component that matches the class exactly
+     */
+    template<std::derived_from<FRemComponentBase> TComponentType>
+    int32 GetComponentIndex() const;
+    
+    /**
+     * @return index of the component 
+     */
+    int32 GetComponentIndex(const FRemComponentBase& InComponent) const;
+    
 	void Initialize(UObject& OwnerRef);
 	void Uninitialize();
 

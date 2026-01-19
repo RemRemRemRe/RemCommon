@@ -54,6 +54,21 @@ void FRemComponentContainer::ForEachComponent(TFunctionRef<void(T&)> FunctionRef
 
 template<std::derived_from<FRemComponentBase> T>
 void FRemComponentContainer::ForEachComponent(TFunctionRef<void(const T&)> FunctionRef) const
+template<std::derived_from<FRemComponentBase> TComponentType>
+int32 FRemComponentContainer::GetComponentIndex() const
+{
+    const auto* Struct = TComponentType::StaticStruct();
+    
+    for (int32 Index = 0; Index < Components.Num(); ++Index)
+    {
+        if (Struct == Components[Index].GetScriptStruct())
+        {
+            return Index;
+        }
+    }
+    
+    return INDEX_NONE;
+}
 {
 	Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
 }
