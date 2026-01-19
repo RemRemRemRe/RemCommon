@@ -11,25 +11,32 @@ struct FRemComponentBase;
 
 namespace Rem::Component
 {
-
-template <std::derived_from<FRemComponentBase> T = FRemComponentBase, std::derived_from<IRemComponentContainerOwnerInterface> TInterface = IRemComponentContainerOwnerInterface>
-auto FindComponent(TInterface& Interface) -> decltype(auto)
+    
+template <Concepts::is_uobject TObject = UObject>
+auto GetComponentContainer(TObject& Object) -> decltype(auto)
 {
-	return Interface.GetComponentContainer().template FindComponent<T>();
-}
+    auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(&Object);
 
+    using TResult = std::add_pointer_t<std::remove_reference_t<decltype(Interface->GetComponentContainer())>>;
+    if (Interface)
+    {
+        return &Interface->GetComponentContainer();
+    }
+
+    return TResult{};
+}
+    
 template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
 auto FindComponent(TObject& Object) -> decltype(auto)
 {
-	auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(&Object);
+    using TResult = decltype(GetComponentContainer<TObject>(Object)->template FindComponent<T>());
 
-	using TResult = decltype(FindComponent<T>(*Interface));
-	if (Interface)
-	{
-		return FindComponent<T>(*Interface);
-	}
+    auto* ComponentContainer = GetComponentContainer<TObject>(Object);
+    RemCheckVariable(ComponentContainer, return TResult{});
+    
+    auto ComponentView = ComponentContainer->template FindComponent<T>();
 
-	return TResult{};
+    return ComponentView;
 }
-
+    
 }
