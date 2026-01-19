@@ -7,41 +7,41 @@
 #include "Struct/RemInstancedStructStaics.inl"
 
 template<std::derived_from<FRemComponentBase> T>
-T* FRemComponentContainer::FindComponent()
+auto FRemComponentContainer::FindComponent()
 {
-	return Rem::Struct::FindStructView<T>(MakeArrayView(Components)).GetPtr();
+    return Rem::Struct::FindStructView<T>(MakeArrayView(Components));
 }
 
 template<std::derived_from<FRemComponentBase> T>
-const T* FRemComponentContainer::FindComponent() const
+auto FRemComponentContainer::FindComponent() const
 {
-	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).GetPtr();
+	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components));
 }
 
 template<std::derived_from<FRemComponentBase> T>
-T* FRemComponentContainer::FindComponent(const int32 Index)
+auto FRemComponentContainer::FindComponent(const int32 Index)
 {
 	RemCheckCondition(Components.IsValidIndex(Index), return {});
 
-	return Components[Index].GetPtr<T>();
+    return Rem::Struct::TryMakeView<T>(FStructView{Components[Index].GetScriptStruct(), Components[Index].GetMutableMemory()});
 }
 
 template<std::derived_from<FRemComponentBase> T>
-const T* FRemComponentContainer::FindComponent(const int32 Index) const
+auto FRemComponentContainer::FindComponent(const int32 Index) const
 {
 	RemCheckCondition(Components.IsValidIndex(Index), return {});
 
-	return Components[Index].GetPtr<const T>();
+	return Rem::Struct::TryMakeView<T>(FConstStructView{Components[Index].GetScriptStruct(), Components[Index].GetMemory()});
 }
 
 template<std::derived_from<FRemComponentBase> T, Rem::Concepts::is_scoped_enum EnumClass>
-T* FRemComponentContainer::FindComponent(EnumClass Enum)
+auto FRemComponentContainer::FindComponent(EnumClass Enum)
 {
 	return FindComponent<T>(static_cast<int32>(Enum));
 }
 
 template<std::derived_from<FRemComponentBase> T, Rem::Concepts::is_scoped_enum EnumClass>
-const T* FRemComponentContainer::FindComponent(EnumClass Enum) const
+auto FRemComponentContainer::FindComponent(EnumClass Enum) const
 {
 	return FindComponent<T>(static_cast<int32>(Enum));
 }

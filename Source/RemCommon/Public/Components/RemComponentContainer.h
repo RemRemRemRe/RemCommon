@@ -58,22 +58,22 @@ protected:
 
 public:
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	T* FindComponent();
+	auto FindComponent();
+    
+	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
+	auto FindComponent() const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	const T* FindComponent() const;
-
+	auto FindComponent(int32 Index);
+    
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	T* FindComponent(int32 Index);
+	auto FindComponent(int32 Index) const;
 
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	const T* FindComponent(int32 Index) const;
+    template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
+	auto FindComponent(EnumClass Enum);
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	T* FindComponent(EnumClass Enum);
-
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	const T* FindComponent(EnumClass Enum) const;
+	auto FindComponent(EnumClass Enum) const;
 
 	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
 	void ForEachComponent(TFunctionRef<void(T&)> FunctionRef);
