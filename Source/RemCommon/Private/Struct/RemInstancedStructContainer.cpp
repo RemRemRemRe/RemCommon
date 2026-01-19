@@ -3,6 +3,7 @@
 #include "Struct/RemInstancedStructContainer.h"
 
 #include "RemBinarySearch.h"
+#include "Macro/RemAssertionMacros.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemInstancedStructContainer)
 
@@ -37,10 +38,10 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
     // StructMemory is optional
     RemEnsureVariable(NewStruct.GetScriptStruct(), return false, REM_NO_LOG_OR_ASSERTION);
 
-    const auto IndexToInsert = Rem::Algo::UpperBound(StructContainer,
+    const auto IndexToInsert = Rem::Algo::LowerBound(StructContainer,
         NewStruct.GetScriptStruct()->GetMinAlignment(),
         [](const FConstStructView View)
-        {                    
+        {
             return View.GetScriptStruct()->GetMinAlignment();
         });
 

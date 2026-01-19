@@ -3,7 +3,6 @@
 #pragma once
 
 #include "RemInstancedStructStaics.inl"
-#include "Macro/RemAssertionMacros.h"
 #include "StructUtils/InstancedStructContainer.h"
 
 #include "RemInstancedStructContainer.generated.h"
@@ -18,7 +17,7 @@
 /**
  * an InstancedStructContainer with optimized layout and a map for quick indexing
  *
- * @note currently, structs would be stored in the oder of their MinAlignment for more compact layout
+ * @note structs with larger MinAlignment will be placed first for more compact layout
  */
 USTRUCT(BlueprintType)
 struct FRemInstancedStructContainer
