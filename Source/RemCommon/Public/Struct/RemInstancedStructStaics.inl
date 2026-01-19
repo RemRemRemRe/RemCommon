@@ -100,10 +100,13 @@ namespace Rem::Struct
 	}
 
 	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
-	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView, TFunctionRef<void(TStructType&)> FunctionRef)
+	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
+	    TFunctionRef<void(TStructType& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
 	{
-		for (auto& BaseStruct : BaseStructsArrayView)
+		for (int32 Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
 		{
+		    auto& BaseStruct = BaseStructsArrayView[Index];
+		    
 			if constexpr (!std::is_const_v<TStructType> &&
 				requires(TStructUtils StructUtils, TStructType* Struct)
 				{
@@ -113,14 +116,14 @@ namespace Rem::Struct
 			{
 				if (auto* Ptr = BaseStruct.template GetMutablePtr<TStructType>())
 				{
-					FunctionRef(*Ptr);
+					FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
 				}
 			}
 			else
 			{
 				if (auto* Ptr = BaseStruct.template GetPtr<TStructType>())
 				{
-					FunctionRef(*Ptr);
+					FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
 				}
 			}
 		}
