@@ -121,23 +121,23 @@ void FRemComponentContainer::TryUninitialize()
 	Uninitialize();
 }
 
-void FRemComponentContainer::CopyComponents(const TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView)
+void FRemComponentContainer::SetComponentsView(const TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView)
 {
 	TryUninitialize();
 
 	Components = InComponentsView;
 }
 
-void FRemComponentContainer::CopyComponents(const TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView)
+void FRemComponentContainer::SetComponentsView(const TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView)
 {
 	TryUninitialize();
 
 	Components = InComponentsView;
 }
 
-void FRemComponentContainer::MoveComponents(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents)
+void FRemComponentContainer::SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents)
 {
-	TryUninitialize();
-
+    TryUninitialize();
+    
 	Components = std::move(InComponents);
 }

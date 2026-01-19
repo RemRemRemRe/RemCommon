@@ -101,9 +101,9 @@ public:
 	void TryInitialize(UObject& OwnerRef);
 	void TryUninitialize();
 
-	void CopyComponents(TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView);
-	void CopyComponents(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
-	void MoveComponents(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
+	void SetComponentsView(TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView);
+	void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
+	void SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
 
     REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
     
