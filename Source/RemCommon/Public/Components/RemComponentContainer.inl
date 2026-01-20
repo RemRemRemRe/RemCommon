@@ -61,17 +61,7 @@ void FRemComponentContainer::ForEachComponent(TFunctionRef<void(const T& Struct,
 template<std::derived_from<FRemComponentBase> TComponentType>
 int32 FRemComponentContainer::GetComponentIndex() const
 {
-    const auto* Struct = TComponentType::StaticStruct();
-    
-    for (int32 Index = 0; Index < Components.Num(); ++Index)
-    {
-        if (Struct == Components[Index].GetScriptStruct())
-        {
-            return Index;
-        }
-    }
-    
-    return INDEX_NONE;
+    return Rem::Struct::FindConstStructView<TComponentType>(MakeConstArrayView(Components)).template Get<1>();
 }
 
 template<Rem::Concepts::is_uobject TOwner>
