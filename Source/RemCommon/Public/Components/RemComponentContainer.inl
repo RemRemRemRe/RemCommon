@@ -9,13 +9,13 @@
 template<std::derived_from<FRemComponentBase> T>
 auto FRemComponentContainer::FindComponent()
 {
-    return Rem::Struct::FindStructView<T>(MakeArrayView(Components));
+    return Rem::Struct::FindStructView<T>(MakeArrayView(Components)).template Get<0>();
 }
 
 template<std::derived_from<FRemComponentBase> T>
 auto FRemComponentContainer::FindComponent() const
 {
-	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components));
+	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).template Get<0>();
 }
 
 template<std::derived_from<FRemComponentBase> T>
