@@ -3,7 +3,6 @@
 #pragma once
 
 #include <type_traits>
-#include <tuple>
 
 #include "Enum/RemHelperEnum.h"
 #include "Macro/RemAssertionMacros.h"
@@ -59,9 +58,10 @@ requires std::is_signed_v<T>
 
 template<typename T>
 requires std::is_signed_v<T>
-[[nodiscard]] T ApplyTransition(T CurrentValue, std::tuple<ETransitionType, T> TransitionData, T End, T Start = 0)
+[[nodiscard]] T ApplyTransition(T CurrentValue, TTuple<ETransitionType, T> TransitionData, T End, T Start = 0)
 {
-	return ApplyTransition(CurrentValue, std::get<ETransitionType>(TransitionData), std::get<T>(TransitionData), End, Start);
+	return ApplyTransition(CurrentValue, TransitionData.template Get<ETransitionType>(),
+	    TransitionData.template Get<T>(), End, Start);
 }
 
 namespace Transition
@@ -69,27 +69,27 @@ namespace Transition
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> Abort = {ETransitionType::ToSpecified, -1};
+constexpr TTuple<ETransitionType, T> Abort = {ETransitionType::ToSpecified, -1};
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> ToNext = {ETransitionType::ToNext, 1};
+constexpr TTuple<ETransitionType, T> ToNext = {ETransitionType::ToNext, 1};
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> ToPrevious = {ETransitionType::ToPrevious, 1};
+constexpr TTuple<ETransitionType, T> ToPrevious = {ETransitionType::ToPrevious, 1};
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> ToStart = {ETransitionType::ToPrevious, -1};
+constexpr TTuple<ETransitionType, T> ToStart = {ETransitionType::ToPrevious, -1};
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> ToEnd = {ETransitionType::ToNext, -1};
+constexpr TTuple<ETransitionType, T> ToEnd = {ETransitionType::ToNext, -1};
 
 template<typename T>
 requires std::is_signed_v<T>
-constexpr std::tuple<ETransitionType, T> Restart = {ETransitionType::ToNext, 0};
+constexpr TTuple<ETransitionType, T> Restart = {ETransitionType::ToNext, 0};
 
 }
 
