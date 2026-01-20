@@ -17,7 +17,7 @@ TComponentType::FInstanceDataType* FRemComponentViewBase::GetInstanceData(const 
 template<std::derived_from<FRemComponentViewBase> T>
 auto FRemComponentViewContainerInstance::FindComponent() const
 {
-	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components));
+	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).template Get<0>();
 }
 
 template<std::derived_from<FRemComponentViewBase> T>
@@ -61,17 +61,7 @@ TStructView<typename TComponentType::FInstanceDataType> FRemComponentViewContain
 template <std::derived_from<FRemComponentViewBase> TComponentType>
 int32 FRemComponentViewContainerInstance::GetComponentIndex() const
 {
-    const auto* Struct = TComponentType::StaticStruct();
-    
-    for (int32 Index = 0; Index < Components.Num(); ++Index)
-    {
-        if (Struct == Components[Index].GetScriptStruct())
-        {
-            return Index;
-        }
-    }
-    
-    return INDEX_NONE;
+    return Rem::Struct::FindConstStructView<TComponentType>(MakeConstArrayView(Components)).template Get<1>();
 }
 
 template <Rem::Concepts::is_uobject TOwner>
