@@ -48,7 +48,7 @@ namespace Rem::Struct
             using FResult = std::conditional_t<bConstView, TConstStructView<TStructType>, TStructView<TStructType>>;
             using StructView = std::conditional_t<bConstView, FConstStructView, FStructView>;
 
-            TTuple<FResult, int32> Result;
+            TTuple<FResult, int32> Result{FResult{}, INDEX_NONE};
             
             for (int32 Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
             {
