@@ -10,6 +10,7 @@
 #include "UObject/Object.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/EngineBaseTypes.h"
+#include "Macro/RemFunctorMacro.h"
 #include "Traits/IsCharType.h"
 
 struct FRealCurve;
@@ -64,16 +65,7 @@ namespace Rem
 			}
 		}
 	}
-
-    template<typename T>
-    // ReSharper disable once CppUE4CodingStandardNamingViolationWarning
-    struct IsValid_Fn
-    {
-	    [[nodiscard]] constexpr bool operator()(const T& X) const
-	    {
-	        return Rem::IsValid(X);
-	    }
-	};
+    REM_FUNCTION_TO_FUNCTOR_SIMPLE(IsValid)
     
 	template<typename T>
 	ENetMode GetNetMode(const T& Object)
