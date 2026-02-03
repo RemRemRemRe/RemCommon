@@ -18,7 +18,7 @@ namespace Rem::AlsEnsure
 
 	// TODO Use "core.ResetEnsureState" instead.
 	static FAutoConsoleCommand ConsoleCommandResetEnsureState{
-		TEXT("als.ResetEnsureState"),
+		TEXT("Rem.als.ResetEnsureState"),
 		TEXT("Reset all ensures so they will fire again."),
 		FConsoleCommandDelegate::CreateLambda([]
 		{
