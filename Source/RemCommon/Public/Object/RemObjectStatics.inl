@@ -241,4 +241,19 @@ auto GetOwner(const TObject& Object)
 		return static_cast<TReturnType*>(nullptr);
 	}
 }
+    
+template<Concepts::is_uobject TObject, Concepts::is_actor TActor = AActor>
+auto GetActorFromObject(TObject& Object)
+{
+    auto* Actor = Cast<TActor>(&Object);
+    if (!Actor)
+    {
+        if (auto* Component = Cast<UActorComponent>(&Object))
+        {
+            Actor = Cast<TActor>(Component->GetOwner());
+        }
+    }
+    
+    return Actor;
+}
 }
