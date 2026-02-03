@@ -59,11 +59,11 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
 
 	REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("initializing components, Owner:{0}"), OwnerRef);
 
-	ForEachComponent<FRemComponentBase>(
-		[&] (FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
-	 {
-		 Component.Initialize({*this, Index});
-	 });
+    ForEachComponent<FRemComponentBase>(
+        [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
+            {
+                Component.Initialize({*this, Index});
+            });
 }
 
 void FRemComponentContainer::Uninitialize()
@@ -80,18 +80,17 @@ void FRemComponentContainer::Uninitialize()
 	// make sure Uninitialize can't be called by TryUninitialize
 	bInitialized = false;
 
-	const auto CopyOwner = Owner;
-	Owner = nullptr;
+	RemCheckVariable(Owner, return;);
 
 	REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("uninitializing components, Owner:{0}"), Owner);
-
-	RemCheckVariable(CopyOwner, return;);
-
-	ForEachComponent<FRemComponentBase>(
-		[&] (FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
-	 {
-		 Component.Uninitialize({*this, Index});
-	 });
+    
+    ForEachComponent<FRemComponentBase>(
+        [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
+            {
+                Component.Uninitialize({*this, Index});
+            });
+    
+	Owner = nullptr;
 }
 
 bool FRemComponentContainer::IsInitialized() const
