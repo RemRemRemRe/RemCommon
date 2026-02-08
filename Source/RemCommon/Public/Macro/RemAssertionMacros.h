@@ -64,7 +64,7 @@
 
 #define REM_NO_LOG
 
-#define REM_NO_ASSERTION
+#define REM_NO_ASSERTION(...)
 
 #define REM_NO_LOG_OR_ASSERTION LogTemp, Log, REM_NO_LOG, REM_NO_ASSERTION
 
