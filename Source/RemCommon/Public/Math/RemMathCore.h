@@ -43,6 +43,21 @@ namespace Rem::Math
         }
     }
     
+    template<typename T>
+    requires std::is_floating_point_v<T>
+    [[nodiscard]] constexpr auto GetPI()
+    {
+        if constexpr (std::is_same_v<float, T>)
+        {
+            return UE_PI;
+        }
+        else
+        {
+            static_assert(std::is_same_v<double, T>);
+            return UE_DOUBLE_PI;
+        }
+    }
+    
     template <typename T>
     requires std::is_floating_point_v<T>
     [[nodiscard]] constexpr bool IsNearlyEqual(T Left, T Right, T Tolerance = GetKindSmallNumber<T>())
