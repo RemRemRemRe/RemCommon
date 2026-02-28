@@ -255,7 +255,7 @@ FVector GetActorFeetLocation(const AActor& Actor)
 	    FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z});
 }
 
-FTransform GetRootTransform(const ACharacter& Character)
+FTransform GetRootBoneTransform(const ACharacter& Character)
 {
     auto* Mesh = Character.GetMesh();
     RemEnsureVariable(Mesh, return FTransform::Identity, REM_NO_LOG_BUT_ENSURE);
@@ -263,9 +263,9 @@ FTransform GetRootTransform(const ACharacter& Character)
     return Mesh->GetSocketTransform(RootBone);
 }
 
-FVector GetRootLocation(const ACharacter& Character)
+FVector GetRootBoneLocation(const ACharacter& Character)
 {
-    return GetRootTransform(Character).GetLocation();
+    return GetRootBoneTransform(Character).GetLocation();
 }
 
 FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController)

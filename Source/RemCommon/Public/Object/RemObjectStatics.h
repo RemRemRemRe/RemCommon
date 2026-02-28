@@ -137,8 +137,8 @@ namespace Rem::Object
 	REM_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
 
 	REM_API FVector GetActorFeetLocation(const AActor& Actor);
-	REM_API FTransform GetRootTransform(const ACharacter& Character);
-	REM_API FVector GetRootLocation(const ACharacter& Character);
+	REM_API FTransform GetRootBoneTransform(const ACharacter& Character);
+	REM_API FVector GetRootBoneLocation(const ACharacter& Character);
 
 	REM_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
 	REM_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);
