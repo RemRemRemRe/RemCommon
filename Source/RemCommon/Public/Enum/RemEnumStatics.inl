@@ -90,7 +90,6 @@ constexpr TTuple<ETransitionType, T> ToEnd = {ETransitionType::ToNext, -1};
 template<typename T>
 requires std::is_signed_v<T>
 constexpr TTuple<ETransitionType, T> Restart = {ETransitionType::ToNext, 0};
-
 }
 
 }
