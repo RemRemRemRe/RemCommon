@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Macro/RemFunctorMacro.h"
 
 class UObject;
 struct FOverlapDatum;
@@ -41,9 +42,11 @@ namespace Rem::Collision
 
     template<typename TTraceType>
     REM_API AActor* GetTraceActor(const TTraceType& TraceData);
+    REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTraceActor);
 
     template<typename TTraceType>
     REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData);
+    REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTracePrimitive);
 }
 
 #undef REM_API
