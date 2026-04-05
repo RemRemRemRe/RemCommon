@@ -8,7 +8,7 @@
         struct Name##_Fn_Impl \
         { \
             template<typename... TArgs> \
-            [[nodiscard]] constexpr auto operator()(TArgs&&... Args) const -> decltype(Function(std::forward<TArgs>(Args)...)) \
+            [[nodiscard]] constexpr decltype(auto) operator()(TArgs&&... Args) const \
             { \
                 return Function(std::forward<TArgs>(Args)...); \
             } \
