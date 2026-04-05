@@ -159,7 +159,6 @@ namespace Rem::Latent
 		explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Time& DelayParameter);
 		explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Frame& DelayParameter);
 
-	protected:
 		virtual void UpdateOperation(FLatentResponse& Response) override;
 	};
 
