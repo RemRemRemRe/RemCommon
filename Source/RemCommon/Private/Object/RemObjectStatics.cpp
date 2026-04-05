@@ -105,7 +105,7 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
 	RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
 
-	// Dedicated server dose not have "local" player controller
+	// Dedicated server does not have "local" player controller
 	RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 
 	PlayerController->ServerViewPrevPlayer();
@@ -116,7 +116,7 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 	auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
 	RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
 
-	// Dedicated server dose not have "local" player controller
+	// Dedicated server does not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
 
 	PlayerController->ServerViewNextPlayer();
