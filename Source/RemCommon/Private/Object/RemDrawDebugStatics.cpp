@@ -2,10 +2,13 @@
 
 #include "Object/RemDrawDebugStatics.h"
 
+#include <functional>
+
 #include "Object/RemObjectStatics.inl"
 #include "DrawDebugHelpers.h"
 #include "KismetTraceUtils.h"
 #include "Engine/HitResult.h"
+#include "Engine/OverlapResult.h"
 #include "Engine/World.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/PlayerController.h"
@@ -432,4 +435,51 @@ void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& 
 #endif
     
 }
+
+void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDatum& Datum, const EDrawDebugTrace::Type DrawDebugType, const FLinearColor& TraceColor,
+    const FLinearColor& TraceHitColor, const float DrawTime)
+{
+
+#if UE_ENABLE_DEBUG_DRAWING
+
+    return DrawDebugTraceData(World, ConvertOverlapDatumToTraceDatum(Datum), DrawDebugType, TraceColor, TraceHitColor, DrawTime);
+    
+#endif
+    
+}
+
+FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResult& Overlap)
+{
+    auto* OverlappingActor = Overlap.GetActor();
+    RemCheckVariable(OverlappingActor, return {});
+    
+    const auto OverlappingActorLocation = OverlappingActor->GetActorLocation();
+    const auto ReversedNormal = (OverlapPoint - OverlappingActorLocation).GetSafeNormal();
+    FHitResult HitResult{OverlappingActor, Overlap.GetComponent(), OverlappingActorLocation, ReversedNormal};
+    
+    HitResult.bBlockingHit = true;
+    
+    return HitResult;
+}
+
+FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap)
+{
+    FTraceDatum Datum;
+    Datum.CollisionParams = Overlap.CollisionParams;
+    Datum.TraceChannel = Overlap.TraceChannel;
+    Datum.FrameNumber = Overlap.FrameNumber;
+    
+    Datum.Start = Overlap.Pos;
+    Datum.End = Overlap.Pos;
+    
+    Datum.Rot = Overlap.Rot;
+    
+    Datum.OutHits.Reserve(Overlap.OutOverlaps.Num());
+    Algo::Transform(Overlap.OutOverlaps, Datum.OutHits, std::bind_front(ConvertOverlapToTrace, Datum.Start));
+    
+    Datum.TraceType = EAsyncTraceType::Multi;
+    
+    return {};
+}
+    
 }

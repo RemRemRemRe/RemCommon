@@ -5,6 +5,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RemDrawDebugStatics.generated.h"
 
+struct FOverlapResult;
+struct FOverlapDatum;
 struct FTraceDatum;
 struct FHitResult;
 namespace EDrawDebugTrace
@@ -88,6 +90,12 @@ namespace Rem::DrawDebug
     
     REM_API void DrawDebugTraceData(TNotNull<const UWorld*> World, const FTraceDatum& Datum, EDrawDebugTrace::Type DrawDebugType,
         const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
+    
+    REM_API void DrawDebugOverlapData(TNotNull<const UWorld*> World, const FOverlapDatum& Datum, EDrawDebugTrace::Type DrawDebugType,
+        const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
+    
+    REM_API FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResult& Overlap);
+    REM_API FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap);
     
 }
 
