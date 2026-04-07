@@ -83,11 +83,10 @@ namespace Rem::DrawDebug
 	/**
 	 * Draw a crosshair on the screen. By default, it draws the crosshair at center of the screen
 	 */
-	REM_API void DrawDebugCrossHair(const UWorld& World, float CrossHairLineLength = 20.0f,
-			float LineThickness = 2.f, float AngleToRotate = 0.0f, const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f},
-		const FLinearColor& LineColor = FLinearColor::White);
+	REM_API void DrawDebugCrossHair(TNotNull<const UWorld*> World, float CrossHairLineLength = 20.0f, float LineThickness = 2.f,
+	    float AngleToRotate = 0.0f, const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f}, const FLinearColor& LineColor = FLinearColor::White);
     
-    REM_API void DrawDebugTraceData(const UWorld& World, const FTraceDatum& TraceDatum, EDrawDebugTrace::Type DrawDebugType,
+    REM_API void DrawDebugTraceData(TNotNull<const UWorld*> World, const FTraceDatum& Datum, EDrawDebugTrace::Type DrawDebugType,
         const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
     
 }

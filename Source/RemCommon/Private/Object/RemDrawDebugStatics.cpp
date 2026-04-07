@@ -300,17 +300,17 @@ void URemDrawDebugStatics::DrawSweepSingleCapsuleAlternative(const UObject* Worl
 namespace Rem::DrawDebug
 {
 
-void DrawDebugCrossHair(const UWorld& World, const float CrossHairLineLength, const float LineThickness,
-	const float AngleToRotate, const FVector2f& CrossHairCenterScreenSpace,	const FLinearColor& LineColor)
+void DrawDebugCrossHair(const TNotNull<const UWorld*> World, const float CrossHairLineLength, const float LineThickness,
+    const float AngleToRotate, const FVector2f& CrossHairCenterScreenSpace, const FLinearColor& LineColor)
 {
-	auto* HUD = Object::GetFirstLocalHUD(World);
+	auto* HUD = Object::GetFirstLocalHUD(*World);
 	RemCheckVariable(HUD, return;);
 
 	auto GetCrossHairCenter = [&]
 	{
 		if (CrossHairCenterScreenSpace.X < 0.0f || CrossHairCenterScreenSpace.Y < 0.0f)
 		{
-			auto* Controller = Object::GetFirstLocalPlayerController(World);
+			auto* Controller = Object::GetFirstLocalPlayerController(*World);
 			RemCheckVariable(Controller, return FVector2f::ZeroVector);
 
 			int32 SizeX, SizeY;
@@ -353,76 +353,78 @@ void DrawDebugCrossHair(const UWorld& World, const float CrossHairLineLength, co
 	DrawLine(DirectionY);
 }
 
-void DrawDebugTraceData(const UWorld& World, const FTraceDatum& TraceDatum, const EDrawDebugTrace::Type DrawDebugType,
+void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& Datum, const EDrawDebugTrace::Type DrawDebugType,
     const FLinearColor& TraceColor, const FLinearColor& TraceHitColor, const float DrawTime)
 {
 
 #if UE_ENABLE_DEBUG_DRAWING
 
-    const bool bHit = TraceDatum.OutHits.Num() > 0 ? TraceDatum.OutHits.Last().bBlockingHit : false;
-    if (TraceDatum.CollisionParams.CollisionShape.IsSphere())
+    auto& Results = Datum.OutHits;
+    const bool bHit = Results.Num() > 0 ? Results.Last().bBlockingHit : false;
+    if (auto& CollisionParameters = Datum.CollisionParams;
+        CollisionParameters.CollisionShape.IsSphere())
     {
-        const auto SphereRadius = TraceDatum.CollisionParams.CollisionShape.GetSphereRadius();
-        if (TraceDatum.TraceType == EAsyncTraceType::Multi)
+        const auto SphereRadius = CollisionParameters.CollisionShape.GetSphereRadius();
+        if (Datum.TraceType == EAsyncTraceType::Multi)
         {
-            ::DrawDebugSphereTraceMulti(&World, TraceDatum.Start, TraceDatum.End, SphereRadius,
-                DrawDebugType, bHit, TraceDatum.OutHits, TraceColor, TraceHitColor, DrawTime);
+            ::DrawDebugSphereTraceMulti(World, Datum.Start, Datum.End, SphereRadius,
+                DrawDebugType, bHit, Results, TraceColor, TraceHitColor, DrawTime);
         }
         else
         {
-            const FHitResult HitResult{TraceDatum.OutHits.Num() > 0 ? TraceDatum.OutHits[0] : FHitResult{}};
+            const FHitResult HitResult{Results.Num() > 0 ? Results[0] : FHitResult{}};
             
-            ::DrawDebugSphereTraceSingle(&World, TraceDatum.Start, TraceDatum.End, SphereRadius,
+            ::DrawDebugSphereTraceSingle(World, Datum.Start, Datum.End, SphereRadius,
                 DrawDebugType, HitResult.bBlockingHit, HitResult, TraceColor, TraceHitColor, DrawTime);
         }
     }
-    else if (TraceDatum.CollisionParams.CollisionShape.IsLine())
+    else if (CollisionParameters.CollisionShape.IsLine())
     {
-        if (TraceDatum.TraceType == EAsyncTraceType::Multi)
+        if (Datum.TraceType == EAsyncTraceType::Multi)
         {
-            ::DrawDebugLineTraceMulti(&World, TraceDatum.Start, TraceDatum.End,
-                DrawDebugType, bHit, TraceDatum.OutHits, TraceColor, TraceHitColor, DrawTime);
+            ::DrawDebugLineTraceMulti(World, Datum.Start, Datum.End,
+                DrawDebugType, bHit, Results, TraceColor, TraceHitColor, DrawTime);
         }
         else
         {
-            const FHitResult HitResult{TraceDatum.OutHits.Num() > 0 ? TraceDatum.OutHits[0] : FHitResult{}};
+            const FHitResult HitResult{Results.Num() > 0 ? Results[0] : FHitResult{}};
             
-            ::DrawDebugLineTraceSingle(&World, TraceDatum.Start, TraceDatum.End,
+            ::DrawDebugLineTraceSingle(World, Datum.Start, Datum.End,
                 DrawDebugType, HitResult.bBlockingHit, HitResult, TraceColor, TraceHitColor, DrawTime);
         }
     }
-    else if (TraceDatum.CollisionParams.CollisionShape.IsBox())
+    else if (CollisionParameters.CollisionShape.IsBox())
     {
-        const auto HalfSize = TraceDatum.CollisionParams.CollisionShape.GetBox();
+        const auto HalfSize = CollisionParameters.CollisionShape.GetBox();
         
-        if (TraceDatum.TraceType == EAsyncTraceType::Multi)
+        if (Datum.TraceType == EAsyncTraceType::Multi)
         {
-            ::DrawDebugBoxTraceMulti(&World, TraceDatum.Start, TraceDatum.End, HalfSize, TraceDatum.Rot.Rotator(),
-                DrawDebugType, bHit, TraceDatum.OutHits, TraceColor, TraceHitColor, DrawTime);
+            ::DrawDebugBoxTraceMulti(World, Datum.Start, Datum.End, HalfSize, Datum.Rot.Rotator(),
+                DrawDebugType, bHit, Results, TraceColor, TraceHitColor, DrawTime);
         }
         else
         {
-            const FHitResult HitResult{TraceDatum.OutHits.Num() > 0 ? TraceDatum.OutHits[0] : FHitResult{}};
+            const FHitResult HitResult{Results.Num() > 0 ? Results[0] : FHitResult{}};
             
-            ::DrawDebugBoxTraceSingle(&World, TraceDatum.Start, TraceDatum.End, HalfSize, TraceDatum.Rot.Rotator(),
+            ::DrawDebugBoxTraceSingle(World, Datum.Start, Datum.End, HalfSize, Datum.Rot.Rotator(),
                 DrawDebugType, HitResult.bBlockingHit, HitResult, TraceColor, TraceHitColor, DrawTime);
         }
     }
-    else if (TraceDatum.CollisionParams.CollisionShape.IsCapsule())
+    else if (CollisionParameters.CollisionShape.IsCapsule())
     {
-        const auto HalfHeight = TraceDatum.CollisionParams.CollisionShape.GetCapsuleHalfHeight();
-        const auto Radius = TraceDatum.CollisionParams.CollisionShape.GetCapsuleRadius();
+        const auto HalfHeight = CollisionParameters.CollisionShape.GetCapsuleHalfHeight();
+        const auto Radius = CollisionParameters.CollisionShape.GetCapsuleRadius();
         
-        if (TraceDatum.TraceType == EAsyncTraceType::Multi)
+        if (Datum.TraceType == EAsyncTraceType::Multi)
         {
-            ::DrawDebugCapsuleTraceMulti(&World, TraceDatum.Start, TraceDatum.End, Radius, HalfHeight, TraceDatum.Rot.Rotator(),
-                DrawDebugType, bHit, TraceDatum.OutHits, TraceColor, TraceHitColor, DrawTime);
+            ::DrawDebugCapsuleTraceMulti(World, Datum.Start, Datum.End, Radius, HalfHeight, Datum.Rot.Rotator(),
+                DrawDebugType, bHit, Results, TraceColor, TraceHitColor, DrawTime);
         }
         else
         {
-            const FHitResult HitResult{TraceDatum.OutHits.Num() > 0 ? TraceDatum.OutHits[0] : FHitResult{}};
+            const FHitResult HitResult{Results.Num() > 0 ? Results[0] : FHitResult{}};
             
-            ::DrawDebugCapsuleTraceSingle(&World, TraceDatum.Start, TraceDatum.End, Radius, HalfHeight, TraceDatum.Rot.Rotator(),
+            ::DrawDebugCapsuleTraceSingle(World, Datum.Start, Datum.End, Radius, HalfHeight, Datum.Rot.Rotator(),
                 DrawDebugType, HitResult.bBlockingHit, HitResult, TraceColor, TraceHitColor, DrawTime);
         }
     }
