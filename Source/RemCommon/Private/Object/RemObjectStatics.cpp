@@ -268,40 +268,48 @@ FVector GetRootBoneLocation(const ACharacter& Character)
     return GetRootBoneTransform(Character).GetLocation();
 }
 
-FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController)
+TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector2f& ScreenPosition)
 {
-	FVector2f MousePosition;
-	if (const auto bSuccess = PlayerController.GetMousePosition(MousePosition.X, MousePosition.Y);
-		!bSuccess)
-	{
-		return FVector2f::ZeroVector;
-	}
-	//RemCheckCondition(bSuccess, return FVector2f::ZeroVector);
+    FVector2f MousePosition;
+    
+    const auto bSuccess = PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
+    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    
+    return FVector2f{MousePosition.X - ScreenPosition.X, ScreenPosition.Y - MousePosition.Y};
+}
 
+TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<APlayerController*> PlayerController)
+{
 	FVector2f ViewportCenter;
 	{
 		FIntVector2 ViewportSize;
-		PlayerController.GetViewportSize(ViewportSize.X, ViewportSize.Y);
+		PlayerController->GetViewportSize(ViewportSize.X, ViewportSize.Y);
 
 		ViewportCenter = FVector2f{static_cast<float>(ViewportSize.X) / 2.0f, static_cast<float>(ViewportSize.Y) / 2.0f};
 	}
 
-	// return MousePosition - ViewportCenter;
-	return {MousePosition.X - ViewportCenter.X, ViewportCenter.Y - MousePosition.Y};
+	return GetScreenPositionToMouse2F(PlayerController, ViewportCenter);
 }
 
-FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController)
+TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<APlayerController*> PlayerController)
 {
-	return GetScreenCenterToMouseVector2F(PlayerController).GetSafeNormal();
-}
-
-FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController)
-{
-	const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController.GetControlRotation().Yaw)};
+    const auto Value = GetScreenCenterToMouse2F(PlayerController);
+    RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
+    
+	const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController->GetControlRotation().Yaw)};
 	const auto RightDirection{Math::PerpendicularCounterClockwiseXY(ForwardDirection)};
 
-	const auto ScreenSpaceDirection{GetScreenCenterToMouseDirection2F(PlayerController)};
-	return FVector2f{ForwardDirection * ScreenSpaceDirection.Y + RightDirection * ScreenSpaceDirection.X}.GetSafeNormal();
+	return FVector2f{ForwardDirection * Value->Y + RightDirection * Value->X};
 }
 
+TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector& WorldLocation)
+{
+    FVector2D ScreenLocation;
+
+    const auto bSuccess = PlayerController->ProjectWorldLocationToScreen(WorldLocation, ScreenLocation);
+    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    
+    return GetScreenPositionToMouse2F(PlayerController, FVector2f{ScreenLocation});
+}
+    
 }

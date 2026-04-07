@@ -140,9 +140,12 @@ namespace Rem::Object
 	REM_API FTransform GetRootBoneTransform(const ACharacter& Character);
 	REM_API FVector GetRootBoneLocation(const ACharacter& Character);
 
-	REM_API FVector2f GetScreenCenterToMouseVector2F(const APlayerController& PlayerController);
-	REM_API FVector2f GetScreenCenterToMouseDirection2F(const APlayerController& PlayerController);
-	REM_API FVector2f GetScreenCenterToMouseAsWorldDirection2F(const APlayerController& PlayerController);
+	REM_API TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector2f& ScreenPosition);
+    
+	REM_API TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<APlayerController*> PlayerController);
+	REM_API TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<APlayerController*> PlayerController);
+    
+	REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector& WorldLocation);
 }
 
 #undef REM_API
