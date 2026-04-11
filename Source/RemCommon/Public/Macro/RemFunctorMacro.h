@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <utility>
+
 #define REM_FUNCTION_TO_FUNCTOR(Name, Function) \
     namespace Private \
     { \
