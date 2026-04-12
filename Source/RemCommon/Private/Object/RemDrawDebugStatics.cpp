@@ -357,7 +357,7 @@ void DrawDebugCrossHair(const TNotNull<const UWorld*> World, const float CrossHa
 }
 
 void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& Datum, const EDrawDebugTrace::Type DrawDebugType,
-    const FLinearColor& TraceColor, const FLinearColor& TraceHitColor, const float DrawTime)
+    const float DrawTime, const FLinearColor& TraceColor, const FLinearColor& TraceHitColor)
 {
 
 #if UE_ENABLE_DEBUG_DRAWING
@@ -436,13 +436,13 @@ void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& 
     
 }
 
-void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDatum& Datum, const EDrawDebugTrace::Type DrawDebugType, const FLinearColor& TraceColor,
-    const FLinearColor& TraceHitColor, const float DrawTime)
+void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDatum& Datum, const EDrawDebugTrace::Type DrawDebugType,
+    const float DrawTime, const FLinearColor& TraceColor, const FLinearColor& TraceHitColor)
 {
 
 #if UE_ENABLE_DEBUG_DRAWING
 
-    return DrawDebugTraceData(World, ConvertOverlapDatumToTraceDatum(Datum), DrawDebugType, TraceColor, TraceHitColor, DrawTime);
+    return DrawDebugTraceData(World, ConvertOverlapDatumToTraceDatum(Datum), DrawDebugType, DrawTime, TraceColor, TraceHitColor);
     
 #endif
     

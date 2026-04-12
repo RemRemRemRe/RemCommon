@@ -89,10 +89,10 @@ namespace Rem::DrawDebug
 	    float AngleToRotate = 0.0f, const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f}, const FLinearColor& LineColor = FLinearColor::White);
     
     REM_API void DrawDebugTraceData(TNotNull<const UWorld*> World, const FTraceDatum& Datum, EDrawDebugTrace::Type DrawDebugType,
-        const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
+        float DrawTime = -1.0f, const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red);
     
     REM_API void DrawDebugOverlapData(TNotNull<const UWorld*> World, const FOverlapDatum& Datum, EDrawDebugTrace::Type DrawDebugType,
-        const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red, float DrawTime = -1.0f);
+        float DrawTime = -1.0f, const FLinearColor& TraceColor = FLinearColor::Green, const FLinearColor& TraceHitColor = FLinearColor::Red);
     
     REM_API FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResult& Overlap);
     REM_API FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap);
