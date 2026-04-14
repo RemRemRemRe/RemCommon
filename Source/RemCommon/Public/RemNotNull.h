@@ -19,5 +19,11 @@ namespace Rem
         return TNotNull<T*>{ Object };
     }
     
+    template<typename T>
+    decltype(auto) MakeNotNull(TObjectPtr<T> Object)
+    {
+        return MakeNotNull(Object.Get());
+    }
+    
     REM_FUNCTION_TO_FUNCTOR_SIMPLE(MakeNotNull)
 }
