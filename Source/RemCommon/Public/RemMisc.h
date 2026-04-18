@@ -202,6 +202,14 @@ namespace Rem
 			}
 		}
 	}
+
+    namespace Concepts
+    {
+	    template <typename T>
+        concept rem_to_stringable = requires(T&& Object) {
+	        Rem::ToString(std::forward<T>(Object));
+        };
+    }
     
 	template<typename T>
 	ENetRole GetNetRole(const T& Object)
@@ -338,7 +346,8 @@ namespace Rem
 		{
 		    using RawType = std::remove_cvref_t<F>;
 		    
-			if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>> && Concepts::can_make_string_from<RawType>)
+			if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>>
+			    && Concepts::rem_to_stringable<RawType>)
 			{
 				Args.Add(Rem::ToString(std::forward<F>(First)));
 			}
