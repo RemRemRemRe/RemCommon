@@ -4,6 +4,7 @@
 
 #include "RemCommonWrapperTypes.h"
 #include "RemConcepts.h"
+#include "Algo/Transform.h"
 
 namespace Rem
 {

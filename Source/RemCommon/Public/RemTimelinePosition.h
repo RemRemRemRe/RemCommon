@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Math/IntVector.h"
+#include "Math/Vector2D.h"
+
 #include "RemTimelinePosition.generated.h"
 
 enum class ERemRangeFormat : uint8;

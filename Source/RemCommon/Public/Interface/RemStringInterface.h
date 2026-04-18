@@ -15,7 +15,7 @@ class URemStringInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/** Interface for printing a object in string format */
+/** Interface for printing an object in string format */
 class REMCOMMON_API IRemStringInterface
 {
 	GENERATED_BODY()
