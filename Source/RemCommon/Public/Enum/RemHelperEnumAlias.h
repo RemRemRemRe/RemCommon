@@ -10,4 +10,6 @@
 namespace Rem::Enum
 {
     STRONG_ALIAS_EXPLICIT_CONVERSION(ECallFinishSpawn, EYesOrNo);
+    STRONG_ALIAS_EXPLICIT_CONVERSION(ERecursive, EYesOrNo);
+    STRONG_ALIAS_EXPLICIT_CONVERSION(EExcludeSelf, EYesOrNo);
 }
