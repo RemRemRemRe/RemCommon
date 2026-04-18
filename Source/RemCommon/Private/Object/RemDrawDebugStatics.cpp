@@ -306,14 +306,14 @@ namespace Rem::DrawDebug
 void DrawDebugCrossHair(const TNotNull<const UWorld*> World, const float CrossHairLineLength, const float LineThickness,
     const float AngleToRotate, const FVector2f& CrossHairCenterScreenSpace, const FLinearColor& LineColor)
 {
-	auto* HUD = Object::GetFirstLocalHUD(*World);
+	auto* HUD = Object::GetFirstLocalHUD(World);
 	RemCheckVariable(HUD, return;);
 
 	auto GetCrossHairCenter = [&]
 	{
 		if (CrossHairCenterScreenSpace.X < 0.0f || CrossHairCenterScreenSpace.Y < 0.0f)
 		{
-			auto* Controller = Object::GetFirstLocalPlayerController(*World);
+			auto* Controller = Object::GetFirstLocalPlayerController(World);
 			RemCheckVariable(Controller, return FVector2f::ZeroVector);
 
 			int32 SizeX, SizeY;

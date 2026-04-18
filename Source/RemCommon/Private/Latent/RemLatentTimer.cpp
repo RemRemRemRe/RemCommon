@@ -4,6 +4,7 @@
 #include "Latent/RemLatentTimer.h"
 
 #include "RemCommonLog.h"
+#include "RemNotNull.h"
 #include "Engine/World.h"
 #include "Enum/RemHelperEnum.h"
 #include "Macro/RemAssertionMacros.h"
@@ -248,9 +249,9 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
 }
 
 template<Enum::EYesOrNo NextTick>
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject)
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(const TNotNull<UObject*> WorldContextObject)
 {
-	auto* World = WorldContextObject.GetWorld();
+	auto* World = WorldContextObject->GetWorld();
 	RemCheckVariable(World, return {});
 
 	auto& LatentActionManager = World->GetLatentActionManager();
@@ -264,13 +265,13 @@ TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& W
 
 	const auto Handle{FTimerHandle::NewHandle()};
 
-	LatentActionManager.AddNewAction(&WorldContextObject, Handle, TimerLatentAction);
+	LatentActionManager.AddNewAction(WorldContextObject, Handle, TimerLatentAction);
 
 	return {Handle, TimerLatentAction};
 }
 
 template<Enum::EYesOrNo NextTick>
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(const TNotNull<UObject*> WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	auto Tuple = SetTimerForTickHelper<NextTick>(WorldContextObject);
@@ -288,40 +289,40 @@ TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForTickHelper(UObject& W
 	return Tuple;
 }
 
-FTimerHandle SetTimerForThisTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForThisTick(const TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate)
 {
 	return SetTimerForThisTickX(WorldContextObject, InDelegate).Get<FTimerHandle>();
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(const TNotNull<UObject*> WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::No>(WorldContextObject, InDelegate);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject)
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(const TNotNull<UObject*> WorldContextObject)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::No>(WorldContextObject);
 }
 
-FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate)
+FTimerHandle SetTimerForNextTick(const TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate)
 {
 	return SetTimerForNextTickX(WorldContextObject, InDelegate).Get<FTimerHandle>();
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(const TNotNull<UObject*> WorldContextObject,
 	const FTimerDelegate& InDelegate)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::Yes>(WorldContextObject, InDelegate);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject)
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(const TNotNull<UObject*> WorldContextObject)
 {
 	return SetTimerForTickHelper<Enum::EYesOrNo::Yes>(WorldContextObject);
 }
 
-template<typename T>
-static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const T& DelayParameter)
+	template<typename T>
+static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(const TNotNull<UObject*> WorldContextObject, const T& DelayParameter)
 {
 	if constexpr (std::is_same_v<std::remove_cvref_t<T>, FTimerParameterHelper_Time>)
 	{
@@ -333,7 +334,7 @@ static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& W
 #endif
 	}
 
-	auto* World = WorldContextObject.GetWorld();
+	auto* World = WorldContextObject->GetWorld();
 	RemCheckVariable(World, return {});
 
 	auto& LatentActionManager = World->GetLatentActionManager();
@@ -342,13 +343,13 @@ static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& W
 
 	const auto Handle{FTimerHandle::NewHandle()};
 
-	LatentActionManager.AddNewAction(&WorldContextObject, Handle, TimerLatentAction);
+	LatentActionManager.AddNewAction(WorldContextObject, Handle, TimerLatentAction);
 
 	return {Handle, TimerLatentAction};
 }
 
 template<typename T>
-static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const T& DelayParameter)
+static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(const TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate, const T& DelayParameter)
 {
 	auto Tuple = SetTimerHelper(WorldContextObject, DelayParameter);
 
@@ -365,53 +366,53 @@ static TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerHelper(UObject& W
 	return Tuple;
 }
 
-FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate,
+FTimerHandle SetTimer(const TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate,
 	const FTimerParameterHelper_Time& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter).Get<FTimerHandle>();
 }
 
-FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate,
+FTimerHandle SetTimer(const TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate,
 	const FTimerParameterHelper_Frame& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter).Get<FTimerHandle>();
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(const TNotNull<UObject*> WorldContextObject,
 	const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(const TNotNull<UObject*> WorldContextObject,
 	const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, InDelegate, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(const TNotNull<UObject*> WorldContextObject,
 	const FTimerParameterHelper_Time& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, DelayParameter);
 }
 
-TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject,
+TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(const TNotNull<UObject*> WorldContextObject,
 	const FTimerParameterHelper_Frame& DelayParameter)
 {
 	return SetTimerHelper(WorldContextObject, DelayParameter);
 }
 
-void PauseTimer(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+void PauseTimer(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle)
 {
 	SetTimerPaused(WorldContextObject, TimerHandle, true);
 }
 
-void UnpauseTimer(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+void UnpauseTimer(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle)
 {
 	SetTimerPaused(WorldContextObject, TimerHandle, false);
 }
 
-void SetTimerPaused(UObject& WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
+void SetTimerPaused(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
@@ -419,7 +420,7 @@ void SetTimerPaused(UObject& WorldContextObject, const FTimerHandle TimerHandle,
 	}
 }
 
-void SetTimerPausedOneFrame(UObject& WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
+void SetTimerPausedOneFrame(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle, const bool bPause)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
@@ -427,7 +428,7 @@ void SetTimerPausedOneFrame(UObject& WorldContextObject, const FTimerHandle Time
 	}
 }
 
-void StopTimer(UObject& WorldContextObject, FTimerHandle& TimerHandle)
+void StopTimer(const TNotNull<UObject*> WorldContextObject, FTimerHandle& TimerHandle)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
@@ -437,41 +438,41 @@ void StopTimer(UObject& WorldContextObject, FTimerHandle& TimerHandle)
 	TimerHandle = {};
 }
 
-FTimerLatentAction_Delay* FindTimerAction(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+FTimerLatentAction_Delay* FindTimerAction(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle)
 {
-	auto* World = WorldContextObject.GetWorld();
+	auto* World = WorldContextObject->GetWorld();
 	RemCheckVariable(World, return nullptr);
 
 	auto& LatentActionManager = World->GetLatentActionManager();
 
-	return LatentActionManager.FindExistingAction<FTimerLatentAction_Delay>(&WorldContextObject, TimerHandle);
+	return LatentActionManager.FindExistingAction<FTimerLatentAction_Delay>(WorldContextObject, TimerHandle);
 }
 
-bool IsTimerActive(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+bool IsTimerActive(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle)
 {
 	return !!FindTimerAction(WorldContextObject, TimerHandle);
 }
 
-bool ResetTimerDelay(UObject& WorldContextObject, const FTimerHandle TimerHandle)
+bool ResetTimerDelay(const TNotNull<UObject*> WorldContextObject, const FTimerHandle TimerHandle)
 {
 	if (auto* TimerLatentAction = FindTimerAction(WorldContextObject, TimerHandle))
 	{
-		ResetTimerDelay(*TimerLatentAction);
+		ResetTimerDelay(TimerLatentAction);
 		return true;
 	}
 
 	return {};
 }
 
-void ResetTimerDelay(FTimerLatentAction_Delay& TimerAction)
+void ResetTimerDelay(const ::TNotNull<FTimerLatentAction_Delay*> TimerAction)
 {
-	if (TimerAction.bTimeOrFrame)
+	if (TimerAction->bTimeOrFrame)
 	{
-		TimerAction.CurrentTimeOrFrame.Time = TimerAction.TimeOrFrameToDelay.Time;
+		TimerAction->CurrentTimeOrFrame.Time = TimerAction->TimeOrFrameToDelay.Time;
 	}
 	else
 	{
-		TimerAction.CurrentTimeOrFrame.Frame = TimerAction.TimeOrFrameToDelay.Frame;
+		TimerAction->CurrentTimeOrFrame.Frame = TimerAction->TimeOrFrameToDelay.Frame;
 	}
 }
 }

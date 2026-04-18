@@ -62,7 +62,7 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
     ForEachComponent<FRemComponentBase>(
         [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
             {
-                Component.Initialize({*this, Index});
+                Component.Initialize({this, Index});
             });
 }
 
@@ -87,7 +87,7 @@ void FRemComponentContainer::Uninitialize()
     ForEachComponent<FRemComponentBase>(
         [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
             {
-                Component.Uninitialize({*this, Index});
+                Component.Uninitialize({this, Index});
             });
     
 	Owner = nullptr;

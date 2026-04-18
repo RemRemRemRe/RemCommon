@@ -6,6 +6,7 @@
 
 #include "RemAlwaysFalse.h"
 #include "RemConcepts.h"
+#include "RemNotNull.h"
 #include "UObject/Class.h"
 #include "UObject/Object.h"
 #include "Engine/EngineTypes.h"
@@ -27,7 +28,7 @@ namespace Rem
 	{
 		using RawType = std::remove_cvref_t<T>;
 
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<RawType>)
 		{
 			if (Object != nullptr)
 			{
@@ -44,6 +45,10 @@ namespace Rem
 			}
 			return {};
 		}
+	    else if constexpr (Rem::is_not_null<RawType>)
+        {
+            return Rem::IsValid(*Object);
+        }
 		else
 		{
 			if constexpr (std::derived_from<RawType, UObject>)
@@ -70,7 +75,7 @@ namespace Rem
 	template<typename T>
 	ENetMode GetNetMode(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::GetNetMode(*Object);
 		}
@@ -97,7 +102,7 @@ namespace Rem
 	template<typename T>
 	bool IsNetMode(const T& Object, const ENetMode NetMode)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::IsNetMode(*Object);
 		}
@@ -141,7 +146,7 @@ namespace Rem
 	template<typename T>
 	FString ToString(const T& Data)
 	{
-        if constexpr (std::is_pointer_v<T>)
+        if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::ToString(*Data);
 		}
@@ -201,7 +206,7 @@ namespace Rem
 	template<typename T>
 	ENetRole GetNetRole(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::GetNetRole(*Object);
 		}
@@ -256,7 +261,7 @@ namespace Rem
 	template<typename T, bool bConstantStringLength = false>
 	FString GetNetRoleString(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::GetNetRoleString(*Object);
 		}
@@ -291,12 +296,7 @@ namespace Rem
 	template<typename  T>
 	FString GetNetDebugString(const T& Object)
 	{
-		if (!Rem::IsValid(Object))
-		{
-			return TEXT("Invalid Object");
-		}
-
-		if constexpr (std::is_pointer_v<T>)
+		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
 		{
 			return Rem::GetNetDebugString(*Object);
 		}

@@ -47,6 +47,7 @@ class FString;
 class AAIController;
 class ISlateTextureAtlasInterface;
 class ULocalPlayer;
+class UMovementComponent;
 class AGameStateBase;
 class AGameModeBase;
 class UAnimInstance;
@@ -219,6 +220,9 @@ namespace Rem::Concepts
 
 	template<class T>
 	concept is_actor_component = std::derived_from<T, UActorComponent>;
+
+	template<class T>
+	concept is_movement_component = std::derived_from<T, UMovementComponent>;
 
 	template<class T>
 	concept is_player_state = std::derived_from<T, APlayerState>;

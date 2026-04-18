@@ -7,7 +7,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemAnimInstanceInterface)
 
-UAnimInstance* IRemAnimInstanceInterface::GetAnimInstance(const AActor& Actor) const
+UAnimInstance* IRemAnimInstanceInterface::GetAnimInstance(const TNotNull<const AActor*> Actor) const
 {
 	return Rem::Animation::GetAnimInstance(Actor);
 }

@@ -19,5 +19,5 @@ class REMCOMMON_API IRemAnimInstanceInterface
 	GENERATED_BODY()
 
 public:
-	virtual UAnimInstance* GetAnimInstance(const AActor& Actor) const;
+	virtual UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor) const;
 };

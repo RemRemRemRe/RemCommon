@@ -170,44 +170,44 @@ namespace Rem::Latent
 	 *
 	 * consider using FTimerManager if you do need do it this frame (before the end of this frame)
 	 */
-	REMCOMMON_API FTimerHandle SetTimerForThisTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(UObject& WorldContextObject,
+	REMCOMMON_API FTimerHandle SetTimerForThisTick(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(TNotNull<UObject*> WorldContextObject,
 		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(UObject& WorldContextObject);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(TNotNull<UObject*> WorldContextObject);
 
 	/**
 	 * This is preferred and safer to call than the one above
 	 */
-	REMCOMMON_API FTimerHandle SetTimerForNextTick(UObject& WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(UObject& WorldContextObject,
+	REMCOMMON_API FTimerHandle SetTimerForNextTick(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(TNotNull<UObject*> WorldContextObject,
 		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(UObject& WorldContextObject);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(TNotNull<UObject*> WorldContextObject);
 
-	REMCOMMON_API FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API FTimerHandle SetTimer(UObject& WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+	REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
+	REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
 		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(UObject& WorldContextObject,
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
 		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(UObject& WorldContextObject, const FTimerParameterHelper_Frame& DelayParameter);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerParameterHelper_Time& DelayParameter);
+	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerParameterHelper_Frame& DelayParameter);
 
-	REMCOMMON_API void PauseTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void UnpauseTimer(UObject& WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void SetTimerPaused(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
+	REMCOMMON_API void PauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API void UnpauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API void SetTimerPaused(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle, bool bPause);
 
-	REMCOMMON_API void SetTimerPausedOneFrame(UObject& WorldContextObject, FTimerHandle TimerHandle, bool bPause);
+	REMCOMMON_API void SetTimerPausedOneFrame(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle, bool bPause);
 
-	REMCOMMON_API void StopTimer(UObject& WorldContextObject, FTimerHandle& TimerHandle);
+	REMCOMMON_API void StopTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle& TimerHandle);
 
-	REMCOMMON_API FTimerLatentAction_Delay* FindTimerAction(UObject& WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API bool IsTimerActive(UObject& WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API FTimerLatentAction_Delay* FindTimerAction(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API bool IsTimerActive(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
 
 	/**
 	 * this could mimic re triggerable timer, won't affect loop count though
 	 *
 	 * @return true if found the timer and reset its delay, time or frame
 	 */
-	REMCOMMON_API bool ResetTimerDelay(UObject& WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void ResetTimerDelay(FTimerLatentAction_Delay& TimerAction);
+	REMCOMMON_API bool ResetTimerDelay(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+	REMCOMMON_API void ResetTimerDelay(TNotNull<FTimerLatentAction_Delay*> TimerAction);
 }

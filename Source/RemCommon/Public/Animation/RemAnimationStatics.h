@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "RemNotNull.h"
 
 #include "RemAnimationStatics.generated.h"
 
@@ -21,5 +22,5 @@ namespace Rem::Animation
 	/**
 	 * try get anim instance from ACharacter::GetMesh
 	 */
-	REMCOMMON_API UAnimInstance* GetAnimInstance(const AActor& Actor);
+	REMCOMMON_API UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor);
 }

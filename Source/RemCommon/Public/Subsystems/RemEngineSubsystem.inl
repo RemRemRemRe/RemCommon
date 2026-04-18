@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include <type_traits>
-
+#include "RemNotNull.h"
 #include "Engine/Engine.h"
+#include "Macro/RemAssertionMacros.h"
 
 class UEngineSubsystem;
 
@@ -13,17 +13,13 @@ namespace Rem::Subsystem
 	template<std::derived_from<UEngineSubsystem> T>
 	T* GetEngineSubsystem()
 	{
-		if (GEngine)
-		{
-			return GEngine->GetEngineSubsystem<T>();
-		}
-
-		return nullptr;
+	    RemEnsureVariable(GEngine, return {});
+		return GEngine->GetEngineSubsystem<T>();
 	}
 
 	template<std::derived_from<UEngineSubsystem> T>
-	T& GetEngineSubsystemRef()
+	auto GetEngineSubsystemNotNull()
 	{
-		return *GetEngineSubsystem<T>();
+		return MakeNotNull(GetEngineSubsystem<T>());
 	}
 }

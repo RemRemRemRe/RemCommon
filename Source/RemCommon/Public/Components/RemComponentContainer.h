@@ -7,6 +7,7 @@
 #include "RemConcepts.h"
 #include "Macro/RemGenerateMembersMacro.h"
 #include "StructUtils/InstancedStructContainer.h"
+#include "RemNotNull.h"
 
 #include "RemComponentContainer.generated.h"
 
@@ -27,7 +28,7 @@ struct REMCOMMON_API FRemComponentBase
 
     struct FContext
 	{
-	    FRemComponentContainer& OwnerInstance;
+	    Rem::TNotNull<FRemComponentContainer*> OwnerInstance;
 	    const int32 ComponentIndex;
 	};
     

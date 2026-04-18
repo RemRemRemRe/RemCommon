@@ -9,7 +9,7 @@
 template <std::derived_from<FRemComponentViewBase> TComponentType>
 TComponentType::FInstanceDataType* FRemComponentViewBase::GetInstanceData(const FContext& Context) const
 {
-    const auto DataView = Context.OwnerInstance.GetInstanceDataView(Context.ComponentIndex);
+    const auto DataView = Context.OwnerInstance->GetInstanceDataView(Context.ComponentIndex);
     
     return DataView.GetPtr<typename TComponentType::FInstanceDataType>();
 }

@@ -92,7 +92,7 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
         ForEachComponent<FRemComponentViewBase>(
         [&] (const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
          {
-             InstanceDataTypes.Add(Component.GetInstanceDataType({*this, Index}));
+             InstanceDataTypes.Add(Component.GetInstanceDataType({this, Index}));
          });
 	    
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
@@ -107,7 +107,7 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
 	ForEachComponent<FRemComponentViewBase>(
 		[&] (const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
 	 {
-		 Component.Initialize({*this, Index});
+		 Component.Initialize({this, Index});
 	 });
 }
 
@@ -135,7 +135,7 @@ void FRemComponentViewContainerInstance::Uninitialize()
 	ForEachComponent<FRemComponentViewBase>(
 		[&] (const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
 	 {
-		 Component.Uninitialize({*this, Index});
+		 Component.Uninitialize({this, Index});
 	 });
     
     InstanceDataContainer.Reset();

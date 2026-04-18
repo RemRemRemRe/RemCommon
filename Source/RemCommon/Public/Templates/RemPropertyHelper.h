@@ -6,7 +6,7 @@ namespace Rem::Property
 {
 
 	template<typename T = FObjectPropertyBase>
-	bool IsPropertyClassChildOf(const FProperty* PropertyToCheck, const UStruct* SomeBase)
+	bool IsPropertyClassChildOf(const TNotNull<const FProperty*> PropertyToCheck, const TNotNull<const UStruct*> SomeBase)
 	{
 		const T* ObjectProperty = CastField<T>(PropertyToCheck);
 				

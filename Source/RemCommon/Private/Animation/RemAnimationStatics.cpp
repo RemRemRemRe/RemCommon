@@ -13,9 +13,9 @@
 namespace Rem::Animation
 {
 
-UAnimInstance* GetAnimInstance(const AActor& Actor)
+UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor)
 {
-	if (auto* Character = Cast<ACharacter>(&Actor);
+	if (auto* Character = Cast<ACharacter>(Actor);
 		LIKELY(Character))
 	{
 		if (LIKELY(Character->GetMesh()))

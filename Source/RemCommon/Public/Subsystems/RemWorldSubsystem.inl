@@ -13,17 +13,17 @@ class UWorldSubsystem;
 namespace Rem::Subsystem
 {
 	template<std::derived_from<UWorldSubsystem> T>
-	T* GetWorldSubsystem(const UObject& Object)
+	T* GetWorldSubsystem(const TNotNull<const UObject*> Object)
 	{
-		const auto* World = Object.GetWorld();
+		const auto* World = Object->GetWorld();
 		RemCheckCondition(World, return nullptr);
 
 		return World->GetSubsystem<T>();
 	}
 
 	template<std::derived_from<UWorldSubsystem> T>
-	T& GetWorldSubsystemRef(const UObject& Object)
+	auto GetWorldSubsystemNotNull(const TNotNull<const UObject*> Object)
 	{
-		return *GetWorldSubsystem<T>(Object);
+		return MakeNotNull(GetWorldSubsystem<T>(Object));
 	}
 }

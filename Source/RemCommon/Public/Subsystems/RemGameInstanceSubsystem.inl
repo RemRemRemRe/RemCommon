@@ -16,7 +16,7 @@ class UGameInstanceSubsystem;
 namespace Rem::Subsystem
 {
 	template<std::derived_from<UGameInstanceSubsystem> T>
-	T* GetGameInstanceSubsystem(const UObject& Object)
+	T* GetGameInstanceSubsystem(const TNotNull<const UObject*> Object)
 	{
 		const auto* GameInstance = Object::GetGameInstance(Object);
 		RemCheckCondition(GameInstance, return nullptr);
@@ -25,8 +25,8 @@ namespace Rem::Subsystem
 	}
 
 	template<std::derived_from<UGameInstanceSubsystem> T>
-	T& GetGameInstanceSubsystemRef()
+	auto GetGameInstanceSubsystemNotNull(const TNotNull<const UObject*> Object)
 	{
-		return *GetGameInstanceSubsystem<T>();
+		return MakeNotNull(GetGameInstanceSubsystem<T>(Object));
 	}
 }

@@ -14,7 +14,7 @@ class UAudioEngineSubsystem;
 namespace Rem::Subsystem
 {
 	template<std::derived_from<UAudioEngineSubsystem> T>
-	T* GetAudioEngineSubsystem(const UObject& Object)
+	T* GetAudioEngineSubsystem(const TNotNull<const UObject*> Object)
 	{
 		const auto AudioDevice = Object::GetAudioDevice(Object);
 		RemCheckCondition(AudioDevice, return nullptr);
@@ -23,8 +23,8 @@ namespace Rem::Subsystem
 	}
 
 	template<std::derived_from<UAudioEngineSubsystem> T>
-	T& GetAudioEngineSubsystemRef(const UObject& Object)
+	auto GetAudioEngineSubsystemNotNull(const TNotNull<const UObject*> Object)
 	{
-		return *GetAudioEngineSubsystem<T>(Object);
+		return MakeNotNull(GetAudioEngineSubsystem<T>(Object));
 	}
 }

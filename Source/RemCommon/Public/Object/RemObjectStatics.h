@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "RemNotNull.h"
 
 #include "RemObjectStatics.generated.h"
 
@@ -95,16 +96,16 @@ namespace Rem::Object
 {
     REM_API extern const FName RootBone;
     
-	REM_API FAudioDeviceHandle GetAudioDevice(const UObject& Object);
+    REM_API FAudioDeviceHandle GetAudioDevice(TNotNull<const UObject*> Object);
 
-	REM_API void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
+	REM_API void ForeachObjectInArray(TNotNull<const FArrayProperty*> ArrayProperty, TNotNull<const UObject*> InContainer,
 		const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate);
 
 	REM_API bool IsImplementedInBlueprint(const UFunction* Function);
 
-	inline bool IsClassDefaultObject(const UObject& Object)
+	inline bool IsClassDefaultObject(const TNotNull<const UObject*> Object)
 	{
-		return static_cast<bool>(Object.GetFlags() & EObjectFlags::RF_ClassDefaultObject);
+		return static_cast<bool>(Object->GetFlags() & RF_ClassDefaultObject);
 	}
 
 	constexpr bool IsArrayItselfChanged(const EPropertyChangeType::Type ChangeType)
@@ -130,22 +131,22 @@ namespace Rem::Object
 	///
 	///
 
-	REM_API FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REM_API FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForThisTick(TNotNull<const UWorld*> World, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForThisTick(TNotNull<const UObject*> WorldContextObject, const FTimerDelegate& Delegate);
 
-	REM_API FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate);
-	REM_API FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForNextTick(TNotNull<const UWorld*> World, const FTimerDelegate& Delegate);
+	REM_API FTimerHandle SetTimerForNextTick(TNotNull<const UObject*> WorldContextObject, const FTimerDelegate& Delegate);
 
-	REM_API FVector GetActorFeetLocation(const AActor& Actor);
-	REM_API FTransform GetRootBoneTransform(const ACharacter& Character);
-	REM_API FVector GetRootBoneLocation(const ACharacter& Character);
+	REM_API FVector GetActorFeetLocation(TNotNull<const AActor*> Actor);
+	REM_API FTransform GetRootBoneTransform(TNotNull<const ACharacter*> Character);
+	REM_API FVector GetRootBoneLocation(TNotNull<const ACharacter*> Character);
 
-	REM_API TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector2f& ScreenPosition);
+	REM_API TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController, const FVector2f& ScreenPosition);
     
-	REM_API TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<APlayerController*> PlayerController);
-	REM_API TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<APlayerController*> PlayerController);
+	REM_API TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<const APlayerController*> PlayerController);
+	REM_API TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<const APlayerController*> PlayerController);
     
-	REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector& WorldLocation);
+	REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController, const FVector& WorldLocation);
 }
 
 #undef REM_API

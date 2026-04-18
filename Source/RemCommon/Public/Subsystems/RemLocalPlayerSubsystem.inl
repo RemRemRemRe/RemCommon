@@ -14,7 +14,7 @@ class ULocalPlayerSubsystem;
 namespace Rem::Subsystem
 {
 	template<std::derived_from<ULocalPlayerSubsystem> T>
-	T* GetLocalPlayerSubsystem(const UObject& Object)
+	T* GetLocalPlayerSubsystem(const TNotNull<const UObject*> Object)
 	{
 		const auto* LocalPlayer = Object::GetFirstLocalPlayer(Object);
 		RemCheckCondition(LocalPlayer, return nullptr);
@@ -23,8 +23,8 @@ namespace Rem::Subsystem
 	}
 
 	template<std::derived_from<ULocalPlayerSubsystem> T>
-	T& GetLocalPlayerSubsystemRef(const UObject& Object)
+	auto GetLocalPlayerSubsystemNotNull(const TNotNull<const UObject*> Object)
 	{
-		return *GetLocalPlayerSubsystem<T>(Object);
+		return MakeNotNull(GetLocalPlayerSubsystem<T>(Object));
 	}
 }

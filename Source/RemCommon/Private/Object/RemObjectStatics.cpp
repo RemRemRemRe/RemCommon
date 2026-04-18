@@ -10,7 +10,6 @@
 #include "Engine/World.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/NavMovementComponent.h"
-// ReSharper disable once CppUnusedIncludeDirective
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Macro/RemAssertionMacros.h"
@@ -38,14 +37,14 @@ UGameInstance* URemObjectStatics::GetGameInstance(const UObject* Object)
 {
 	RemCheckVariable(Object, return nullptr);
 
-	return Rem::Object::GetGameInstance(*Object);
+	return Rem::Object::GetGameInstance(Object);
 }
 
 FAudioDeviceHandle URemObjectStatics::GetAudioDevice(const UObject* Object)
 {
 	RemCheckVariable(Object, return {});
 
-	return Rem::Object::GetAudioDevice(*Object);
+	return Rem::Object::GetAudioDevice(Object);
 }
 
 bool URemObjectStatics::IsObjectValidForBlueprint(const UObject* Object)
@@ -59,7 +58,7 @@ APlayerState* URemObjectStatics::GetPlayerState(const AActor* Actor)
 {
 	RemEnsureVariable(Actor, return {});
 
-	return Rem::Object::GetPlayerState<APlayerState>(*Actor);
+	return Rem::Object::GetPlayerState<const AActor>(Actor);
 }
 
 void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
@@ -73,31 +72,31 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
 {
 	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-	return Rem::Object::GetFirstLocalPlayerController(*WorldContextObject);
+	return Rem::Object::GetFirstLocalPlayerController(WorldContextObject);
 }
 
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
 	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-	return Rem::Object::GetFirstLocalPlayer(*WorldContextObject);
+	return Rem::Object::GetFirstLocalPlayer(WorldContextObject);
 }
 
 APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
 {
 	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-	return Rem::Object::GetFirstLocalPlayerPawn(*WorldContextObject);
+	return Rem::Object::GetFirstLocalPlayerPawn(WorldContextObject);
 }
 
 APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
 {
 	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-	return Rem::Object::GetFirstLocalPlayerState(*WorldContextObject);
+	return Rem::Object::GetFirstLocalPlayerState(WorldContextObject);
 }
 
 APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
 {
 	RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
-	return Rem::Object::GetFirstLocalPlayerCameraManager(*WorldContextObject);
+	return Rem::Object::GetFirstLocalPlayerCameraManager(WorldContextObject);
 }
 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
@@ -135,28 +134,28 @@ namespace Rem::Object
     
 const FName RootBone{TEXTVIEW("root")};
     
-FAudioDeviceHandle GetAudioDevice(const UObject& Object)
+FAudioDeviceHandle GetAudioDevice(const TNotNull<const UObject*> Object)
 {
-	auto* World = Object.GetWorld();
+	const auto* World = Object->GetWorld();
 	RemCheckVariable(World, return {});
 
 	return World->GetAudioDevice();
 }
 
-void ForeachObjectInArray(const FArrayProperty* ArrayProperty, const UObject* InContainer,
-	const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate)
+void ForeachObjectInArray(const TNotNull<const FArrayProperty*> ArrayProperty, const TNotNull<const UObject*> InContainer,
+                          const TFunctionRef<void(void* ObjectMemberPtr, int32 Index)>& Predicate)
 {
-	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(ArrayProperty->Inner);
-	RemCheckVariable(ObjectProperty, return;);
+    FObjectProperty* ObjectProperty = CastField<FObjectProperty>(ArrayProperty->Inner);
+    RemCheckVariable(ObjectProperty, return;);
 
-	FScriptArrayHelper_InContainer Helper(ArrayProperty, InContainer);
+    FScriptArrayHelper_InContainer Helper(ArrayProperty, InContainer);
 
-	for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
-	{
-		uint8* PropertyValueAddress = Helper.GetRawPtr(DynamicIndex);
+    for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
+    {
+        uint8* PropertyValueAddress = Helper.GetRawPtr(DynamicIndex);
 
-		Predicate(PropertyValueAddress, DynamicIndex);
-	}
+        Predicate(PropertyValueAddress, DynamicIndex);
+    }
 }
 
 bool IsImplementedInBlueprint(const UFunction* Function)
@@ -195,26 +194,28 @@ bool CheckPropertyChainByNames(const FEditPropertyChain& PropertyChain, const TA
 	return true;
 }
 
-FTimerHandle SetTimerForThisTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate)
+FTimerHandle SetTimerForThisTick(const TNotNull<const UWorld*> World, const FTimerDelegate& Delegate)
 {
-	auto* World = WorldContextObject.GetWorld();
-	RemCheckVariable(World, return {});
-
-	return SetTimerForThisTick(*World, Delegate);
-}
-
-FTimerHandle SetTimerForThisTick(const UWorld& World, const FTimerDelegate& Delegate)
-{
-	return World.GetTimerManager().SetTimerForNextTick([=]
+	return World->GetTimerManager().SetTimerForNextTick([=]
 	{
 		Delegate.Execute();
 	});
 }
 
-FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Delegate)
+FTimerHandle SetTimerForThisTick(const TNotNull<const UObject*> WorldContextObject, const FTimerDelegate& Delegate)
+{
+	const auto* World = WorldContextObject->GetWorld();
+	RemCheckVariable(World, return {});
+
+    // MakeNotNull - fix ambiguous call
+	return SetTimerForThisTick(MakeNotNull(World), Delegate);
+}
+
+    
+FTimerHandle SetTimerForNextTick(const TNotNull<const UWorld*> World, const FTimerDelegate& Delegate)
 {
 	FTimerHandle Handle;
-	World.GetTimerManager().SetTimer(Handle, [=]
+	World->GetTimerManager().SetTimer(Handle, [=]
 	{
 		Delegate.Execute();
 	}, UE_KINDA_SMALL_NUMBER, {});
@@ -222,19 +223,20 @@ FTimerHandle SetTimerForNextTick(const UWorld& World, const FTimerDelegate& Dele
 	return Handle;
 }
 
-FTimerHandle SetTimerForNextTick(const UObject& WorldContextObject, const FTimerDelegate& Delegate)
+FTimerHandle SetTimerForNextTick(const TNotNull<const UObject*> WorldContextObject, const FTimerDelegate& Delegate)
 {
-	auto* World = WorldContextObject.GetWorld();
-	RemCheckVariable(World, return {});
+    const auto* World = WorldContextObject->GetWorld();
+    RemCheckVariable(World, return {});
 
-	return SetTimerForNextTick(*World, Delegate);
+    // MakeNotNull - fix ambiguous call
+    return SetTimerForNextTick(MakeNotNull(World), Delegate);
 }
-
-FVector GetActorFeetLocation(const AActor& Actor)
+    
+FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
 {
     const UNavMovementComponent* MovementComponent;
     
-    if (auto* Pawn = Cast<APawn>(&Actor))
+    if (auto* Pawn = Cast<APawn>(Actor))
     {
         MovementComponent = Pawn->GetMovementComponent();
         if (MovementComponent)
@@ -243,32 +245,32 @@ FVector GetActorFeetLocation(const AActor& Actor)
         }
     }
     
-    MovementComponent = FindMovementComponent<UNavMovementComponent>(Actor);
+    MovementComponent = FindMovementComponent<AActor, UNavMovementComponent>(Actor);
     if (MovementComponent)
     {
         return MovementComponent->GetActorFeetLocation();
     }
 
-	RemCheckCondition(Actor.GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
+	RemCheckCondition(Actor->GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
     
-	return Actor.GetRootComponent()->GetComponentTransform().TransformPosition(
-	    FVector{0.0f, 0.0f, Actor.GetRootComponent()->Bounds.BoxExtent.Z});
+	return Actor->GetRootComponent()->GetComponentTransform().TransformPosition(
+	    FVector{0.0f, 0.0f, Actor->GetRootComponent()->Bounds.BoxExtent.Z});
 }
 
-FTransform GetRootBoneTransform(const ACharacter& Character)
+FTransform GetRootBoneTransform(const TNotNull<const ACharacter*> Character)
 {
-    auto* Mesh = Character.GetMesh();
+    auto* Mesh = Character->GetMesh();
     RemEnsureVariable(Mesh, return FTransform::Identity, REM_NO_LOG_BUT_ENSURE);
 
     return Mesh->GetSocketTransform(RootBone);
 }
 
-FVector GetRootBoneLocation(const ACharacter& Character)
+FVector GetRootBoneLocation(const TNotNull<const ACharacter*> Character)
 {
     return GetRootBoneTransform(Character).GetLocation();
 }
 
-TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector2f& ScreenPosition)
+TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController, const FVector2f& ScreenPosition)
 {
     FVector2f MousePosition;
     
@@ -278,7 +280,7 @@ TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<APlayerController
     return FVector2f{MousePosition.X - ScreenPosition.X, ScreenPosition.Y - MousePosition.Y};
 }
 
-TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<APlayerController*> PlayerController)
+TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<const APlayerController*> PlayerController)
 {
 	FVector2f ViewportCenter;
 	{
@@ -291,7 +293,7 @@ TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<APlayerController*>
 	return GetScreenPositionToMouse2F(PlayerController, ViewportCenter);
 }
 
-TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<APlayerController*> PlayerController)
+TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<const APlayerController*> PlayerController)
 {
     const auto Value = GetScreenCenterToMouse2F(PlayerController);
     RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
@@ -302,7 +304,7 @@ TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<APlayerCo
 	return FVector2f{ForwardDirection * Value->Y + RightDirection * Value->X};
 }
 
-TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<APlayerController*> PlayerController, const FVector& WorldLocation)
+TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController, const FVector& WorldLocation)
 {
     FVector2D ScreenLocation;
 
