@@ -4,6 +4,8 @@
 
 #include "RemComponentContainerOwnerInterface.h"
 #include "RemComponentContainer.inl"
+#include "RemNotNull.h"
+#include "Misc/Optional.h"
 
 #include "RemConcepts.h"
 
@@ -11,32 +13,31 @@ struct FRemComponentBase;
 
 namespace Rem::Component
 {
-    
+
 template <Concepts::is_uobject TObject = UObject>
-auto GetComponentContainer(TObject& Object) -> decltype(auto)
+auto GetComponentContainer(TNotNull<TObject*> Object) -> decltype(auto)
 {
-    auto* Interface = ::Cast<IRemComponentContainerOwnerInterface, TObject>(&Object);
+    using FResult = TOptional<decltype(::Cast<IRemComponentContainerOwnerInterface>(Object)->GetComponentContainer())>;
 
-    using TResult = std::add_pointer_t<std::remove_reference_t<decltype(Interface->GetComponentContainer())>>;
-    if (Interface)
-    {
-        return &Interface->GetComponentContainer();
-    }
+    auto* Interface = ::Cast<IRemComponentContainerOwnerInterface>(Object);
+    RemEnsureVariable(Interface, return FResult{}, REM_NO_LOG_OR_ASSERTION);
 
-    return TResult{};
+    return FResult{Interface->GetComponentContainer()};
 }
-    
-template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
-auto FindComponent(TObject& Object) -> decltype(auto)
-{
-    using TResult = decltype(GetComponentContainer<TObject>(Object)->template FindComponent<T>());
 
-    auto* ComponentContainer = GetComponentContainer<TObject>(Object);
-    RemCheckVariable(ComponentContainer, return TResult{});
-    
-    auto ComponentView = ComponentContainer->template FindComponent<T>();
+template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
+auto FindComponent(TNotNull<TObject*> Object) -> decltype(auto)
+{
+    using TResult = decltype(GetComponentContainer(Object).GetValue()->template FindComponent<T>());
+
+    auto ComponentContainer = GetComponentContainer(Object);
+    RemEnsureCondition(ComponentContainer, return TResult{}, REM_NO_LOG_OR_ASSERTION);
+
+    auto ComponentView = ComponentContainer.GetValue()->template FindComponent<T>();
+
+    static_assert(std::is_same_v<decltype(ComponentView), TResult>, "return type missing match");
 
     return ComponentView;
 }
-    
+
 }
