@@ -58,7 +58,7 @@ APlayerState* URemObjectStatics::GetPlayerState(const AActor* Actor)
 {
 	RemEnsureVariable(Actor, return {});
 
-	return Rem::Object::GetPlayerState<const AActor>(Actor);
+	return Rem::Object::GetPlayerState(Rem::MakeNotNull(Actor));
 }
 
 void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
@@ -131,9 +131,9 @@ bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* Ne
 
 namespace Rem::Object
 {
-    
+
 const FName RootBone{TEXTVIEW("root")};
-    
+
 FAudioDeviceHandle GetAudioDevice(const TNotNull<const UObject*> Object)
 {
 	const auto* World = Object->GetWorld();
@@ -211,7 +211,7 @@ FTimerHandle SetTimerForThisTick(const TNotNull<const UObject*> WorldContextObje
 	return SetTimerForThisTick(MakeNotNull(World), Delegate);
 }
 
-    
+
 FTimerHandle SetTimerForNextTick(const TNotNull<const UWorld*> World, const FTimerDelegate& Delegate)
 {
 	FTimerHandle Handle;
@@ -231,11 +231,11 @@ FTimerHandle SetTimerForNextTick(const TNotNull<const UObject*> WorldContextObje
     // MakeNotNull - fix ambiguous call
     return SetTimerForNextTick(MakeNotNull(World), Delegate);
 }
-    
+
 FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
 {
     const UNavMovementComponent* MovementComponent;
-    
+
     if (auto* Pawn = Cast<APawn>(Actor))
     {
         MovementComponent = Pawn->GetMovementComponent();
@@ -244,15 +244,15 @@ FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
 		    return MovementComponent->GetActorFeetLocation();
         }
     }
-    
-    MovementComponent = FindMovementComponent<AActor, UNavMovementComponent>(Actor);
+
+    MovementComponent = FindMovementComponent<UNavMovementComponent>(Actor);
     if (MovementComponent)
     {
         return MovementComponent->GetActorFeetLocation();
     }
 
 	RemCheckCondition(Actor->GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
-    
+
 	return Actor->GetRootComponent()->GetComponentTransform().TransformPosition(
 	    FVector{0.0f, 0.0f, Actor->GetRootComponent()->Bounds.BoxExtent.Z});
 }
@@ -273,10 +273,10 @@ FVector GetRootBoneLocation(const TNotNull<const ACharacter*> Character)
 TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController, const FVector2f& ScreenPosition)
 {
     FVector2f MousePosition;
-    
+
     const auto bSuccess = PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
-    
+
     return FVector2f{MousePosition.X - ScreenPosition.X, ScreenPosition.Y - MousePosition.Y};
 }
 
@@ -297,7 +297,7 @@ TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(const TNotNull<const APl
 {
     const auto Value = GetScreenCenterToMouse2F(PlayerController);
     RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
-    
+
 	const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController->GetControlRotation().Yaw)};
 	const auto RightDirection{Math::PerpendicularCounterClockwiseXY(ForwardDirection)};
 
@@ -310,8 +310,8 @@ TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APl
 
     const auto bSuccess = PlayerController->ProjectWorldLocationToScreen(WorldLocation, ScreenLocation);
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
-    
+
     return GetScreenPositionToMouse2F(PlayerController, FVector2f{ScreenLocation});
 }
-    
+
 }

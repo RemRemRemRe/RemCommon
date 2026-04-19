@@ -35,7 +35,7 @@ T* GetGameState(const TNotNull<const UObject*> Object)
     return World->GetGameState<T>();
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetGameState)
-    
+
 
 template<Concepts::is_player_controller T = APlayerController>
 T* GetControllerFromPawnOwner(const TNotNull<const UActorComponent*> Component)
@@ -47,9 +47,10 @@ T* GetControllerFromPawnOwner(const TNotNull<const UActorComponent*> Component)
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerStateFromPawnOwner)
 
-template<Concepts::is_actor TActorOfNotNull = AActor,
-    Concepts::is_player_state TPlayerState = APlayerState,
-    Enum::ERecursive ShouldRecursive = Enum::ERecursive{Enum::EYesOrNo::No}>
+template<Concepts::is_player_state TPlayerState = APlayerState,
+    Enum::ERecursive ShouldRecursive = Enum::ERecursive{Enum::EYesOrNo::No},
+    Concepts::is_actor TActorOfNotNull = AActor
+>
 TPlayerState* GetPlayerState(const TNotNull<TActorOfNotNull*> Actor)
 {
 	TPlayerState* Result{nullptr};
@@ -98,14 +99,15 @@ TPlayerState* GetPlayerState(const TNotNull<TActorOfNotNull*> Actor)
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerState)
 
-template<Concepts::is_actor TActorOfNotNull = AActor,
-    Concepts::is_player_state TPlayerState = APlayerState>
-TPlayerState* GetPlayerStateRecursive(const TNotNull<const TActorOfNotNull*> Actor)
+template<Concepts::is_player_state TPlayerState = APlayerState,
+    Concepts::is_actor TActorOfNotNull = AActor
+>
+TPlayerState* GetPlayerStateRecursive(const TNotNull<TActorOfNotNull*> Actor)
 {
 	return GetPlayerState<TActorOfNotNull, TPlayerState, Enum::ERecursive{Enum::EYesOrNo::Yes}>(Actor);
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerStateRecursive)
-    
+
 template<Concepts::is_player_controller T = APlayerController>
 T* GetFirstLocalPlayerController(const TNotNull<const UObject*> WorldContextObject)
 {
@@ -118,7 +120,7 @@ T* GetFirstLocalPlayerController(const TNotNull<const UObject*> WorldContextObje
 	return Cast<T>(GameInstance->GetFirstLocalPlayerController());
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerController)
-    
+
 template<Concepts::is_hud T = AHUD>
 T* GetFirstLocalHUD(const TNotNull<const UObject*> WorldContextObject)
 {
@@ -128,7 +130,7 @@ T* GetFirstLocalHUD(const TNotNull<const UObject*> WorldContextObject)
 	return PlayerController->GetHUD<T>();
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalHUD)
-    
+
 template<Concepts::is_local_player T = ULocalPlayer>
 T* GetFirstLocalPlayer(const TNotNull<const UObject*> WorldContextObject)
 {
@@ -148,7 +150,7 @@ T* GetFirstLocalPlayerPawn(const TNotNull<const UObject*> WorldContextObject)
 	return PlayerController->GetPawn<T>();
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerPawn)
-    
+
 template<Concepts::is_player_state T = APlayerState>
 T* GetFirstLocalPlayerState(const TNotNull<const UObject*> WorldContextObject)
 {
@@ -158,7 +160,7 @@ T* GetFirstLocalPlayerState(const TNotNull<const UObject*> WorldContextObject)
 	return PlayerController->GetPlayerState<T>();
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerState)
-    
+
 template<Concepts::is_player_camera_manager T = APlayerCameraManager>
 T* GetFirstLocalPlayerCameraManager(const TNotNull<const UObject*> WorldContextObject)
 {
@@ -168,7 +170,7 @@ T* GetFirstLocalPlayerCameraManager(const TNotNull<const UObject*> WorldContextO
 	return Cast<T>(PlayerController->PlayerCameraManager);
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerCameraManager)
-    
+
 template<Concepts::is_uobject T>
 [[nodiscard]] uint32 GetHashForObjects(const TConstArrayView<T*> Objects)
 {
@@ -183,8 +185,8 @@ template<Concepts::is_uobject T>
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetHashForObjects)
 
-template<Concepts::is_actor TActorOfNotNull = AActor, Concepts::is_movement_component T = UMovementComponent>
-T* FindMovementComponent(const TNotNull<const TActorOfNotNull*> Actor)
+template<Concepts::is_movement_component T = UMovementComponent, Concepts::is_actor TActorOfNotNull = AActor>
+T* FindMovementComponent(const TNotNull<TActorOfNotNull*> Actor)
 {
 	if (auto* Pawn = Cast<APawn>(Actor))
 	{
@@ -247,6 +249,7 @@ REM_FUNCTION_TO_FUNCTOR_SIMPLE(MakeArrayView)
 
 template<Concepts::is_uobject TReturnType,
     typename T>
+requires !Concepts::is_not_null<T>
 decltype(auto) GetOwner(const T& Object)
 {
     using FReturnTypeOfGetOwner = decltype(Object.GetOwner());
@@ -259,18 +262,18 @@ decltype(auto) GetOwner(const T& Object)
         return ::Cast<TReturnType>(Object.GetOwner());
     }
 }
-    
-template<Concepts::is_uobject TReturnType,
-    typename TObjectOfNotNull>
-decltype(auto) GetOwner(const TNotNull<const TObjectOfNotNull*> Object)
+
+template<Concepts::is_uobject TReturnType = UObject,
+    typename TObjectOfNotNull = UObject>
+decltype(auto) GetOwner(const Rem::TNotNull<TObjectOfNotNull*>& Object)
 {
-    return GetOwner<TReturnType, const TObjectOfNotNull>(*Object);
+    return GetOwner<TReturnType>(*Object);
 }
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetOwner)
 
-template<Concepts::is_actor TReturnType,
+template<Concepts::is_actor TReturnType = AActor,
     Concepts::is_uobject TObjectOfNotNull = UObject>
-auto GetActorFromObject(const TNotNull<const TObjectOfNotNull*> Object)
+auto GetActorFromObject(const TNotNull<TObjectOfNotNull*> Object)
 {
     auto* Actor = Cast<TReturnType>(Object);
     if (!Actor)
