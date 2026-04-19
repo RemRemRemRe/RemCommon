@@ -45,7 +45,7 @@ namespace Rem
 			}
 			return {};
 		}
-	    else if constexpr (Rem::is_not_null<RawType>)
+	    else if constexpr (Concepts::is_not_null<RawType>)
         {
             return Rem::IsValid(*Object);
         }
@@ -71,11 +71,11 @@ namespace Rem
 		}
 	}
     REM_FUNCTION_TO_FUNCTOR_SIMPLE(IsValid)
-    
+
 	template<typename T>
 	ENetMode GetNetMode(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+		if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::GetNetMode(*Object);
 		}
@@ -102,7 +102,7 @@ namespace Rem
 	template<typename T>
 	bool IsNetMode(const T& Object, const ENetMode NetMode)
 	{
-		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+		if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::IsNetMode(*Object);
 		}
@@ -146,7 +146,7 @@ namespace Rem
 	template<typename T>
 	FString ToString(const T& Data)
 	{
-        if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+        if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::ToString(*Data);
 		}
@@ -210,11 +210,11 @@ namespace Rem
 	        Rem::ToString(std::forward<T>(Object));
         };
     }
-    
+
 	template<typename T>
 	ENetRole GetNetRole(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+		if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::GetNetRole(*Object);
 		}
@@ -269,7 +269,7 @@ namespace Rem
 	template<typename T, bool bConstantStringLength = false>
 	FString GetNetRoleString(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+		if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::GetNetRoleString(*Object);
 		}
@@ -304,7 +304,7 @@ namespace Rem
 	template<typename  T>
 	FString GetNetDebugString(const T& Object)
 	{
-		if constexpr (std::is_pointer_v<T> || is_not_null<T>)
+		if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
 		{
 			return Rem::GetNetDebugString(*Object);
 		}
@@ -345,7 +345,7 @@ namespace Rem
 		void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
 		{
 		    using RawType = std::remove_cvref_t<F>;
-		    
+
 			if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>>
 			    && Concepts::rem_to_stringable<RawType>)
 			{
