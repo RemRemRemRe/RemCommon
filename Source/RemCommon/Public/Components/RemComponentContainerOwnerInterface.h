@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "RemNotNull.h"
 
 #include "RemComponentContainerOwnerInterface.generated.h"
 
@@ -27,6 +28,6 @@ class REMCOMMON_API IRemComponentContainerOwnerInterface
 	GENERATED_BODY()
 
 public:
-	virtual FRemComponentContainer& GetComponentContainer() = 0;
-	virtual const FRemComponentContainer& GetComponentContainer() const = 0;
+	virtual Rem::TNotNull<FRemComponentContainer*> GetComponentContainer() = 0;
+	virtual Rem::TNotNull<const FRemComponentContainer*> GetComponentContainer() const = 0;
 };
