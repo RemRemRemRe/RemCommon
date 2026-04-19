@@ -27,9 +27,6 @@ class REMCOMMON_API IRemComponentContainerOwnerInterface
 	GENERATED_BODY()
 
 public:
-	virtual TConstStructView<FRemComponentContainer> GetComponentContainerView() const;
-	virtual TStructView<FRemComponentContainer> GetComponentContainerView();
-
 	virtual FRemComponentContainer& GetComponentContainer() = 0;
 	virtual const FRemComponentContainer& GetComponentContainer() const = 0;
 };
