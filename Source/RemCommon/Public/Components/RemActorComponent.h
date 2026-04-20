@@ -10,8 +10,8 @@
 UCLASS()
 class REMCOMMON_API URemActorComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	URemActorComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+    URemActorComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 };

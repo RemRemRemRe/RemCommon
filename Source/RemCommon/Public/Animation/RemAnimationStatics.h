@@ -12,15 +12,14 @@ class UAnimInstance;
 UCLASS()
 class REMCOMMON_API URemAnimationStatics : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
 };
 
 namespace Rem::Animation
 {
-	/**
-	 * try get anim instance from ACharacter::GetMesh
-	 */
-	REMCOMMON_API UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor);
+/**
+ * try get anim instance from ACharacter::GetMesh
+ */
+REMCOMMON_API UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor);
 }

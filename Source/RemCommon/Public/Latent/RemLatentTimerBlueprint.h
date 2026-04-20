@@ -6,8 +6,8 @@
 
 namespace Rem::Latent
 {
-	struct FTimerParameterHelper_Time;
-	struct FTimerParameterHelper_Frame;
+struct FTimerParameterHelper_Time;
+struct FTimerParameterHelper_Frame;
 }
 
 /**
@@ -18,24 +18,24 @@ namespace Rem::Latent
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FTimerParameterBlueprintHelper_Time
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
-	float TimeToDelay{0.0f};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
+    float TimeToDelay{0.0f};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "times", ClampMin = 0))
-	int64 LoopCount{1};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "times", ClampMin = 0))
+    int64 LoopCount{1};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
-	float InitialDelay{-1.0f};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
+    float InitialDelay{-1.0f};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	bool bMaxOncePerFrame{false};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    bool bMaxOncePerFrame{false};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	bool bSkipCountingThisFrame{false};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    bool bSkipCountingThisFrame{false};
 
-	Rem::Latent::FTimerParameterHelper_Time operator*() const;
+    Rem::Latent::FTimerParameterHelper_Time operator*() const;
 };
 
 /**
@@ -48,19 +48,19 @@ struct REMCOMMON_API FTimerParameterBlueprintHelper_Time
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FTimerParameterBlueprintHelper_Frame
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "frame", ClampMin = 0))
-	int64 FrameToDelay{0};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "frame", ClampMin = 0))
+    int64 FrameToDelay{0};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "times", ClampMin = 0))
-	int64 LoopCount{1};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "times", ClampMin = 0))
+    int64 LoopCount{1};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "frame", ClampMin = 0))
-	int64 InitialDelay{std::numeric_limits<uint32>::max()};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "frame", ClampMin = 0))
+    int64 InitialDelay{std::numeric_limits<uint32>::max()};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	bool bSkipCountingThisFrame{false};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    bool bSkipCountingThisFrame{false};
 
-	Rem::Latent::FTimerParameterHelper_Frame operator*() const;
+    Rem::Latent::FTimerParameterHelper_Frame operator*() const;
 };

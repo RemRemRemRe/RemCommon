@@ -4,5 +4,8 @@
 
 namespace Rem
 {
-	template <class...> struct always_false : std::false_type {};
+template <class...>
+struct always_false : std::false_type
+{
+};
 }

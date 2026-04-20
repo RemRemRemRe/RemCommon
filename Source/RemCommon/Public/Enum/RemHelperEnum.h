@@ -8,58 +8,58 @@
 
 namespace Rem::Enum
 {
-	enum class ENewOrOld : uint8
-	{
-		New,
-		Old,
-	};
+enum class ENewOrOld : uint8
+{
+    New,
+    Old,
+};
 
-	enum class EBreakMode : uint8
-	{
-		BreakOnFirstElement,
-		NoBreak,
-	};
+enum class EBreakMode : uint8
+{
+    BreakOnFirstElement,
+    NoBreak,
+};
 
-	enum class EOptionalMode : uint8
-	{
-		Optional,
-		Required,
-	};
+enum class EOptionalMode : uint8
+{
+    Optional,
+    Required,
+};
 
-	enum class EHierarchyMatchMode : uint8
-	{
-		IncludeChildren,
-		MatchExact,
-	};
+enum class EHierarchyMatchMode : uint8
+{
+    IncludeChildren,
+    MatchExact,
+};
 
-	enum class EAttributeValueType : uint8
-	{
-		Base,
-		Current,
-	};
+enum class EAttributeValueType : uint8
+{
+    Base,
+    Current,
+};
 
-	enum class EYesOrNo : uint8
-	{
-		Yes,
-		No,
-	};
+enum class EYesOrNo : uint8
+{
+    Yes,
+    No,
+};
 
-    enum class EStartOrEnd : uint8
-	{
-		Start,
-		End,
-	};
+enum class EStartOrEnd : uint8
+{
+    Start,
+    End,
+};
 
-    enum class EAddOrRemove : uint8
-    {
-        Add,
-        Remove,
-    };
-    
-	enum class ETransitionType : uint8
-	{
-		ToNext,
-		ToPrevious,
-		ToSpecified,
-	};
+enum class EAddOrRemove : uint8
+{
+    Add,
+    Remove,
+};
+
+enum class ETransitionType : uint8
+{
+    ToNext,
+    ToPrevious,
+    ToSpecified,
+};
 }

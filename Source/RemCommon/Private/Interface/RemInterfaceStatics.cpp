@@ -7,5 +7,5 @@
 
 bool URemInterfaceStatics::IsValidInterface(const FScriptInterface& Interface)
 {
-	return IsValid(Interface.GetObject());
+    return IsValid(Interface.GetObject());
 }

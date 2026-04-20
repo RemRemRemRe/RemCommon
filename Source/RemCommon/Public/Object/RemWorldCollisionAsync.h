@@ -16,36 +16,39 @@ class UPrimitiveComponent;
 namespace Rem::Collision
 {
 
-    /**
-     * Get trace data of CURRENT FRAME
-     */
-    REM_API FTraceDatum* QueryTraceDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+/**
+ * Get trace data of CURRENT FRAME
+ */
+REM_API FTraceDatum* QueryTraceDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle);
 
-    /**
-     * Get trace data of PREVIOUS FRAME
-     */
-    REM_API FTraceDatum* QueryTraceDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+/**
+ * Get trace data of PREVIOUS FRAME
+ */
+REM_API FTraceDatum* QueryTraceDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle);
 
-    /**
-     * Get overlap data of CURRENT FRAME
-     */
-    REM_API FOverlapDatum* QueryOverlapDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+/**
+ * Get overlap data of CURRENT FRAME
+ */
+REM_API FOverlapDatum* QueryOverlapDataCurrentFrame(const UObject& WorldContext,
+    const FTraceHandle& Handle);
 
-    /**
-     * Get overlap data of PREVIOUS FRAME
-     */
-    REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+/**
+ * Get overlap data of PREVIOUS FRAME
+ */
+REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext,
+    const FTraceHandle& Handle);
 
-    
-    REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle);
 
-    template<typename TTraceType>
-    REM_API AActor* GetTraceActor(const TTraceType& TraceData);
-    REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTraceActor);
+REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext,
+    const FTraceHandle& Handle);
 
-    template<typename TTraceType>
-    REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData);
-    REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTracePrimitive);
+template <typename TTraceType>
+REM_API AActor* GetTraceActor(const TTraceType& TraceData);
+REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTraceActor);
+
+template <typename TTraceType>
+REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData);
+REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTracePrimitive);
 }
 
 #undef REM_API

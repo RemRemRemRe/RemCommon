@@ -16,7 +16,7 @@ void FRemComponentBase::Initialize(const FContext& Context)
 
 bool FRemComponentBase::ShouldTick(const FContext& Context) const
 {
-	return false;
+    return false;
 }
 
 void FRemComponentBase::Tick(const FContext& Context, float)
@@ -30,113 +30,115 @@ void FRemComponentBase::Uninitialize(const FContext& Context)
 
 int32 FRemComponentContainer::GetComponentIndex(const FRemComponentBase& InComponent) const
 {
-    for (int32 Index = 0; Index < Components.Num(); ++Index)
+    for (auto Index = 0; Index < Components.Num(); ++Index)
     {
         if (reinterpret_cast<const uint8*>(&InComponent) == Components[Index].GetMemory())
         {
             return Index;
         }
     }
-    
+
     return INDEX_NONE;
 }
 
 void FRemComponentContainer::Initialize(UObject& OwnerRef)
 {
-	// make sure not calling this during UnInitializing
-	RemCheckCondition(!bUnInitializing, return;);
+    // make sure not calling this during UnInitializing
+    RemCheckCondition(!bUnInitializing, return;);
 
-	bInitializing = true;
-	ON_SCOPE_EXIT
-	{
-		bInitializing = false;
-	};
+    bInitializing = true;
+    ON_SCOPE_EXIT
+    {
+        bInitializing = false;
+    };
 
-	Owner = &OwnerRef;
+    Owner = &OwnerRef;
 
-	// make sure Initialize can't be called by TryInitialize
-	bInitialized = true;
+    // make sure Initialize can't be called by TryInitialize
+    bInitialized = true;
 
-	REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("initializing components, Owner:{0}"), OwnerRef);
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("initializing components, Owner:{0}"), OwnerRef);
 
     ForEachComponent<FRemComponentBase>(
         [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
-            {
-                Component.Initialize({this, Index});
-            });
+        {
+            Component.Initialize({this, Index});
+        });
 }
 
 void FRemComponentContainer::Uninitialize()
 {
-	// make sure not calling this during Initializing
-	RemCheckCondition(!bInitializing, return;);
+    // make sure not calling this during Initializing
+    RemCheckCondition(!bInitializing, return;);
 
-	bUnInitializing = true;
-	ON_SCOPE_EXIT
-	{
-		bUnInitializing = false;
-	};
+    bUnInitializing = true;
+    ON_SCOPE_EXIT
+    {
+        bUnInitializing = false;
+    };
 
-	// make sure Uninitialize can't be called by TryUninitialize
-	bInitialized = false;
+    // make sure Uninitialize can't be called by TryUninitialize
+    bInitialized = false;
 
-	RemCheckVariable(Owner, return;);
+    RemCheckVariable(Owner, return;);
 
-	REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("uninitializing components, Owner:{0}"), Owner);
-    
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("uninitializing components, Owner:{0}"), Owner);
+
     ForEachComponent<FRemComponentBase>(
         [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
-            {
-                Component.Uninitialize({this, Index});
-            });
-    
-	Owner = nullptr;
+        {
+            Component.Uninitialize({this, Index});
+        });
+
+    Owner = nullptr;
 }
 
 bool FRemComponentContainer::IsInitialized() const
 {
-	return bInitialized;
+    return bInitialized;
 }
 
 void FRemComponentContainer::TryInitialize(UObject& OwnerRef)
 {
-	if (bInitialized)
-	{
-		REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("already initialized, Owner:{0}"), OwnerRef);
-		return;
-	}
+    if (bInitialized)
+    {
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("already initialized, Owner:{0}"), OwnerRef);
+        return;
+    }
 
-	Initialize(OwnerRef);
+    Initialize(OwnerRef);
 }
 
 void FRemComponentContainer::TryUninitialize()
 {
-	if (!bInitialized)
-	{
-		REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("it's not initialized, Owner:{0}"), Owner);
-		return;
-	}
+    if (!bInitialized)
+    {
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("it's not initialized, Owner:{0}"), Owner);
+        return;
+    }
 
-	Uninitialize();
+    Uninitialize();
 }
 
-void FRemComponentContainer::SetComponentsView(const TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView)
+void FRemComponentContainer::SetComponentsView(
+    const TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView)
 {
-	TryUninitialize();
+    TryUninitialize();
 
-	Components = InComponentsView;
+    Components = InComponentsView;
 }
 
-void FRemComponentContainer::SetComponentsView(const TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView)
+void FRemComponentContainer::SetComponentsView(
+    const TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView)
 {
-	TryUninitialize();
+    TryUninitialize();
 
-	Components = InComponentsView;
+    Components = InComponentsView;
 }
 
 void FRemComponentContainer::SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents)
 {
     TryUninitialize();
-    
-	Components = std::move(InComponents);
+
+    Components = std::move(InComponents);
 }

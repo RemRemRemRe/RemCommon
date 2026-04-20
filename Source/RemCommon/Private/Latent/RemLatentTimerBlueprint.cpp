@@ -9,21 +9,21 @@
 
 Rem::Latent::FTimerParameterHelper_Time FTimerParameterBlueprintHelper_Time::operator*() const
 {
-	return {
-		.TimeToDelay = TimeToDelay,
-		.LoopCount = static_cast<uint32>(LoopCount),
-		.InitialDelay = InitialDelay,
-		.bMaxOncePerFrame = bMaxOncePerFrame,
-		.bSkipCountingThisFrame = bSkipCountingThisFrame,
-	};
+    return {
+        .TimeToDelay            = TimeToDelay,
+        .LoopCount              = static_cast<uint32>(LoopCount),
+        .InitialDelay           = InitialDelay,
+        .bMaxOncePerFrame       = bMaxOncePerFrame,
+        .bSkipCountingThisFrame = bSkipCountingThisFrame,
+    };
 }
 
 Rem::Latent::FTimerParameterHelper_Frame FTimerParameterBlueprintHelper_Frame::operator*() const
 {
-	return {
-		.FrameToDelay = static_cast<uint32>(FrameToDelay),
-		.LoopCount = static_cast<uint32>(LoopCount),
-		.InitialDelay = static_cast<uint32>(InitialDelay),
-		.bSkipCountingThisFrame = bSkipCountingThisFrame,
-	};
+    return {
+        .FrameToDelay           = static_cast<uint32>(FrameToDelay),
+        .LoopCount              = static_cast<uint32>(LoopCount),
+        .InitialDelay           = static_cast<uint32>(InitialDelay),
+        .bSkipCountingThisFrame = bSkipCountingThisFrame,
+    };
 }

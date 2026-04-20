@@ -11,18 +11,18 @@
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemReflectedFunctionCallData
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	FRemReflectedFunctionData FunctionData;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    FRemReflectedFunctionData FunctionData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	TObjectPtr<UObject> ContextObject;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    TObjectPtr<UObject> ContextObject;
 
-	UPROPERTY(EditAnywhere, Category = "Rem", meta=(FixedLayout))
-	FInstancedPropertyBag Parameters;
+    UPROPERTY(EditAnywhere, Category = "Rem", meta=(FixedLayout))
+    FInstancedPropertyBag Parameters;
 
-	void Execute();
+    void Execute();
 
-	bool TryFillParameters();
+    bool TryFillParameters();
 };

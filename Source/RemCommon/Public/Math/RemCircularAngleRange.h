@@ -11,27 +11,28 @@
 
 struct FRemCircularAngleRange
 {
- 
+
 private:
     /**
      * normalized angle : [0, 360)
      */
     float StartAngle;
-    
+
     /**
      * normalized angle : [0, 360)
      */
     float EndAngle;
-    
+
 public:
     /**
      * default to a full circle
      */
-    FRemCircularAngleRange() 
-        : StartAngle(0.0f), EndAngle(0.0f)
+    FRemCircularAngleRange()
+        : StartAngle(0.0f)
+      , EndAngle(0.0f)
     {
     }
-    
+
     /**
      * @param Center could be arbitrary angle, would be converted to [0, 360)
      * @param FullSpan full range of the angle, must be greater than 0
@@ -49,7 +50,7 @@ public:
     {
         SetRangeFromAngles(AngleRange.X, AngleRange.Y, bClockwise);
     }
-    
+
     /**
      * @param Center could be arbitrary angle, would be converted to [0, 360)
      * @param FullSpan full range of the angle, must be greater than 0
@@ -57,28 +58,28 @@ public:
     void SetRangeFromCenterAndSpan(float Center, const float FullSpan)
     {
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
-        
+
         RemCheckCondition(FullSpan >= 0.0f, return);
-        
+
 #endif
-        
+
         if (FullSpan >= 360.0f)
         {
             StartAngle = 0.0f;
-            EndAngle = 0.0f;
+            EndAngle   = 0.0f;
             return;
         }
-        
-        Center = FRotator3f::ClampAxis(Center);
+
+        Center               = FRotator3f::ClampAxis(Center);
         const float HalfSpan = FMath::Clamp(FullSpan * 0.5f, 0.0f, 180.0f);
 
         const float RawStart = Center - HalfSpan;
-        const float RawEnd = Center + HalfSpan;
-        
+        const float RawEnd   = Center + HalfSpan;
+
         StartAngle = FRotator3f::ClampAxis(RawStart);
-        EndAngle = FRotator3f::ClampAxis(RawEnd);
+        EndAngle   = FRotator3f::ClampAxis(RawEnd);
     }
-    
+
     /**
      * @param AngleA could be arbitrary angle
      * @param AngleB could be arbitrary angle
@@ -89,25 +90,25 @@ public:
         if (IsFullCircleByAngles(AngleA, AngleB))
         {
             StartAngle = 0.0f;
-            EndAngle = 0.0f;
+            EndAngle   = 0.0f;
             return;
         }
-        
+
         AngleA = FRotator3f::ClampAxis(AngleA);
         AngleB = FRotator3f::ClampAxis(AngleB);
-        
+
         if (bClockwise)
         {
             StartAngle = AngleA;
-            EndAngle = AngleB;
+            EndAngle   = AngleB;
         }
         else
         {
             StartAngle = AngleB;
-            EndAngle = AngleA;
+            EndAngle   = AngleA;
         }
     }
-    
+
     /**
      * @param Angle could be arbitrary angle
      * 
@@ -119,18 +120,18 @@ public:
         {
             return true;
         }
-        
+
         Angle = FRotator3f::ClampAxis(Angle);
-        
+
         if (!IsWrappingZero())
         {
             return (Angle >= StartAngle) && (Angle <= EndAngle);
         }
-        
+
         // check if the angle lands in [StartAngle, 360) or [0, EndAngle]
         return (Angle >= StartAngle) || (Angle <= EndAngle);
     }
-    
+
     /**
      * @param Angle could be arbitrary angle
      * 
@@ -139,33 +140,35 @@ public:
     float ClampAngle(float Angle) const
     {
         Angle = FRotator3f::ClampAxis(Angle);
-        
+
         if (IsFullCircle() || Contains(Angle))
         {
             return Angle;
         }
-        
+
         const float DistToStart = GetShortestAngleDistance(Angle, StartAngle);
-        const float DistToEnd = GetShortestAngleDistance(Angle, EndAngle);
-        return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
+        const float DistToEnd   = GetShortestAngleDistance(Angle, EndAngle);
+        return (DistToStart < DistToEnd)
+                   ? StartAngle
+                   : EndAngle;
     }
-    
+
     /**
      * @param Angle arbitrary angle 
      * @return the distance to the range bound,
      *  if not full circle, value range: [0, 360)
      *  else 360 is returned
      */
-    template<Rem::Enum::EStartOrEnd StartOrEnd>
+    template <Rem::Enum::EStartOrEnd StartOrEnd>
     float GetDistanceToBoundary(float Angle) const
     {
         if (IsFullCircle())
         {
             return 360.0f;
         }
-        
+
         Angle = FRotator3f::ClampAxis(Angle);
-        
+
         if (!Contains(Angle))
         {
             if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
@@ -189,7 +192,7 @@ public:
                 return EndAngle - Angle;
             }
         }
-        
+
         if constexpr (StartOrEnd == Rem::Enum::EStartOrEnd::Start)
         {
             // in [StartAngle, 360)
@@ -197,7 +200,7 @@ public:
             {
                 return Angle - StartAngle;
             }
-            
+
             // in [0, EndAngle]
             return 360.0f - StartAngle + Angle;
         }
@@ -208,12 +211,12 @@ public:
             {
                 return 360.0f - Angle + EndAngle;
             }
-            
+
             // in [0, EndAngle]
             return EndAngle - Angle;
         }
     }
-    
+
     /**
      * @param Angle arbitrary angle 
      * @param bStart get distance to StartAngle or EndAngle
@@ -225,31 +228,33 @@ public:
         {
             return GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
         }
-        
+
         return GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
     }
-    
+
     float GetMinimalAngleDistanceToBounds(const float Angle) const
     {
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
-        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+        const float DistToEnd   = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return FMath::Min(DistToStart, DistToEnd);
     }
 
     float GetMaximalAngleDistanceToBounds(const float Angle) const
     {
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
-        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+        const float DistToEnd   = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
         return FMath::Max(DistToStart, DistToEnd);
     }
-    
+
     float GetClosestBoundToAngle(const float Angle) const
     {
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
-        const float DistToEnd = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
-        return (DistToStart < DistToEnd) ? StartAngle : EndAngle;
+        const float DistToEnd   = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
+        return (DistToStart < DistToEnd)
+                   ? StartAngle
+                   : EndAngle;
     }
-    
+
     float GetStartAngle() const
     {
         return StartAngle;
@@ -259,7 +264,7 @@ public:
     {
         return EndAngle;
     }
-    
+
     /**
      * @return value in range : [0, 360)
      */
@@ -267,7 +272,7 @@ public:
     {
         return {StartAngle, EndAngle};
     }
-    
+
     /**
      * @return value in range : [0, 360)
      */
@@ -277,10 +282,10 @@ public:
         {
             return 0.0f;
         }
-        
+
         return FRotator3f::ClampAxis(StartAngle + GetSpan() * 0.5f);
     }
-    
+
     /**
      * @return value in range : [0, 360)
      */
@@ -290,20 +295,20 @@ public:
         {
             return 360.0f;
         }
-        
+
         if (!IsWrappingZero())
         {
             return EndAngle - StartAngle;
         }
-        
+
         return (360.0f - StartAngle) + EndAngle;
     }
-    
+
     float GetRange() const
     {
         return GetSpan();
     }
-    
+
     /**
      * @return true if the range contains the 0°
      */
@@ -313,10 +318,10 @@ public:
         {
             return true;
         }
-        
+
         return StartAngle > EndAngle;
     }
-    
+
     /**
      * @return turn if the range contains full 360°
      */
@@ -324,22 +329,22 @@ public:
     {
         return Rem::Math::IsNearlyZero(StartAngle) && Rem::Math::IsNearlyZero(EndAngle);
     }
-    
+
     FString ToString() const
     {
         if (IsFullCircle())
         {
             return FString("[0°-360°]");
         }
-        
+
         if (!IsWrappingZero())
         {
             return FString::Printf(TEXT("[%.3f°-%.3f°]"), StartAngle, EndAngle);
         }
-        
+
         return FString::Printf(TEXT("[%.3f°-360°) and [0°-%.3f°]"), StartAngle, EndAngle);
     }
-    
+
     /**
      * @return angle distance of shortest path for two angles,
      * always greater than 0
@@ -360,10 +365,12 @@ public:
     {
         const auto AngleOfOtherDirection = FMath::Modulo(Angle - 360.0f, 360.0f);
 
-        const auto Abs = FMath::Abs(Angle);
+        const auto Abs                 = FMath::Abs(Angle);
         const auto AbsOfOtherDirection = FMath::Abs(AngleOfOtherDirection);
-        
-        return Abs < AbsOfOtherDirection ? Angle : AngleOfOtherDirection;
+
+        return Abs < AbsOfOtherDirection
+                   ? Angle
+                   : AngleOfOtherDirection;
     }
 
     /**
@@ -373,15 +380,15 @@ public:
     {
         const auto ClampedA = FRotator3f::ClampAxis(A);
         const auto ClampedB = FRotator3f::ClampAxis(B);
-        
+
         if (!Rem::Math::IsNearlyEqual(ClampedA, ClampedB))
         {
             return false;
         }
-        
+
         const auto RawDiff = FMath::Abs(A - B);
-        
+
         return Rem::Math::IsNearlyEqual(FMath::Fmod(RawDiff, 360.0f), 0.0f) &&
-           !Rem::Math::IsNearlyZero(RawDiff);
+               !Rem::Math::IsNearlyZero(RawDiff);
     }
 };

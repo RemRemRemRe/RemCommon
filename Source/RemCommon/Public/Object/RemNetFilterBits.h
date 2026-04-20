@@ -12,22 +12,22 @@ enum ENetRole : int;
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemNetFilterBits
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Role")
-	uint8 bRunOnLocalPlayer : 1 {true};
+    UPROPERTY(EditAnywhere, Category = "Role")
+    uint8 bRunOnLocalPlayer : 1 {true};
 
-	UPROPERTY(EditAnywhere, Category = "Role")
-	uint8 bRunOnSimulatedProxy : 1 {true};
+    UPROPERTY(EditAnywhere, Category = "Role")
+    uint8 bRunOnSimulatedProxy : 1 {true};
 
-	UPROPERTY(EditAnywhere, Category = "Net Mode")
-	uint8 bRunOnStandalone : 1 {true};
+    UPROPERTY(EditAnywhere, Category = "Net Mode")
+    uint8 bRunOnStandalone : 1 {true};
 
-	UPROPERTY(EditAnywhere, Category = "Net Mode")
-	uint8 bRunOnDedicatedServer : 1 {true};
+    UPROPERTY(EditAnywhere, Category = "Net Mode")
+    uint8 bRunOnDedicatedServer : 1 {true};
 
-	UPROPERTY(EditAnywhere, Category = "Net Mode")
-	uint8 bRunOnListenServer : 1 {true};
+    UPROPERTY(EditAnywhere, Category = "Net Mode")
+    uint8 bRunOnListenServer : 1 {true};
 
-	bool Matches(ENetMode NetMode, ENetRole Role) const;
+    bool Matches(ENetMode NetMode, ENetRole Role) const;
 };

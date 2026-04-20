@@ -38,37 +38,47 @@
 
 namespace Rem::Private
 {
-	template <size_t CompileTimeCounter>
-	struct TFunctionNameParser
-	{
-		constexpr static std::string_view ParseSignature(const char* FunctionSignatureRaw) noexcept
-		{
-			std::string_view FunctionSignature = FunctionSignatureRaw;
+template <size_t CompileTimeCounter>
+struct TFunctionNameParser
+{
+    constexpr static std::string_view ParseSignature(const char* FunctionSignatureRaw) noexcept
+    {
+        std::string_view FunctionSignature = FunctionSignatureRaw;
 
-			const auto LeftParenthesisPosition = std::invoke([&]{
-				size_t Position = FunctionSignature.find('(');
-				return Position != std::string_view::npos ? Position : FunctionSignature.size();
-			});
+        const auto LeftParenthesisPosition = std::invoke([&]
+        {
+            size_t Position = FunctionSignature.find('(');
+            return Position != std::string_view::npos
+                       ? Position
+                       : FunctionSignature.size();
+        });
 
-			std::string_view FunctionSignatureNoArgs = FunctionSignature.substr(0, LeftParenthesisPosition);
+        std::string_view FunctionSignatureNoArgs = FunctionSignature.substr(0, LeftParenthesisPosition);
 
-			const auto PositionOfLastSpace = std::invoke([&]{
-				const size_t Position = FunctionSignatureNoArgs.rfind(' ');
+        const auto PositionOfLastSpace = std::invoke([&]
+        {
+            const size_t Position = FunctionSignatureNoArgs.rfind(' ');
 
 #ifdef _MSC_VER
-	 // ReSharper disable once CommentTypo
-				// MSVC specific things like " __cdecl"
-				if (Position == std::string_view::npos) {
-					Position = FunctionSignatureNoArgs.rfind('>'); // template specialization
-					if (Position != std::string_view::npos) Position += 2;
-				}
+            // ReSharper disable once CommentTypo
+            // MSVC specific things like " __cdecl"
+            if (Position == std::string_view::npos)
+            {
+                Position = FunctionSignatureNoArgs.rfind('>'); // template specialization
+                if (Position != std::string_view::npos)
+                {
+                    Position += 2;
+                }
+            }
 #endif
 
-				return Position != std::string_view::npos ? Position + 1 : 0;
-			});
+            return Position != std::string_view::npos
+                       ? Position + 1
+                       : 0;
+        });
 
-			const auto Result = FunctionSignatureNoArgs.substr(PositionOfLastSpace);
-			return Result;
-		}
-	};
+        const auto Result = FunctionSignatureNoArgs.substr(PositionOfLastSpace);
+        return Result;
+    }
+};
 }

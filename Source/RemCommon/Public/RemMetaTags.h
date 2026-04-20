@@ -17,8 +17,8 @@
 UCLASS(Abstract, config = RemMetaTags, defaultconfig, notplaceable, BlueprintType)
 class REMCOMMON_API URemMetaTags : public UDeveloperSettings
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	URemMetaTags(const FObjectInitializer& ObjectInitializer);
+    URemMetaTags(const FObjectInitializer& ObjectInitializer);
 };

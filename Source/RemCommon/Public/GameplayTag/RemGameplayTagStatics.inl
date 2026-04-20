@@ -8,5 +8,4 @@ namespace Rem::GameplayTag
 {
 
 
-
 }

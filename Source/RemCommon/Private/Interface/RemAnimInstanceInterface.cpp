@@ -9,5 +9,5 @@
 
 UAnimInstance* IRemAnimInstanceInterface::GetAnimInstance(const TNotNull<const AActor*> Actor) const
 {
-	return Rem::Animation::GetAnimInstance(Actor);
+    return Rem::Animation::GetAnimInstance(Actor);
 }

@@ -6,8 +6,8 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemMetaTags)
 
 URemMetaTags::URemMetaTags(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+    : Super(ObjectInitializer)
 {
-	// Put it under game section of project setting
-	CategoryName = FName(TEXTVIEW("Game"));
+    // Put it under game section of project setting
+    CategoryName = FName(TEXTVIEW("Game"));
 }

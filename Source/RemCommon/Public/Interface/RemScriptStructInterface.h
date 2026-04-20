@@ -9,13 +9,13 @@
 UINTERFACE(MinimalAPI)
 class URemScriptStructInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 class REMCOMMON_API IRemScriptStructInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual UScriptStruct& GetScriptStruct() const;
+    virtual UScriptStruct& GetScriptStruct() const;
 };

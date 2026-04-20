@@ -8,11 +8,12 @@
 
 namespace Rem
 {
-    template <typename T>
-    auto RefToPtr(std::reference_wrapper<T> ReferenceWrapper) -> decltype(auto)
-    {
-        return &ReferenceWrapper.get();
-    }
-    REM_FUNCTION_TO_FUNCTOR_SIMPLE(RefToPtr)
+template <typename T>
+decltype(auto) RefToPtr(std::reference_wrapper<T> ReferenceWrapper)
+{
+    return &ReferenceWrapper.get();
+}
+
+REM_FUNCTION_TO_FUNCTOR_SIMPLE(RefToPtr)
 
 }

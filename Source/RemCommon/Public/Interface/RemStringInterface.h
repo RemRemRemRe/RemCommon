@@ -12,16 +12,16 @@
 UINTERFACE(MinimalAPI)
 class URemStringInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /** Interface for printing an object in string format */
 class REMCOMMON_API IRemStringInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual FString ToString() const
-		REM_VIRTUAL_WARN(LogRemCommon, return {};);
+    virtual FString ToString() const
+    REM_VIRTUAL_WARN(LogRemCommon, return {};);
 
 };

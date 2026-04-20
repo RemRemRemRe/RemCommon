@@ -12,29 +12,29 @@ class UCurveBase;
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemAlphaBlend
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend", meta = (ClampMin = "0", ForceUnits = "s"))
-	float BlendTime{1.0f};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend", meta = (ClampMin = "0", ForceUnits = "s"))
+    float BlendTime{1.0f};
 };
 
 USTRUCT(Blueprintable)
 struct REMCOMMON_API FRemAlphaBlendOption : public FRemAlphaBlend
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	/** Type of blending used (Linear, Cubic, etc.) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
-	EAlphaBlendOption BlendOption{};
+    /** Type of blending used (Linear, Cubic, etc.) */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
+    EAlphaBlendOption BlendOption{};
 };
 
 USTRUCT(Blueprintable)
 struct REMCOMMON_API FRemAlphaBlendCurve : public FRemAlphaBlend
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
-	FRemCurveBaseWrapper Curve;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
+    FRemCurveBaseWrapper Curve;
 };
 
 /**
@@ -43,14 +43,14 @@ struct REMCOMMON_API FRemAlphaBlendCurve : public FRemAlphaBlend
 USTRUCT(Blueprintable)
 struct REMCOMMON_API FRemAlphaBlendCurveAndOption : public FRemAlphaBlendOption
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	/**
-	 * Curve used when BlendOption set to Custom
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
-	FRemCurveBaseWrapper Curve;
+    /**
+     * Curve used when BlendOption set to Custom
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend")
+    FRemCurveBaseWrapper Curve;
 
-	static FVector3f GetAlpha(float Time, float BlendTime, EAlphaBlendOption BlendOption,
-		const FRemCurveBaseWrapper& CurveWrapper, bool& bOutVectorAlpha);
+    static FVector3f GetAlpha(float Time, float BlendTime, EAlphaBlendOption BlendOption,
+        const FRemCurveBaseWrapper& CurveWrapper, bool& bOutVectorAlpha);
 };

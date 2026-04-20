@@ -9,104 +9,104 @@
 
 namespace Rem::Struct
 {
-    template <Rem::Concepts::has_static_struct TStructType, typename StructView>
+template <Concepts::has_static_struct TStructType, typename StructView>
     requires (std::is_same_v<StructView, FStructView> || std::is_same_v<StructView, FConstStructView>)
-    auto MakeView(const StructView View)
+auto MakeView(const StructView View)
+{
+    using FTResult = std::conditional_t<std::is_same_v<StructView, FStructView>,
+                                        TStructView<TStructType>, TConstStructView<TStructType>>;
+
+    FTResult Result{};
+
+    static_assert(sizeof(StructView) == sizeof(FTResult));
+
+    // work around constructor issue of TStructView
+    FMemory::Memcpy(&Result, &View, sizeof(FTResult));
+
+    return Result;
+}
+
+template <Concepts::has_static_struct TStructType, typename StructView>
+    requires (std::is_same_v<StructView, FStructView> || std::is_same_v<StructView, FConstStructView>)
+auto TryMakeView(const StructView View)
+{
+    using FTResult = decltype(MakeView<TStructType>(View));
+
+    if (View.IsValid() && View.GetScriptStruct()->IsChildOf(TStructType::StaticStruct()))
     {
-        using FTResult = std::conditional_t<std::is_same_v<StructView, FStructView>,
-            TStructView<TStructType>, TConstStructView<TStructType>>;
-        
-        FTResult Result{};
-        
-        static_assert(sizeof(StructView) == sizeof(FTResult));
-
-        // work around constructor issue of TStructView
-        FMemory::Memcpy(&Result, &View, sizeof(FTResult));
-
-        return Result;
+        return MakeView<TStructType>(View);
     }
 
-    template <Rem::Concepts::has_static_struct TStructType, typename StructView>
-    requires (std::is_same_v<StructView, FStructView> || std::is_same_v<StructView, FConstStructView>)
-    auto TryMakeView(const StructView View)
+    return FTResult{};
+}
+
+namespace Private
+{
+template <bool bConstView, typename TStructType, Concepts::is_struct_utils TStructUtils>
+auto FindStructViewInternal(TArrayView<TStructUtils> BaseStructsArrayView)
+{
+    using FResult    = std::conditional_t<bConstView, TConstStructView<TStructType>, TStructView<TStructType>>;
+    using StructView = std::conditional_t<bConstView, FConstStructView, FStructView>;
+
+    TTuple<FResult, int32> Result{FResult{}, INDEX_NONE};
+
+    for (auto Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
     {
-        using FTResult = decltype(MakeView<TStructType>(View));
-        
-        if (View.IsValid() && View.GetScriptStruct()->IsChildOf(TStructType::StaticStruct()))
+        auto& BaseStruct = BaseStructsArrayView[Index];
+
+        auto View = TryMakeView<TStructType>(StructView(
+            BaseStruct.GetScriptStruct(), const_cast<uint8*>(BaseStruct.GetMemory())));
+
+        if (View.IsValid())
         {
-            return MakeView<TStructType>(View);
+            Result = {View, Index};
+            break;
         }
-
-        return FTResult{};
     }
 
-    namespace Private
-    {
-        template <bool bConstView, typename TStructType, Concepts::is_struct_utils TStructUtils>
-        auto FindStructViewInternal(TArrayView<TStructUtils> BaseStructsArrayView)
-        {
-            using FResult = std::conditional_t<bConstView, TConstStructView<TStructType>, TStructView<TStructType>>;
-            using StructView = std::conditional_t<bConstView, FConstStructView, FStructView>;
+    return Result;
+}
+}
 
-            TTuple<FResult, int32> Result{FResult{}, INDEX_NONE};
-            
-            for (int32 Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
+template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+auto FindStructView(TArrayView<TStructUtils> BaseStructsArrayView)
+{
+    return Private::FindStructViewInternal<false, TStructType>(BaseStructsArrayView);
+}
+
+template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
+{
+    return Private::FindStructViewInternal<true, TStructType>(BaseStructsArrayView);
+}
+
+template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
+    TFunctionRef<void(TStructType& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
+{
+    for (auto Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
+    {
+        auto& BaseStruct = BaseStructsArrayView[Index];
+
+        if constexpr (!std::is_const_v<TStructType> &&
+                      requires(TStructUtils StructUtils, TStructType* Struct)
+                      {
+                          // has GetMutablePtr
+                          Struct = StructUtils.template GetMutablePtr<TStructType>();
+                      })
+        {
+            if (auto* Ptr = BaseStruct.template GetMutablePtr<TStructType>())
             {
-                auto& BaseStruct = BaseStructsArrayView[Index];
-                
-                auto View = TryMakeView<TStructType>(StructView(
-                    BaseStruct.GetScriptStruct(), const_cast<uint8*>(BaseStruct.GetMemory())));
-		    
-                if (View.IsValid())
-                {
-                    Result = {View, Index};
-                    break;
-                }
+                FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
             }
-
-            return Result;
+        }
+        else
+        {
+            if (auto* Ptr = BaseStruct.template GetPtr<TStructType>())
+            {
+                FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
+            }
         }
     }
-    
-	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
-	auto FindStructView(TArrayView<TStructUtils> BaseStructsArrayView)
-	{
-		return Private::FindStructViewInternal<false, TStructType>(BaseStructsArrayView);
-	}
-
-	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
-	auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
-	{
-		return Private::FindStructViewInternal<true, TStructType>(BaseStructsArrayView);
-	}
-
-	template <typename TStructType, Concepts::is_struct_utils TStructUtils>
-	void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
-	    TFunctionRef<void(TStructType& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
-	{
-		for (int32 Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
-		{
-		    auto& BaseStruct = BaseStructsArrayView[Index];
-		    
-			if constexpr (!std::is_const_v<TStructType> &&
-				requires(TStructUtils StructUtils, TStructType* Struct)
-				{
-					// has GetMutablePtr
-					Struct = StructUtils.template GetMutablePtr<TStructType>();
-				})
-			{
-				if (auto* Ptr = BaseStruct.template GetMutablePtr<TStructType>())
-				{
-					FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
-				}
-			}
-			else
-			{
-				if (auto* Ptr = BaseStruct.template GetPtr<TStructType>())
-				{
-					FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
-				}
-			}
-		}
-	}
+}
 }

@@ -17,22 +17,22 @@
 
 namespace Rem::AlsEnsure
 {
-	struct FAlsEnsureInfo
-	{
-		const ANSICHAR* Expression{nullptr};
+struct FAlsEnsureInfo
+{
+    const ANSICHAR* Expression{nullptr};
 
-		const ANSICHAR* FilePath{nullptr};
+    const ANSICHAR* FilePath{nullptr};
 
-		int32 LineNumber{0};
+    int32 LineNumber{0};
 
-		uint8 bEnsureAlways : 1 {false};
-	};
+    uint8 bEnsureAlways : 1 {false};
+};
 
-	REM_API bool UE_COLD UE_DEBUG_SECTION VARARGS
-	Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo);
+REM_API UE_COLD UE_DEBUG_SECTION bool VARARGS
+Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo);
 
-	REM_API bool UE_COLD UE_DEBUG_SECTION VARARGS
-	ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo, const TCHAR* Format, ...);
+REM_API UE_COLD UE_DEBUG_SECTION bool VARARGS
+ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo, const TCHAR* Format, ...);
 }
 
 #define REM_ALS_ENSURE_IMPLEMENTATION(bEnsureAlways, Expression) \

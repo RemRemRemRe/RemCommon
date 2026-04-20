@@ -14,16 +14,16 @@
 #define DISABLE_CHECK_MACRO false
 
 #ifdef REM_LET_IT_CRASH
-    #define REM_INVALID_HANDLING_STATEMENT(...)
+#define REM_INVALID_HANDLING_STATEMENT(...)
 #else
-    #define REM_INVALID_HANDLING_STATEMENT(...) __VA_ARGS__
+#define REM_INVALID_HANDLING_STATEMENT(...) __VA_ARGS__
 #endif // REM_LET_IT_CRASH
 
 
 #ifdef REM_DISABLE_LOG
-    #define REM_LOG_HELPER(CategoryName, Verbosity, Message)
+#define REM_LOG_HELPER(CategoryName, Verbosity, Message)
 #else
-    #define REM_LOG_HELPER(CategoryName, Verbosity, Message) \
+#define REM_LOG_HELPER(CategoryName, Verbosity, Message) \
         do \
         { \
             if constexpr ( constexpr auto StringView = TEXTVIEW(#Message); \
@@ -36,11 +36,11 @@
 
 
 #ifdef REM_DISABLE_ASSERTION
-    #define REM_ASSER_CONDITION(AssertionMacro, Condition)
-    #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition)
+#define REM_ASSER_CONDITION(AssertionMacro, Condition)
+#define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition)
 
 #else
-    #define REM_ASSER_CONDITION(AssertionMacro, Condition) \
+#define REM_ASSER_CONDITION(AssertionMacro, Condition) \
         do \
         { \
             if constexpr ( constexpr auto StringView = TEXTVIEW(#AssertionMacro); \
@@ -50,7 +50,7 @@
             } \
         } while (false)
 
-    #define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition) \
+#define REM_ASSER_CONDITION_EVALUATED(AssertionMacro, Condition) \
         do \
         { \
             REM_ASSER_CONDITION(AssertionMacro, Condition); \
@@ -156,8 +156,8 @@
 #pragma region Check Condition & Check Variable
 
 #if DISABLE_CHECK_MACRO
-    #define RemCheckCondition(...)
-    #define RemCheckVariable(...)
+#define RemCheckCondition(...)
+#define RemCheckVariable(...)
 #else
 
 /**

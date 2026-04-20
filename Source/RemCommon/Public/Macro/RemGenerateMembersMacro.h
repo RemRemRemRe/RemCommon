@@ -83,7 +83,6 @@
 #pragma endregion Getter
 
 
-
 #pragma region Getter template
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,8 +110,7 @@
  * @param ReturnValue statement without the "return" keyword
  */
 #define REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(YourConcept, NamePredicate, NameSuffix, ReturnValue) \
-	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(YourConcept, NamePredicate, NameSuffix, const, ReturnValue) \
-
+	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO(YourConcept, NamePredicate, NameSuffix, const, ReturnValue)
 /**
  * @brief Use this macro to help define getters --- "return reference", const only
  * @param YourConcept required concept for the template getter
@@ -124,7 +122,6 @@
 	REM_DEFINE_TEMPLATE_GETTERS_RETURN_AUTO_REFERENCE(YourConcept, NamePredicate, NameSuffix, const, ReturnValue)
 
 #pragma endregion Getter template
-
 
 
 #pragma region Rule Of Five

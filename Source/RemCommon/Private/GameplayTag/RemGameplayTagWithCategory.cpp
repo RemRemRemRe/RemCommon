@@ -10,12 +10,11 @@
 
 void FRemGameplayTagWithCategory::SetTagAndCategory(const FGameplayTag& InTag)
 {
-	Tag = InTag;
+    Tag = InTag;
 
 #if WITH_EDITORONLY_DATA
-	
-	Category = Rem::GameplayTag::GetFirstParent(GetTag());
+
+    Category = Rem::GameplayTag::GetFirstParent(GetTag());
 
 #endif
 }
-

@@ -6,19 +6,19 @@
 
 UFunction* FRemReflectedFunctionData::GetFunction() const
 {
-	if (!FunctionOwnerClass || FunctionName.IsNone())
-	{
-		return {};
-	}
+    if (!FunctionOwnerClass || FunctionName.IsNone())
+    {
+        return {};
+    }
 
-	// for (const UClass* Class = FunctionOwnerClass; Class; Class = Class->GetSuperClass())
-	// {
-		// using ExcludeSuper to avoid populate UClass::AllFunctionsCache
-		if (auto* Function = FunctionOwnerClass->FindFunctionByName(FunctionName, EIncludeSuperFlag::ExcludeSuper))
-		{
-			return Function;
-		}
-	// }
+    // for (const UClass* Class = FunctionOwnerClass; Class; Class = Class->GetSuperClass())
+    // {
+    // using ExcludeSuper to avoid populate UClass::AllFunctionsCache
+    if (auto* Function = FunctionOwnerClass->FindFunctionByName(FunctionName, EIncludeSuperFlag::ExcludeSuper))
+    {
+        return Function;
+    }
+    // }
 
-	return {};
+    return {};
 }

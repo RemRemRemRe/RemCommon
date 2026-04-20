@@ -9,17 +9,17 @@
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemReflectedFunctionData
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	TObjectPtr<UClass> FunctionOwnerClass;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    TObjectPtr<UClass> FunctionOwnerClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
-	FName FunctionName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
+    FName FunctionName;
 
-	// TODO: utilize it
-	UPROPERTY(EditAnywhere, Category = "Rem")
-	uint32 Flags{};
+    // TODO: utilize it
+    UPROPERTY(EditAnywhere, Category = "Rem")
+    uint32 Flags{};
 
-	UFunction* GetFunction() const;
+    UFunction* GetFunction() const;
 };

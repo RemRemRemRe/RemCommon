@@ -10,39 +10,42 @@ template <std::derived_from<FRemComponentViewBase> TComponentType>
 TComponentType::FInstanceDataType* FRemComponentViewBase::GetInstanceData(const FContext& Context) const
 {
     const auto DataView = Context.OwnerInstance->GetInstanceDataView(Context.ComponentIndex);
-    
+
     return DataView.GetPtr<typename TComponentType::FInstanceDataType>();
 }
 
-template<std::derived_from<FRemComponentViewBase> T>
+template <std::derived_from<FRemComponentViewBase> T>
 auto FRemComponentViewContainerInstance::FindComponent() const
 {
-	return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).template Get<0>();
+    return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).template Get<0>();
 }
 
-template<std::derived_from<FRemComponentViewBase> T>
+template <std::derived_from<FRemComponentViewBase> T>
 auto FRemComponentViewContainerInstance::FindComponent(const int32 Index) const
 {
-	RemCheckCondition(Components.IsValidIndex(Index), return {});
+    RemCheckCondition(Components.IsValidIndex(Index), return {});
 
-	return Rem::Struct::TryMakeView<T>(FConstStructView{Components[Index].GetScriptStruct(), Components[Index].GetMemory()});
+    return Rem::Struct::TryMakeView<T>(FConstStructView{Components[Index].GetScriptStruct(),
+        Components[Index].GetMemory()
+    });
 }
 
-template<std::derived_from<FRemComponentViewBase> T, Rem::Concepts::is_scoped_enum EnumClass>
+template <std::derived_from<FRemComponentViewBase> T, Rem::Concepts::is_scoped_enum EnumClass>
 auto FRemComponentViewContainerInstance::FindComponent(EnumClass Enum) const
 {
-	return FindComponent<T>(static_cast<int32>(Enum));
+    return FindComponent<T>(static_cast<int32>(Enum));
 }
 
-template<std::derived_from<FRemComponentViewBase> T>
+template <std::derived_from<FRemComponentViewBase> T>
 void FRemComponentViewContainerInstance::ForEachComponent(
     TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const
 {
-	Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
+    Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
 }
 
 template <std::derived_from<FRemComponentViewBase> TComponentType>
-TStructView<typename TComponentType::FInstanceDataType> FRemComponentViewContainerInstance::GetInstanceData(const int32 ComponentIndex)
+TStructView<typename TComponentType::FInstanceDataType> FRemComponentViewContainerInstance::GetInstanceData(
+    const int32 ComponentIndex)
 {
     const auto InstanceData = GetInstanceDataView(ComponentIndex);
     return Rem::Struct::TryMakeView<typename TComponentType::FInstanceDataType>(InstanceData);
@@ -53,7 +56,7 @@ TStructView<typename TComponentType::FInstanceDataType> FRemComponentViewContain
 {
     const auto ComponentIndex = GetComponentIndex<TComponentType>();
     RemCheckCondition(ComponentIndex != INDEX_NONE, return {});
-    
+
     auto InstanceData = GetInstanceDataView(ComponentIndex);
     return Rem::Struct::TryMakeView<typename TComponentType::FInstanceDataType>(InstanceData);
 }

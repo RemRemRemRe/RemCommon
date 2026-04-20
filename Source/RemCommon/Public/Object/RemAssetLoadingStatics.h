@@ -10,9 +10,8 @@
 UCLASS()
 class REMCOMMON_API URemAssetLoadingStatics : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
 };
 
 namespace Rem

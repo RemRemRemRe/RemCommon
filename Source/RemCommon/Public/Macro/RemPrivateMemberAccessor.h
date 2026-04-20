@@ -8,53 +8,53 @@
 
 namespace Rem::PrivateMemberAccessor
 {
-    // Global pointer to a field or method.
-    template <typename AccessorName>
-    AccessorName::MemberType TMemberPointer;
+// Global pointer to a field or method.
+template <typename AccessorName>
+AccessorName::MemberType TMemberPointer;
 
-    // Struct that is used to initialize TPointer.
-    template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
-    struct TPointerInitializer
+// Struct that is used to initialize TPointer.
+template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
+struct TPointerInitializer
+{
+    TPointerInitializer()
     {
-        TPointerInitializer()
-        {
-            TMemberPointer<AccessorName> = MemberPointer;
-        }
+        TMemberPointer<AccessorName> = MemberPointer;
+    }
 
-        static TPointerInitializer Instance;
-    };
+    static TPointerInitializer Instance;
+};
 
-    // Declaration of a TPointerInitializer instance.
-    template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
-    TPointerInitializer<AccessorName, MemberPointer> TPointerInitializer<AccessorName, MemberPointer>::Instance;
+// Declaration of a TPointerInitializer instance.
+template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
+TPointerInitializer<AccessorName, MemberPointer> TPointerInitializer<AccessorName, MemberPointer>::Instance;
 
-    // Returns the value of the data member or invokes the member function referenced by this accessor.
-    template <typename AccessorName, typename ThisType, typename... ArgumentsType>
-    decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
+// Returns the value of the data member or invokes the member function referenced by this accessor.
+template <typename AccessorName, typename ThisType, typename... ArgumentsType>
+decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
+{
+    if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
     {
-        if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
+        if constexpr (sizeof...(ArgumentsType) > 0)
         {
-            if constexpr (sizeof...(ArgumentsType) > 0)
-            {
-                return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
-            }
-            else
-            {
-                return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
-            }
+            return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
         }
         else
         {
-            if constexpr (sizeof...(ArgumentsType) > 0)
-            {
-                return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
-            }
-            else
-            {
-                return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
-            }
+            return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
         }
     }
+    else
+    {
+        if constexpr (sizeof...(ArgumentsType) > 0)
+        {
+            return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+        }
+        else
+        {
+            return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
+        }
+    }
+}
 }
 
 /**
@@ -88,4 +88,4 @@ namespace Rem::PrivateMemberAccessor
 	    }; \
     } \
 	\
-	template struct Rem::PrivateMemberAccessor::TPointerInitializer<AccessorName, MemberPointer>; \
+	template struct Rem::PrivateMemberAccessor::TPointerInitializer<AccessorName, MemberPointer>;

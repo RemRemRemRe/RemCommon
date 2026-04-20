@@ -7,5 +7,5 @@
 USTRUCT(BlueprintType)
 struct FRemEmptyStruct
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };

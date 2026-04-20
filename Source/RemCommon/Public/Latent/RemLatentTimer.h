@@ -6,208 +6,231 @@
 
 namespace Rem
 {
-    using FTimerDelegate = TDelegate<void()>;
+using FTimerDelegate = TDelegate<void()>;
 }
 
 namespace Rem::Latent
 {
-	/**
-	 * 0 means invalid handle (default to 0)
-	 */
-	struct REMCOMMON_API FTimerHandle
-	{
-		uint32 Handle{0};
+/**
+ * 0 means invalid handle (default to 0)
+ */
+struct REMCOMMON_API FTimerHandle
+{
+    uint32 Handle{0};
 
-		using FHandleType = decltype(Handle);
+    using FHandleType = decltype(Handle);
 
-		bool IsValid() const { return Handle != 0; }
+    bool IsValid() const { return Handle != 0; }
 
-		operator FHandleType() const { return Handle; }
+    operator FHandleType() const { return Handle; }
 
-		FHandleType& operator*() { return Handle; }
-		const FHandleType& operator*() const { return Handle; }
+    FHandleType& operator*() { return Handle; }
+    const FHandleType& operator*() const { return Handle; }
 
-		static FTimerHandle NewHandle();
-	    
-	    FTimerHandle() = default;
-	    explicit FTimerHandle(const FHandleType NewHandle) : Handle(NewHandle) {}
-	    
-	    //////////////////////////////////////////////////////
-	    // Start - intrusive TOptional<FTimerHandle> state ///
-	    //////////////////////////////////////////////////////
-	    constexpr static bool bHasIntrusiveUnsetOptionalState = true;
-	    using IntrusiveUnsetOptionalStateType = FTimerHandle;
+    static FTimerHandle NewHandle();
 
-	    UE_NODEBUG [[nodiscard]] explicit FTimerHandle(FIntrusiveUnsetOptionalState) {}
-	    UE_NODEBUG [[nodiscard]] bool operator==(FIntrusiveUnsetOptionalState) const
-	    {
-	        return !IsValid();
-	    }
-	    //////////////////////////////////////////////////////
-	    // End - intrusive TOptional<FTimerHandle> state /////
-	    //////////////////////////////////////////////////////
-	};
+    FTimerHandle() = default;
 
-	/**
-	 * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
-	 *
-	 * @note do set bSkipCountingThisFrame to TRUE if you're set timer WITHIN a latent timer callback,
-	 * or it may cause infinite loop when delta time is larger enough than your TimeToDelay
-	 *
-	 * @LoopCount 0 means loop forever
-	 */
-	struct REMCOMMON_API FTimerParameterHelper_Time
-	{
-		float TimeToDelay{0.0f};
-		uint32 LoopCount{1};
-		float InitialDelay{-1.0f};
-		bool bMaxOncePerFrame{false};
-		bool bSkipCountingThisFrame{false};
-	};
+    explicit FTimerHandle(const FHandleType NewHandle)
+        : Handle(NewHandle)
+    {
+    }
 
-	/**
-	 * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
-	 *
-	 * @LoopCount 0 means loop forever
-	 *
-	 * @note the frame format could only be called up to once per frame
-	 */
-	struct REMCOMMON_API FTimerParameterHelper_Frame
-	{
-		uint32 FrameToDelay{0};
-		uint32 LoopCount{1};
-		uint32 InitialDelay{std::numeric_limits<uint32>::max()};
-		bool bSkipCountingThisFrame{false};
-	};
+    //////////////////////////////////////////////////////
+    // Start - intrusive TOptional<FTimerHandle> state ///
+    //////////////////////////////////////////////////////
+    constexpr static auto bHasIntrusiveUnsetOptionalState = true;
+    using IntrusiveUnsetOptionalStateType                 = FTimerHandle;
 
-	class REMCOMMON_API FTimerLatentActionBase : public FPendingLatentAction
-	{
-		using Super = FPendingLatentAction;
+    UE_NODEBUG [[nodiscard]] explicit FTimerHandle(FIntrusiveUnsetOptionalState)
+    {
+    }
 
-	public:
-		FTimerDelegate Delegate;
-	};
+    UE_NODEBUG [[nodiscard]] bool operator==(FIntrusiveUnsetOptionalState) const
+    {
+        return !IsValid();
+    }
 
-	/**
-	 * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
-	 *
-	 * we are counting from this frame, from index 0
-	 *
-	 * this frame, aka 0 frame(frame at index 0), or the first frame
-	 *
-	 * if you want to call back at the third frame(frame at index 2), you could pass FTimerParameterHelper_Frame
-	 * whose FrameToDelay is 2 or InitialDelay is 2 with other value to be defaulted
-	 *
-	 * when bSkipCountingThisFrame is true, you will start counting from "second frame(frame at index 1)" in the context above
-	 * in this case, with FrameToDelay set to 2, the call back will fire at "fourth frame(frame at index 3)" in the context above
-	 *
-	 * @note LevelCollection related functionality is not supported as the engine does, you have to do it on your own delegates
-	 *	@see FTimerData::LevelCollection, FScopedLevelCollectionContextSwitch
-	 *	
-	 * @note By default, in order to tick alongside the tick group of the bound object, the bound object need to be a BLUEPRINT class,
-	 * and the delta time is not effected by AActor::CustomTimeDilation, it's the UWorld::GetDeltaSeconds
-	 *  @see AActor::Tick, UActorComponent::TickComponent, UUserWidget::NativeTick
-	 */
-	class REMCOMMON_API FTimerLatentAction_Delay : public FTimerLatentActionBase
-	{
-		using Super = FTimerLatentActionBase;
+    //////////////////////////////////////////////////////
+    // End - intrusive TOptional<FTimerHandle> state /////
+    //////////////////////////////////////////////////////
+};
 
-	public:
-		/**
-		 * 4 bytes for timer counter
-		 */
-		union FTimeOrFrame32
-		{
-			uint32 Frame{0};
-			float Time;
-		} TimeOrFrameToDelay{};
+/**
+ * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
+ *
+ * @note do set bSkipCountingThisFrame to TRUE if you're set timer WITHIN a latent timer callback,
+ * or it may cause infinite loop when delta time is larger enough than your TimeToDelay
+ *
+ * @LoopCount 0 means loop forever
+ */
+struct REMCOMMON_API FTimerParameterHelper_Time
+{
+    float TimeToDelay{0.0f};
+    uint32 LoopCount{1};
+    float InitialDelay{-1.0f};
+    bool bMaxOncePerFrame{false};
+    bool bSkipCountingThisFrame{false};
+};
 
-		/**
-		 * CurrentTimeOrFrame in frame format has to start from 1 rather than 0,
-		 * because it will be "--" first in UpdateOperation
-		 */
-		FTimeOrFrame32 CurrentTimeOrFrame{1};
+/**
+ * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
+ *
+ * @LoopCount 0 means loop forever
+ *
+ * @note the frame format could only be called up to once per frame
+ */
+struct REMCOMMON_API FTimerParameterHelper_Frame
+{
+    uint32 FrameToDelay{0};
+    uint32 LoopCount{1};
+    uint32 InitialDelay{std::numeric_limits<uint32>::max()};
+    bool bSkipCountingThisFrame{false};
+};
 
-		/**
-		 * "format" of TimeOrFrameToDelay, default to frame. 1 for time, 0 for frame
-		 */
-		uint32 bTimeOrFrame : 1{0};
+class REMCOMMON_API FTimerLatentActionBase : public FPendingLatentAction
+{
+    using Super = FPendingLatentAction;
 
-		uint32 bPaused : 1{0};
-		uint32 bPausedOneFrame : 1{0};
-		uint32 bStopped : 1{0};
+public:
+    FTimerDelegate Delegate;
+};
 
-		/**
-		 * @see FTimerData::bMaxOncePerFrame
-		 */
-		uint32 bMaxOncePerFrame : 1{0};
+/**
+ * by default, it set to execute this frame, no loop, no initial delay, up to call once per frame
+ *
+ * we are counting from this frame, from index 0
+ *
+ * this frame, aka 0 frame(frame at index 0), or the first frame
+ *
+ * if you want to call back at the third frame(frame at index 2), you could pass FTimerParameterHelper_Frame
+ * whose FrameToDelay is 2 or InitialDelay is 2 with other value to be defaulted
+ *
+ * when bSkipCountingThisFrame is true, you will start counting from "second frame(frame at index 1)" in the context above
+ * in this case, with FrameToDelay set to 2, the call back will fire at "fourth frame(frame at index 3)" in the context above
+ *
+ * @note LevelCollection related functionality is not supported as the engine does, you have to do it on your own delegates
+ *	@see FTimerData::LevelCollection, FScopedLevelCollectionContextSwitch
+ *	
+ * @note By default, in order to tick alongside the tick group of the bound object, the bound object need to be a BLUEPRINT class,
+ * and the delta time is not effected by AActor::CustomTimeDilation, it's the UWorld::GetDeltaSeconds
+ *  @see AActor::Tick, UActorComponent::TickComponent, UUserWidget::NativeTick
+ */
+class REMCOMMON_API FTimerLatentAction_Delay : public FTimerLatentActionBase
+{
+    using Super = FTimerLatentActionBase;
+
+public:
+    /**
+     * 4 bytes for timer counter
+     */
+    union FTimeOrFrame32
+    {
+        uint32 Frame{0};
+        float Time;
+    } TimeOrFrameToDelay{};
+
+    /**
+     * CurrentTimeOrFrame in frame format has to start from 1 rather than 0,
+     * because it will be "--" first in UpdateOperation
+     */
+    FTimeOrFrame32 CurrentTimeOrFrame{1};
+
+    /**
+     * "format" of TimeOrFrameToDelay, default to frame. 1 for time, 0 for frame
+     */
+    uint32 bTimeOrFrame : 1{0};
+
+    uint32 bPaused         : 1{0};
+    uint32 bPausedOneFrame : 1{0};
+    uint32 bStopped        : 1{0};
+
+    /**
+     * @see FTimerData::bMaxOncePerFrame
+     */
+    uint32 bMaxOncePerFrame : 1{0};
 
 
-		//// bits wasted ////
-		//uint32 Wasted : 27{0};
+    //// bits wasted ////
+    //uint32 Wasted : 27{0};
 
-		/**
-		 * 4 bytes for loop count
-		 *
-		 * 0 means loop forever, 1 means no loop,
-		 */
-		uint32 LoopCount{1};
+    /**
+     * 4 bytes for loop count
+     *
+     * 0 means loop forever, 1 means no loop,
+     */
+    uint32 LoopCount{1};
 
-		FTimerLatentAction_Delay() = default;
-		FTimerLatentAction_Delay(const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-		FTimerLatentAction_Delay(const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-		explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Time& DelayParameter);
-		explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Frame& DelayParameter);
+    FTimerLatentAction_Delay() = default;
+    FTimerLatentAction_Delay(const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
+    FTimerLatentAction_Delay(const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
+    explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Time& DelayParameter);
+    explicit FTimerLatentAction_Delay(const FTimerParameterHelper_Frame& DelayParameter);
 
-		virtual void UpdateOperation(FLatentResponse& Response) override;
-	};
+    virtual void UpdateOperation(FLatentResponse& Response) override;
+};
 
-	/**
-	 * @note if you are writing something like "retry every frame" or "retry next frame", use SetTimerForNextTick
-	 * or infinite loop happens if this called within FLatentActionManager::ProcessLatentActions,
-	 *
-	 * and it will call back in next frame if FLatentActionManager::ProcessLatentActions is called on WorldContextObject this frame
-	 *
-	 * consider using FTimerManager if you do need do it this frame (before the end of this frame)
-	 */
-	REMCOMMON_API FTimerHandle SetTimerForThisTick(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(TNotNull<UObject*> WorldContextObject,
-		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(TNotNull<UObject*> WorldContextObject);
+/**
+ * @note if you are writing something like "retry every frame" or "retry next frame", use SetTimerForNextTick
+ * or infinite loop happens if this called within FLatentActionManager::ProcessLatentActions,
+ *
+ * and it will call back in next frame if FLatentActionManager::ProcessLatentActions is called on WorldContextObject this frame
+ *
+ * consider using FTimerManager if you do need do it this frame (before the end of this frame)
+ */
+REMCOMMON_API FTimerHandle SetTimerForThisTick(TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTickX(
+    TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForThisTick(
+    TNotNull<UObject*> WorldContextObject);
 
-	/**
-	 * This is preferred and safer to call than the one above
-	 */
-	REMCOMMON_API FTimerHandle SetTimerForNextTick(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(TNotNull<UObject*> WorldContextObject,
-		const FTimerDelegate& InDelegate);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(TNotNull<UObject*> WorldContextObject);
+/**
+ * This is preferred and safer to call than the one above
+ */
+REMCOMMON_API FTimerHandle SetTimerForNextTick(TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTickX(
+    TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerForNextTick(
+    TNotNull<UObject*> WorldContextObject);
 
-	REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
-		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
-		const FTimerDelegate& InDelegate, const FTimerParameterHelper_Frame& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerParameterHelper_Time& DelayParameter);
-	REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerParameterHelper_Frame& DelayParameter);
+REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate,
+    const FTimerParameterHelper_Time& DelayParameter);
+REMCOMMON_API FTimerHandle SetTimer(TNotNull<UObject*> WorldContextObject, const FTimerDelegate& InDelegate,
+    const FTimerParameterHelper_Frame& DelayParameter);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate,
+    const FTimerParameterHelper_Time& DelayParameter);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimerX(TNotNull<UObject*> WorldContextObject,
+    const FTimerDelegate& InDelegate,
+    const FTimerParameterHelper_Frame& DelayParameter);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject,
+    const FTimerParameterHelper_Time& DelayParameter);
+REMCOMMON_API TTuple<FTimerHandle, FTimerLatentAction_Delay*> SetTimer(TNotNull<UObject*> WorldContextObject,
+    const FTimerParameterHelper_Frame& DelayParameter);
 
-	REMCOMMON_API void PauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void UnpauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void SetTimerPaused(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle, bool bPause);
+REMCOMMON_API void PauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+REMCOMMON_API void UnpauseTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+REMCOMMON_API void SetTimerPaused(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle,
+    bool bPause);
 
-	REMCOMMON_API void SetTimerPausedOneFrame(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle, bool bPause);
+REMCOMMON_API void SetTimerPausedOneFrame(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle,
+    bool bPause);
 
-	REMCOMMON_API void StopTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle& TimerHandle);
+REMCOMMON_API void StopTimer(TNotNull<UObject*> WorldContextObject, FTimerHandle& TimerHandle);
 
-	REMCOMMON_API FTimerLatentAction_Delay* FindTimerAction(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API bool IsTimerActive(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+REMCOMMON_API FTimerLatentAction_Delay* FindTimerAction(TNotNull<UObject*> WorldContextObject,
+    FTimerHandle TimerHandle);
+REMCOMMON_API bool IsTimerActive(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
 
-	/**
-	 * this could mimic re triggerable timer, won't affect loop count though
-	 *
-	 * @return true if found the timer and reset its delay, time or frame
-	 */
-	REMCOMMON_API bool ResetTimerDelay(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
-	REMCOMMON_API void ResetTimerDelay(TNotNull<FTimerLatentAction_Delay*> TimerAction);
+/**
+ * this could mimic re triggerable timer, won't affect loop count though
+ *
+ * @return true if found the timer and reset its delay, time or frame
+ */
+REMCOMMON_API bool ResetTimerDelay(TNotNull<UObject*> WorldContextObject, FTimerHandle TimerHandle);
+REMCOMMON_API void ResetTimerDelay(TNotNull<FTimerLatentAction_Delay*> TimerAction);
 }

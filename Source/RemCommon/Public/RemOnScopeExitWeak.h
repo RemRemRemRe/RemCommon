@@ -15,26 +15,40 @@ class UObject;
 
 namespace Rem::ScopeExit
 {
-	template<typename F>
-	struct TWeakScopeExit
-	{
-		FWeakObjectPtr Weak;
-		F Finally;
+template <typename F>
+struct TWeakScopeExit
+{
+    FWeakObjectPtr Weak;
+    F Finally;
 
-		explicit TWeakScopeExit(const UObject* Object, F&& Callback)
-			: Weak(Object), Finally(MoveTemp(Callback)) { }
+    explicit TWeakScopeExit(const UObject* Object, F&& Callback)
+        : Weak(Object)
+      , Finally(MoveTemp(Callback))
+    {
+    }
 
-		~TWeakScopeExit() { if (Weak.IsValid()) Finally(); }
-	};
+    ~TWeakScopeExit()
+    {
+        if (Weak.IsValid())
+        {
+            Finally();
+        }
+    }
+};
 
-	struct FOperatorHelper
-	{
-		const UObject* Object;
-		explicit FOperatorHelper(const UObject* Object) : Object(Object) { }
-		template<typename F>
-		TWeakScopeExit<F> operator+=(F Callback)
-		{
-			return TWeakScopeExit(Object, MoveTemp(Callback));
-		}
-	};
+struct FOperatorHelper
+{
+    const UObject* Object;
+
+    explicit FOperatorHelper(const UObject* Object)
+        : Object(Object)
+    {
+    }
+
+    template <typename F>
+    TWeakScopeExit<F> operator+=(F Callback)
+    {
+        return TWeakScopeExit(Object, MoveTemp(Callback));
+    }
+};
 }

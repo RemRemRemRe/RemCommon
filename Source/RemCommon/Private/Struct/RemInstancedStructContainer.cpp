@@ -11,7 +11,7 @@ FStructView FRemInstancedStructContainer::TryGetView(const FKeyType Key)
 {
     auto* Index = IndexMap.Find(Key);
     RemEnsureVariable(Index, return {}, REM_NO_LOG_OR_ASSERTION);
-    
+
     return StructContainer[*Index];
 }
 
@@ -19,7 +19,7 @@ FConstStructView FRemInstancedStructContainer::TryGetView(const FKeyType Key) co
 {
     auto* Index = IndexMap.Find(Key);
     RemEnsureVariable(Index, return {}, REM_NO_LOG_OR_ASSERTION);
-    
+
     return StructContainer[*Index];
 }
 
@@ -66,7 +66,7 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
         // insert new one
         StructContainer.InsertAt(IndexToInsert, MakeConstArrayView(&NewStruct, 1));
     }
-                
+
     IndexMap.Add(Key, IndexToInsert);
 
     return true;

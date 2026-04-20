@@ -11,39 +11,41 @@
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemClassWrapper
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
-	TSubclassOf<UObject> Class{};
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true))
+    TSubclassOf<UObject> Class{};
 
-	using ThisType = FRemClassWrapper;
-	bool operator==(const ThisType&) const = default;
+    using ThisType = FRemClassWrapper;
+    bool operator==(const ThisType&) const = default;
 
-	using IsObjectWrapper = std::true_type;
-	REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Class.Get())
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Object, /*no suffix*/, TSubclassOf<T>{Class}.Get())
+    using IsObjectWrapper = std::true_type;
+    REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Class.Get())
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Object, /*no suffix*/,
+        TSubclassOf<T>{Class}.Get())
 
-	REM_DEFINE_GETTERS_RETURN_VALUE(Class, /* no suffix */, Class.Get())
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Class, /*no suffix*/, TSubclassOf<T>{Class}.Get())
+    REM_DEFINE_GETTERS_RETURN_VALUE(Class, /* no suffix */, Class.Get())
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, Class, /*no suffix*/,
+        TSubclassOf<T>{Class}.Get())
 
-	REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, ClassT, /*no suffix*/, TSubclassOf<T>{Class})
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(std::derived_from<UObject>, ClassT, /*no suffix*/, TSubclassOf<T>{Class})
 
-	REM_DEFINE_GETTERS_RETURN_VALUE(/*no predicate*/, /*no suffix*/, Class.Get())
+    REM_DEFINE_GETTERS_RETURN_VALUE(/*no predicate*/, /*no suffix*/, Class.Get())
 };
 
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemClassArrayWrapper
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Class))
-	TArray<FRemClassWrapper> Classes;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (AddFilterUI = true, TitleProperty = Class))
+    TArray<FRemClassWrapper> Classes;
 
-	using ThisType = FRemClassArrayWrapper;
-	using IsArrayOfObjectWrapper = std::true_type;
-	using WrapperElementType = decltype(Classes)::ElementType;
+    using ThisType               = FRemClassArrayWrapper;
+    using IsArrayOfObjectWrapper = std::true_type;
+    using WrapperElementType     = decltype(Classes)::ElementType;
 
-	REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Classes)
+    REM_DEFINE_GETTERS_RETURN_REFERENCE(Elements, /*no suffix*/, Classes)
 
-	REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Classes)
+    REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Classes)
 };

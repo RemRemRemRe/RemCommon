@@ -12,32 +12,32 @@
 #include "RemComponentContainer.generated.h"
 
 struct FRemComponentContainer;
-template<typename BaseStructT>
+template <typename BaseStructT>
 struct TInstancedStruct;
 
-template<typename BaseStructT>
+template <typename BaseStructT>
 struct TConstStructView;
 
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemComponentBase
 #if CPP
-	: public IRemScriptStructInterface
+    : public IRemScriptStructInterface
 #endif
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
     struct FContext
-	{
-	    Rem::TNotNull<FRemComponentContainer*> OwnerInstance;
-	    const int32 ComponentIndex;
-	};
-    
-	virtual void Initialize(const FContext& Context);
+    {
+        Rem::TNotNull<FRemComponentContainer*> OwnerInstance;
+        const int32 ComponentIndex;
+    };
 
-	virtual bool ShouldTick(const FContext& Context) const;
-	virtual void Tick(const FContext& Context, float DeltaSeconds);
+    virtual void Initialize(const FContext& Context);
 
-	virtual void Uninitialize(const FContext& Context);
+    virtual bool ShouldTick(const FContext& Context) const;
+    virtual void Tick(const FContext& Context, float DeltaSeconds);
+
+    virtual void Uninitialize(const FContext& Context);
 };
 
 /**
@@ -46,86 +46,88 @@ struct REMCOMMON_API FRemComponentBase
 USTRUCT(BlueprintType)
 struct REMCOMMON_API FRemComponentContainer
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component", meta = (ExcludeBaseStruct))
-	TArray<TInstancedStruct<FRemComponentBase>> Components;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component", meta = (ExcludeBaseStruct))
+    TArray<TInstancedStruct<FRemComponentBase>> Components;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<UObject> Owner{};
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<UObject> Owner{};
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
-	uint8 bInitialized : 1{false};
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+    uint8 bInitialized : 1{false};
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
-	uint8 bInitializing : 1{false};
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+    uint8 bInitializing : 1{false};
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
-	uint8 bUnInitializing : 1{false};
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Component")
+    uint8 bUnInitializing : 1{false};
 
 public:
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	auto FindComponent();
-    
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	auto FindComponent() const;
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    auto FindComponent();
 
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	auto FindComponent(int32 Index);
-    
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	auto FindComponent(int32 Index) const;
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    auto FindComponent() const;
 
-    template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	auto FindComponent(EnumClass Enum);
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    auto FindComponent(int32 Index);
 
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
-	auto FindComponent(EnumClass Enum) const;
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    auto FindComponent(int32 Index) const;
 
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	void ForEachComponent(TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef);
-    
-	template<std::derived_from<FRemComponentBase> T = FRemComponentBase>
-	void ForEachComponent(TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const;
-    
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
+    auto FindComponent(EnumClass Enum);
+
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
+    auto FindComponent(EnumClass Enum) const;
+
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    void ForEachComponent(
+        TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef);
+
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
+    void ForEachComponent(
+        TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const;
+
     /**
      * @return index of first component that matches the class exactly
      */
-    template<std::derived_from<FRemComponentBase> TComponentType>
+    template <std::derived_from<FRemComponentBase> TComponentType>
     int32 GetComponentIndex() const;
-    
+
     /**
-     * @return index of the component 
+     * @return index of the component
      */
     int32 GetComponentIndex(const FRemComponentBase& InComponent) const;
-    
-	void Initialize(UObject& OwnerRef);
-	void Uninitialize();
 
-	bool IsInitialized() const;
+    void Initialize(UObject& OwnerRef);
+    void Uninitialize();
 
-	void TryInitialize(UObject& OwnerRef);
-	void TryUninitialize();
+    bool IsInitialized() const;
 
-	void SetComponentsView(TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView);
-	void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
-	void SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
+    void TryInitialize(UObject& OwnerRef);
+    void TryUninitialize();
 
-    template<Rem::Concepts::is_uobject TOwner>
+    void SetComponentsView(TConstArrayView<TConstStructView<FRemComponentBase>> InComponentsView);
+    void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
+    void SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
+
+    template <Rem::Concepts::is_uobject TOwner>
     TOwner* GetOwner() const;
-    
+
     REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)
-    
-    FRemComponentContainer() = default;
-    FRemComponentContainer(const FRemComponentContainer&) = delete;
-    FRemComponentContainer(FRemComponentContainer&&) noexcept = delete;
-    FRemComponentContainer& operator=(const FRemComponentContainer&) = delete;
+
+    FRemComponentContainer()                                             = default;
+    FRemComponentContainer(const FRemComponentContainer&)                = delete;
+    FRemComponentContainer(FRemComponentContainer&&) noexcept            = delete;
+    FRemComponentContainer& operator=(const FRemComponentContainer&)     = delete;
     FRemComponentContainer& operator=(FRemComponentContainer&&) noexcept = delete;
-    ~FRemComponentContainer() noexcept = default;
+    ~FRemComponentContainer() noexcept                                   = default;
 };
 
-template<>
+template <>
 struct TStructOpsTypeTraits<FRemComponentContainer> : TStructOpsTypeTraitsBase2<FRemComponentContainer>
 {
     enum

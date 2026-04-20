@@ -10,16 +10,16 @@ class UEngineSubsystem;
 
 namespace Rem::Subsystem
 {
-	template<std::derived_from<UEngineSubsystem> T>
-	T* GetEngineSubsystem()
-	{
-	    RemEnsureVariable(GEngine, return {});
-		return GEngine->GetEngineSubsystem<T>();
-	}
+template <std::derived_from<UEngineSubsystem> T>
+T* GetEngineSubsystem()
+{
+    RemEnsureVariable(GEngine, return {});
+    return GEngine->GetEngineSubsystem<T>();
+}
 
-	template<std::derived_from<UEngineSubsystem> T>
-	auto GetEngineSubsystemNotNull()
-	{
-		return MakeNotNull(GetEngineSubsystem<T>());
-	}
+template <std::derived_from<UEngineSubsystem> T>
+auto GetEngineSubsystemNotNull()
+{
+    return MakeNotNull(GetEngineSubsystem<T>());
+}
 }

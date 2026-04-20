@@ -15,22 +15,22 @@ namespace Rem::Animation
 
 UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor)
 {
-	if (auto* Character = Cast<ACharacter>(Actor);
-		LIKELY(Character))
-	{
-		if (LIKELY(Character->GetMesh()))
-		{
-			return Character->GetMesh()->GetAnimInstance();
-		}
+    if (auto* Character = Cast<ACharacter>(Actor);
+        LIKELY(Character))
+    {
+        if (LIKELY(Character->GetMesh()))
+        {
+            return Character->GetMesh()->GetAnimInstance();
+        }
 
-		REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("mesh is missing on Character:{0}"), Character);
-	}
-	else
-	{
-		REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("Actor:{0} is not an ACharacter "), Actor);
-	}
+        REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("mesh is missing on Character:{0}"), Character);
+    }
+    else
+    {
+        REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("Actor:{0} is not an ACharacter "), Actor);
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 }

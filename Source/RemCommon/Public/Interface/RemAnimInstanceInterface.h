@@ -11,13 +11,13 @@ class UAnimInstance;
 UINTERFACE(MinimalAPI)
 class URemAnimInstanceInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 class REMCOMMON_API IRemAnimInstanceInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor) const;
+    virtual UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor) const;
 };

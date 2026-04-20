@@ -8,15 +8,15 @@
 #include "RemComponentContainerOwnerInterface.generated.h"
 
 struct FRemComponentContainer;
-template<typename BaseStructT>
+template <typename BaseStructT>
 struct TConstStructView;
-template<typename BaseStructT>
+template <typename BaseStructT>
 struct TStructView;
 
 UINTERFACE(MinimalAPI)
 class URemComponentContainerOwnerInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -25,9 +25,9 @@ class URemComponentContainerOwnerInterface : public UInterface
  */
 class REMCOMMON_API IRemComponentContainerOwnerInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual Rem::TNotNull<FRemComponentContainer*> GetComponentContainer() = 0;
-	virtual Rem::TNotNull<const FRemComponentContainer*> GetComponentContainer() const = 0;
+    virtual Rem::TNotNull<FRemComponentContainer*> GetComponentContainer() = 0;
+    virtual Rem::TNotNull<const FRemComponentContainer*> GetComponentContainer() const = 0;
 };

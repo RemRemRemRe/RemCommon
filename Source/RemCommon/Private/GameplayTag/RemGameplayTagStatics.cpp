@@ -16,220 +16,222 @@ namespace Rem::GameplayTag
 
 FGameplayTag GetFirstParent(const FGameplayTag& Tag)
 {
-	return Tag.GetGameplayTagParents().Last();
+    return Tag.GetGameplayTagParents().Last();
 }
 
 FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag)
 {
-	return FPrimaryAssetId{GetFirstParent(Tag).GetTagName(), Tag.GetTagName()};
+    return FPrimaryAssetId{GetFirstParent(Tag).GetTagName(), Tag.GetTagName()};
 }
 
 uint32 GetHashForTags(const TConstArrayView<FGameplayTag> Tags)
 {
-	uint32 HashResult{GetTypeHash(Tags.Num())};
+    uint32 HashResult{GetTypeHash(Tags.Num())};
 
-	for (auto& Tag : Tags)
-	{
-		HashResult = HashCombineFast(HashResult, GetTypeHash(Tag));
-	}
+    for (auto& Tag : Tags)
+    {
+        HashResult = HashCombineFast(HashResult, GetTypeHash(Tag));
+    }
 
-	return HashResult;
+    return HashResult;
 }
 
 uint32 GetHashForTags(const FGameplayTagContainer& Tags)
 {
-	return GetHashForTags(Tags.GetGameplayTagArray());
+    return GetHashForTags(Tags.GetGameplayTagArray());
 }
 
 FString TagToStringWithoutDot(const FGameplayTag& Tag)
 {
-	return Tag.GetTagName().ToString().Replace(TEXTVIEW(".").GetData(), TEXTVIEW("").GetData());
+    return Tag.GetTagName().ToString().Replace(TEXTVIEW(".").GetData(), TEXTVIEW("").GetData());
 }
 
 FName TagToNameWithoutDot(const FGameplayTag& Tag)
 {
-	return FName{TagToStringWithoutDot(Tag)};
+    return FName{TagToStringWithoutDot(Tag)};
 }
 
 FGameplayTag TryGetTagFromString(const FString& TagString)
 {
-	if (auto& Manager = UGameplayTagsManager::Get();
-		Manager.IsValidGameplayTagString(TagString))
-	{
-		const auto Tag = FGameplayTag::RequestGameplayTag(*TagString, false);
-		return Tag;
-	}
-	return FGameplayTag::EmptyTag;
+    if (auto& Manager = UGameplayTagsManager::Get();
+        Manager.IsValidGameplayTagString(TagString))
+    {
+        const auto Tag = FGameplayTag::RequestGameplayTag(*TagString, false);
+        return Tag;
+    }
+    return FGameplayTag::EmptyTag;
 }
 
 bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag)
 {
-	if (StringRef.IsEmpty())
-	{
-		// empty string, use tag name string by default
-		StringRef = Tag.GetTagName().ToString();
-	}
-	else if (const auto TagFromComment = TryGetTagFromString(StringRef);
-		TagFromComment.IsValid() && TagFromComment != Tag)
-	{
-		// used tag name string but not matched
-		StringRef = Tag.GetTagName().ToString();
-	}
-	else
-	{
-		// did nothing
-		return false;
-	}
+    if (StringRef.IsEmpty())
+    {
+        // empty string, use tag name string by default
+        StringRef = Tag.GetTagName().ToString();
+    }
+    else if (const auto TagFromComment = TryGetTagFromString(StringRef);
+        TagFromComment.IsValid() && TagFromComment != Tag)
+    {
+        // used tag name string but not matched
+        StringRef = Tag.GetTagName().ToString();
+    }
+    else
+    {
+        // did nothing
+        return false;
+    }
 
-	// updated
-	return true;
+    // updated
+    return true;
 }
 
 TArray<FString> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
 {
-	TArray<FString> TagsString{};
-	TagsString.Reserve(Tags.Num());
+    TArray<FString> TagsString{};
+    TagsString.Reserve(Tags.Num());
 
-	for (auto& TagOne : Tags)
-	{
-		TagsString.Add(TagOne.ToString());
-	}
+    for (auto& TagOne : Tags)
+    {
+        TagsString.Add(TagOne.ToString());
+    }
 
-	return TagsString;
+    return TagsString;
 }
 
 FGameplayTagContainer ToTagContainer(const TConstArrayView<FGameplayTag> Tags)
 {
-	return FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>(Tags));
+    return FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>(Tags));
 }
 
 FString ToString(const TConstArrayView<FGameplayTag> Tags, const bool bQuoted)
 {
-	FString RetString;
-	for (int32 Index = 0; Index < Tags.Num(); ++Index)
-	{
-		if (bQuoted)
-		{
-			RetString += TEXT("\"");
-		}
-		RetString += Tags[Index].ToString();
-		if (bQuoted)
-		{
-			RetString += TEXT("\"");
-		}
+    FString RetString;
+    for (auto Index = 0; Index < Tags.Num(); ++Index)
+    {
+        if (bQuoted)
+        {
+            RetString += TEXT("\"");
+        }
+        RetString += Tags[Index].ToString();
+        if (bQuoted)
+        {
+            RetString += TEXT("\"");
+        }
 
-		if (Index < Tags.Num() - 1)
-		{
-			RetString += TEXT(", ");
-		}
-	}
-	return RetString;
+        if (Index < Tags.Num() - 1)
+        {
+            RetString += TEXT(", ");
+        }
+    }
+    return RetString;
 }
 
 FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo)
 {
-	RemCheckVariable(TagOne, return {});
-	RemCheckVariable(TagTwo, return {});
+    RemCheckVariable(TagOne, return {});
+    RemCheckVariable(TagTwo, return {});
 
-	if (TagOne == TagTwo)
-	{
-		return TagOne;
-	}
+    if (TagOne == TagTwo)
+    {
+        return TagOne;
+    }
 
-	// could we get string view of tag?
-	const auto StringOne = TagOne.ToString();
-	const auto StringTwo = TagTwo.ToString();
+    // could we get string view of tag?
+    const auto StringOne = TagOne.ToString();
+    const auto StringTwo = TagTwo.ToString();
 
-	return FindCommonParentTag(StringOne, StringTwo);
+    return FindCommonParentTag(StringOne, StringTwo);
 }
 
 FGameplayTag FindCommonParentTag(const FStringView TagStringOne, const FStringView TagStringTwo)
 {
-	const auto MinLength = FMath::Min(TagStringOne.Len(), TagStringTwo.Len());
-	int32 DotIndex{INDEX_NONE};
+    const auto MinLength = FMath::Min(TagStringOne.Len(), TagStringTwo.Len());
+    int32 DotIndex{INDEX_NONE};
 
-	for (int32 Index= 0; Index < MinLength; ++Index)
-	{
-		if (TagStringOne[Index] != TagStringTwo[Index])
-		{
-			break;
-		}
+    for (auto Index = 0; Index < MinLength; ++Index)
+    {
+        if (TagStringOne[Index] != TagStringTwo[Index])
+        {
+            break;
+        }
 
-		if (TagStringOne[Index] == '.')
-		{
-			DotIndex = Index;
-		}
-	}
+        if (TagStringOne[Index] == '.')
+        {
+            DotIndex = Index;
+        }
+    }
 
-	if (DotIndex == INDEX_NONE)
-	{
-		return {};
-	}
+    if (DotIndex == INDEX_NONE)
+    {
+        return {};
+    }
 
-	return FGameplayTag::RequestGameplayTag(*FString{TagStringOne.SubStr(0, DotIndex)});
+    return FGameplayTag::RequestGameplayTag(*FString{TagStringOne.SubStr(0, DotIndex)});
 }
 
-TArray<FGameplayTag> FindCommonParentTags(const TConstArrayView<FGameplayTag> TagsOne, const TConstArrayView<FGameplayTag> TagsTwo)
+TArray<FGameplayTag> FindCommonParentTags(const TConstArrayView<FGameplayTag> TagsOne,
+    const TConstArrayView<FGameplayTag> TagsTwo)
 {
-	const auto Number = FMath::Min(TagsOne.Num(), TagsTwo.Num());
-	if (Number == 0)
-	{
-		return {};
-	}
+    const auto Number = FMath::Min(TagsOne.Num(), TagsTwo.Num());
+    if (Number == 0)
+    {
+        return {};
+    }
 
-	TArray<FGameplayTag> Results{};
-	Results.Reserve(Number);
+    TArray<FGameplayTag> Results{};
+    Results.Reserve(Number);
 
-	const auto TagsStringOne = GetTagsString(TagsOne);
-	const auto TagsStringTwo = GetTagsString(TagsTwo);
+    const auto TagsStringOne = GetTagsString(TagsOne);
+    const auto TagsStringTwo = GetTagsString(TagsTwo);
 
-	for (auto& TagOne : TagsStringOne)
-	{
-		for (auto& TagTwo : TagsStringTwo)
-		{
-			if (auto CommonTag = FindCommonParentTag(TagOne, TagTwo);
-				CommonTag.IsValid())
-			{
-				Results.Add(CommonTag);
-			}
-		}
-	}
+    for (auto& TagOne : TagsStringOne)
+    {
+        for (auto& TagTwo : TagsStringTwo)
+        {
+            if (auto CommonTag = FindCommonParentTag(TagOne, TagTwo);
+                CommonTag.IsValid())
+            {
+                Results.Add(CommonTag);
+            }
+        }
+    }
 
-	return Results;
+    return Results;
 }
 
 bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const TConstArrayView<FGameplayTag> TagsToMatch)
 {
-	return IsTagQueryMatches(TagQuery, ToTagContainer(TagsToMatch));
+    return IsTagQueryMatches(TagQuery, ToTagContainer(TagsToMatch));
 }
 
 bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTag& TagToMatch)
 {
-	return IsTagQueryMatches(TagQuery, TagToMatch.GetSingleTagContainer());
+    return IsTagQueryMatches(TagQuery, TagToMatch.GetSingleTagContainer());
 }
 
 bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery, const FGameplayTagContainer& TagsToMatch)
 {
-	if (TagQuery.IsEmpty())
-	{
-		return true;
-	}
+    if (TagQuery.IsEmpty())
+    {
+        return true;
+    }
 
-	return TagQuery.Matches(TagsToMatch);
+    return TagQuery.Matches(TagsToMatch);
 }
 
 const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag)
 {
-	if (const auto TagNode = UGameplayTagsManager::Get().FindTagNode(Tag);
-		TagNode.IsValid())
-	{
-		return TagNode->GetSingleTagContainer();
-	}
+    if (const auto TagNode = UGameplayTagsManager::Get().FindTagNode(Tag);
+        TagNode.IsValid())
+    {
+        return TagNode->GetSingleTagContainer();
+    }
 
-	// This tag should always be invalid if the node is missing
-	RemCheckVariable(Tag, REM_NO_HANDLING, LogRemCommon, Error,
-		StringFormat(TEXT("GetSingleTagContainer passed invalid gameplay tag {0}, only registered tags can be queried"), Tag));
+    // This tag should always be invalid if the node is missing
+    RemCheckVariable(Tag, REM_NO_HANDLING, LogRemCommon, Error,
+        StringFormat(TEXT("GetSingleTagContainer passed invalid gameplay tag {0}, only registered tags can be queried"),
+            Tag));
 
-	return FGameplayTagContainer::EmptyContainer;
+    return FGameplayTagContainer::EmptyContainer;
 }
 }
