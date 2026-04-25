@@ -4,19 +4,25 @@
 
 #include <type_traits>
 
-namespace Rem::Concepts
+namespace Rem
 {
 template <typename T>
-concept is_scoped_enum = std::is_enum_v<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
+concept CEnum = std::is_enum_v<T>;
+
+template <typename T>
+concept CScopedEnum = CEnum<T> && !std::is_convertible_v<T, int>;
+
+template <typename T>
+concept CUnscopedEnum = CEnum<T> && std::is_convertible_v<T, int>;
 
 template <class T>
-concept has_equals = requires(bool Result, const T Left, const T Right)
+concept CHasEquals = requires(bool Result, const T Left, const T Right)
 {
     Result = Left.Equals(Right);
 };
 
 template <class T>
-concept has_equals_with_error_tolerance = requires(bool Result, const T Left, const T Right,
+concept CHasEqualsWithErrorTolerance = requires(bool Result, const T Left, const T Right,
     float ErrorTolerance)
     {
         Result = Left.Equals(Right, ErrorTolerance);

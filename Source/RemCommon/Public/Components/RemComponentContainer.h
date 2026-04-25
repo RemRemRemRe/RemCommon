@@ -77,10 +77,10 @@ public:
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
     auto FindComponent(int32 Index) const;
 
-    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::CScopedEnum EnumClass>
     auto FindComponent(EnumClass Enum);
 
-    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::Concepts::is_scoped_enum EnumClass>
+    template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::CScopedEnum EnumClass>
     auto FindComponent(EnumClass Enum) const;
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
@@ -114,7 +114,7 @@ public:
     void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentBase>> InComponentsView);
     void SetComponentsView(TArray<TInstancedStruct<FRemComponentBase>>&& InComponents);
 
-    template <Rem::Concepts::is_uobject TOwner>
+    template <Rem::CUObject TOwner>
     TOwner* GetOwner() const;
 
     REM_DEFINE_CONST_ONLY_GETTERS_RETURN_REFERENCE_SIMPLE(Components)

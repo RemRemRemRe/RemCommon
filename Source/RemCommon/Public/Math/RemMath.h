@@ -144,11 +144,11 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr T Lerp(const T& Current, const T& Target, float Ratio)
 {
-    if constexpr (is_instance_v<T, UE::Math::TQuat>)
+    if constexpr (CInstanceOf<T, UE::Math::TQuat>)
     {
         return T::Slerp(Current, Target, Ratio).GetNormalized();
     }
-    else if constexpr (is_instance_v<T, UE::Math::TRotator>)
+    else if constexpr (CInstanceOf<T, UE::Math::TRotator>)
     {
 #if PLATFORM_ENABLE_VECTORINTRINSICS
         const auto CurrentRegister{VectorLoadFloat3_W0(&Current)};
@@ -181,7 +181,7 @@ template <typename T>
         return Result;
 #endif
     }
-    else if constexpr (is_instance_v<T, TAngle>)
+    else if constexpr (CInstanceOf<T, TAngle>)
     {
         auto Delta{FMath::UnwindDegrees(*Target - *Current)};
         Delta = RemapAngleForCounterClockwiseRotation(Delta);
@@ -239,9 +239,9 @@ template <typename T>
 }
 
 template <typename T>
-    requires (Rem::is_instance_v<T, UE::Math::TRotator>
-              || Rem::is_instance_v<T, UE::Math::TQuat>
-              || Rem::is_instance_v<T, UE::Math::TVector>
+    requires (Rem::CInstanceOf<T, UE::Math::TRotator>
+              || Rem::CInstanceOf<T, UE::Math::TQuat>
+              || Rem::CInstanceOf<T, UE::Math::TVector>
     )
 [[nodiscard]] constexpr T DamperExact(const T& Current, const T& Target, const float DeltaTime,
     const FVector3f HalfLife3)
@@ -257,11 +257,11 @@ template <typename T>
     }
 
     T Result;
-    if constexpr (Rem::is_instance_v<T, UE::Math::TRotator>)
+    if constexpr (Rem::CInstanceOf<T, UE::Math::TRotator>)
     {
         Result = Private::DampRotatorWithHalfLife3(Current, Target, DeltaTime, HalfLife3);
     }
-    else if constexpr (Rem::is_instance_v<T, UE::Math::TQuat>)
+    else if constexpr (Rem::CInstanceOf<T, UE::Math::TQuat>)
     {
         auto CurrentRotator{Current.Rotator()};
         auto TargetRotator{Target.Rotator()};
@@ -270,7 +270,7 @@ template <typename T>
 
         Result = ResultRotator.Quaternion();
     }
-    else if constexpr (Rem::is_instance_v<T, UE::Math::TVector>)
+    else if constexpr (Rem::CInstanceOf<T, UE::Math::TVector>)
     {
         Result = {
             Math::DamperExact(Current.X, Target.X, DeltaTime, HalfLife3.X),
@@ -366,9 +366,9 @@ constexpr void PerpendicularCounterClockwiseXY(T& X, T& Y)
 
 template <typename T>
     requires (
-        is_instance_v<T, UE::Math::TVector>
-        || is_instance_v<T, UE::Math::TVector2>
-        || is_instance_v<T, UE::Math::TVector4>
+        CInstanceOf<T, UE::Math::TVector>
+        || CInstanceOf<T, UE::Math::TVector2>
+        || CInstanceOf<T, UE::Math::TVector4>
     )
 [[nodiscard]] constexpr T PerpendicularClockwiseXY(const T& Vector)
 {
@@ -379,9 +379,9 @@ template <typename T>
 
 template <typename T>
     requires (
-        is_instance_v<T, UE::Math::TVector>
-        || is_instance_v<T, UE::Math::TVector2>
-        || is_instance_v<T, UE::Math::TVector4>
+        CInstanceOf<T, UE::Math::TVector>
+        || CInstanceOf<T, UE::Math::TVector2>
+        || CInstanceOf<T, UE::Math::TVector4>
     )
 [[nodiscard]] constexpr T PerpendicularCounterClockwiseXY(const T& Vector)
 {

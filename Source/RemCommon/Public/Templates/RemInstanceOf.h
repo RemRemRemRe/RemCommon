@@ -10,24 +10,25 @@ namespace Rem
 namespace Private
 {
 
+// check if type T is an instantiation of template U
+// @see https://stackoverflow.com/a/61040973
 template <typename, template <typename...> typename>
-struct TIsInstanceImpl : std::false_type
+struct TInstanceOfImpl : std::false_type
 {
 };
 
 template <template <typename...> typename U, typename... Ts>
-struct TIsInstanceImpl<U<Ts...>, U> : std::true_type
+struct TInstanceOfImpl<const volatile U<Ts...>, U> : std::true_type
 {
 };
 
+// @see Engine/Source/Runtime/Core/Public/Concepts/ConceptDefinitionRules.md
+template <typename T, template <typename...> typename U>
+concept CInstanceOfPrivate = TInstanceOfImpl<T, U>::value;
+
 }
 
-// check if type T is an instantiation of template U
-// @see https://stackoverflow.com/a/61040973
 template <typename T, template <typename...> typename U>
-using is_instance = Private::TIsInstanceImpl<std::remove_cvref_t<T>, U>;
-
-template <typename T, template <typename...> typename U>
-constexpr bool is_instance_v = Private::TIsInstanceImpl<std::remove_cvref_t<T>, U>::value;
+concept CInstanceOf = Private::CInstanceOfPrivate<const volatile std::remove_reference_t<T>, U>;
 
 }

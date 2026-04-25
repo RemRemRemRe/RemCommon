@@ -8,7 +8,7 @@ namespace Rem::Property
 {
 namespace Private
 {
-template <Concepts::is_property PropertyType, typename TVoid, typename TFunctor>
+template <CFProperty PropertyType, typename TVoid, typename TFunctor>
     requires std::is_void_v<TVoid>
 void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InContainer, TFunctor InFunction)
 {
@@ -159,7 +159,7 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
 }
 }
 
-template <Concepts::is_property PropertyType, typename TVoid, typename TFunctor>
+template <CFProperty PropertyType, typename TVoid, typename TFunctor>
     requires std::is_void_v<TVoid>
 void IteratePropertiesOfType(const UStruct* InStruct, TVoid* InContainer, TFunctor InFunction)
 {
@@ -170,9 +170,8 @@ void IteratePropertiesOfType(const UStruct* InStruct, TVoid* InContainer, TFunct
     }
 }
 
-template <Concepts::is_property PropertyType, typename TObject, typename TFunctor>
-    requires Rem::Concepts::is_uobject<std::remove_cvref_t<TObject>> || Rem::Concepts::has_static_struct<
-                 std::remove_cvref_t<TObject>>
+template <CFProperty PropertyType, typename TObject, typename TFunctor>
+    requires Rem::CUObject<std::remove_cvref_t<TObject>> || Rem::CHasStaticStruct<std::remove_cvref_t<TObject>>
 void IteratePropertiesOfType(const UStruct* Struct, TObject&& Object, TFunctor InFunction)
 {
     if constexpr (std::is_const_v<TObject>)

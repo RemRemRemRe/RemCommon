@@ -45,7 +45,7 @@ bool IsValid(const T& Object)
         }
         return {};
     }
-    else if constexpr (Concepts::is_not_null<RawType>)
+    else if constexpr (CNotNull<RawType>)
     {
         return Rem::IsValid(*Object);
     }
@@ -59,7 +59,7 @@ bool IsValid(const T& Object)
         {
             return ::IsValid(Object.Get());
         }
-        else if constexpr (Concepts::has_is_valid<RawType>)
+        else if constexpr (CHasIsValid<RawType>)
         {
             return Object.IsValid();
         }
@@ -76,7 +76,7 @@ REM_FUNCTION_TO_FUNCTOR_SIMPLE(IsValid)
 template <typename T>
 ENetMode GetNetMode(const T& Object)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::GetNetMode(*Object);
     }
@@ -88,7 +88,7 @@ ENetMode GetNetMode(const T& Object)
         {
             return Rem::GetNetMode(*Object);
         }
-        else if constexpr (Concepts::has_get_net_mode<RawType>)
+        else if constexpr (CHasGetNetMode<RawType>)
         {
             return Object.GetNetMode();
         }
@@ -103,7 +103,7 @@ ENetMode GetNetMode(const T& Object)
 template <typename T>
 bool IsNetMode(const T& Object, const ENetMode NetMode)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::IsNetMode(*Object);
     }
@@ -115,11 +115,11 @@ bool IsNetMode(const T& Object, const ENetMode NetMode)
         {
             return Rem::IsNetMode(*Object, NetMode);
         }
-        else if constexpr (Concepts::has_is_net_mode<RawType>)
+        else if constexpr (CHasIsNetMode<RawType>)
         {
             return Object.IsNetMode(NetMode);
         }
-        else if constexpr (Concepts::has_get_net_mode<RawType>)
+        else if constexpr (CHasGetNetMode<RawType>)
         {
             return Object.GetNetMode() == NetMode;
         }
@@ -149,7 +149,7 @@ REMCOMMON_API FString ToString(const UScriptStruct& ScriptStruct, const void* Va
 template <typename T>
 FString ToString(const T& Data)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::ToString(*Data);
     }
@@ -161,23 +161,23 @@ FString ToString(const T& Data)
         {
             return Rem::BoolToString(Data).GetData();
         }
-        else if constexpr (Concepts::has_to_compact_string<RawType>)
+        else if constexpr (CHasToCompactString<RawType>)
         {
             return Data.ToCompactString();
         }
-        else if constexpr (Concepts::has_to_string_simple<RawType>)
+        else if constexpr (CHasToStringSimple<RawType>)
         {
             return Data.ToStringSimple();
         }
-        else if constexpr (Concepts::has_to_simple_string<RawType>)
+        else if constexpr (CHasToSimpleString<RawType>)
         {
             return Data.ToSimpleString();
         }
-        else if constexpr (Concepts::has_to_string<RawType>)
+        else if constexpr (CHasToString<RawType>)
         {
             return Data.ToString();
         }
-        else if constexpr (Concepts::has_get_name<RawType>)
+        else if constexpr (CHasGetName<RawType>)
         {
             return Data.GetName();
         }
@@ -186,15 +186,15 @@ FString ToString(const T& Data)
             // print FDelegateHandle as uint64
             return FString::Format(TEXT("{0}"), {*reinterpret_cast<const uint64*>(&Data)});
         }
-        else if constexpr (Concepts::is_uenum<T> || TIsUEnumClass<RawType>::Value)
+        else if constexpr (CUEnum<T> || TIsUEnumClass<RawType>::Value)
         {
             return UEnum::GetValueAsString(Data);
         }
-        else if constexpr (Concepts::has_static_struct<RawType>)
+        else if constexpr (CHasStaticStruct<RawType>)
         {
             return Rem::ToString(*RawType::StaticStruct(), &Data);
         }
-        else if constexpr (Concepts::has_lex_to_string<RawType>)
+        else if constexpr (CCanLexToString<RawType>)
         {
             return LexToString(Data);
         }
@@ -206,19 +206,16 @@ FString ToString(const T& Data)
     }
 }
 
-namespace Concepts
-{
 template <typename T>
-concept rem_to_stringable = requires(T&& Object)
+concept CToStringable = requires(T&& Object)
 {
     Rem::ToString(std::forward<T>(Object));
 };
-}
 
 template <typename T>
 ENetRole GetNetRole(const T& Object)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::GetNetRole(*Object);
     }
@@ -230,11 +227,11 @@ ENetRole GetNetRole(const T& Object)
         {
             return Rem::GetNetRole(*Object);
         }
-        if constexpr (Concepts::has_get_local_role<T>)
+        if constexpr (CHasGetLocalRole<T>)
         {
             return Object.GetLocalRole();
         }
-        else if constexpr (Concepts::has_get_owner_role<T>)
+        else if constexpr (CHasGetOwnerRole<T>)
         {
             return Object.GetOwnerRole();
         }
@@ -274,7 +271,7 @@ REMCOMMON_API void AppendCharRepeated(FString& String, const TCHAR Char, const i
 template <typename T, bool bConstantStringLength = false>
 FString GetNetRoleString(const T& Object)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::GetNetRoleString(*Object);
     }
@@ -309,7 +306,7 @@ FText GetNetRoleText(const T& Object)
 template <typename T>
 FString GetNetDebugString(const T& Object)
 {
-    if constexpr (std::is_pointer_v<T> || Concepts::is_not_null<T>)
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
         return Rem::GetNetDebugString(*Object);
     }
@@ -325,7 +322,7 @@ FString GetNetDebugString(const T& Object)
         {
             const FString NetModeString = Rem::GetNetModeString<T, true>(Object);
 
-            if constexpr (Concepts::has_get_local_role<T> || Concepts::has_get_owner_role<T>)
+            if constexpr (CHasGetLocalRole<T> || CHasGetOwnerRole<T>)
             {
                 const FString NetRoleString = Rem::GetNetRoleString<T, true>(Object);
 
@@ -352,7 +349,7 @@ void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&...
     using RawType = std::remove_cvref_t<F>;
 
     if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>>
-                  && Concepts::rem_to_stringable<RawType>)
+                  && CToStringable<RawType>)
     {
         Args.Add(Rem::ToString(std::forward<F>(First)));
     }
@@ -374,13 +371,13 @@ FString StringFormat(const TCHAR* Format, T&&... Args)
     return FString::Format(Format, std::move(OrderedArgs));
 }
 
-template <Concepts::is_uobject T>
+template <CUObject T>
 decltype(auto) GetDefaultRef()
 {
     return *::GetDefault<T>();
 }
 
-template <Concepts::is_uobject T>
+template <CUObject T>
 decltype(auto) GetMutableDefaultRef()
 {
     return *::GetMutableDefault<T>();

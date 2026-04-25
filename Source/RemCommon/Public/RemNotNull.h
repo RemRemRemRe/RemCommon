@@ -10,18 +10,13 @@ namespace Rem
 template <typename T>
 using TNotNull = TNotNull<T>;
 
-namespace Concepts
-{
-
 template <typename T>
-concept is_not_null = UE::Core::Private::TIsTNotNullParam_V<T>;
+concept CNotNull = UE::Core::Private::TIsTNotNullParam_V<T>;
 
 template <typename NotNull, typename ValueTypeBase>
-concept is_not_null_of_t = is_not_null<NotNull>
-                           && std::derived_from<std::remove_cvref_t<std::remove_pointer_t<decltype(*std::declval<
-                                                    NotNull>())>>, ValueTypeBase>;
-
-}
+concept CNotNullOf = CNotNull<NotNull>
+                     && std::derived_from<std::remove_cvref_t<std::remove_pointer_t<decltype(*std::declval<
+                                              NotNull>())>>, ValueTypeBase>;
 
 /**
  * pointer can convert / construct TNotNull implicitly, but there are cases to copy const from T

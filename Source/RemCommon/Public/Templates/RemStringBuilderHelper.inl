@@ -11,24 +11,25 @@ template <typename StringBuilder, typename T>
     requires std::derived_from<StringBuilder, TStringBuilderBase<typename StringBuilder::ElementType>>
 StringBuilder::BuilderType& AppendValueString(StringBuilder& Builder, const T& Value)
 {
-    if constexpr (is_instance_v<T, UE::Math::TVector>)
+    if constexpr (CInstanceOf<T, UE::Math::TVector>)
     {
         return Builder.Appendf(TEXT("X:%.3f Y:%.3f Z:%.3f"), Value.X, Value.Y, Value.Z);
     }
-    else if constexpr (is_instance_v<T, UE::Math::TRotator>)
+    else if constexpr (CInstanceOf<T, UE::Math::TRotator>)
     {
         return Builder.Appendf(TEXT("P:%.3f Y:%.3f R:%.3f"), Value.Pitch, Value.Yaw, Value.Roll);
     }
-    else if constexpr (is_instance_v<T, UE::Math::TVector2>)
+    else if constexpr (CInstanceOf<T, UE::Math::TVector2>)
     {
         return Builder.Appendf(TEXT("X:%.3f Y:%.3f"), Value.X, Value.Y);
     }
-    else if constexpr (is_instance_v<T, UE::Math::TVector4> || is_instance_v<T, UE::Math::TQuat> || is_instance_v<
-                           T, UE::Math::TPlane>)
+    else if constexpr (CInstanceOf<T, UE::Math::TVector4>
+                       || CInstanceOf<T, UE::Math::TQuat>
+                       || CInstanceOf<T, UE::Math::TPlane>)
     {
         return Builder.Appendf(TEXT("X:%.3f Y:%.3f Z:%.3f W:%.3f"), Value.X, Value.Y, Value.Z, Value.W);
     }
-    else if constexpr (is_instance_v<T, UE::Math::TTransform>)
+    else if constexpr (CInstanceOf<T, UE::Math::TTransform>)
     {
         const auto Rotator(Value.Rotator());
         const auto Translation(Value.GetTranslation());

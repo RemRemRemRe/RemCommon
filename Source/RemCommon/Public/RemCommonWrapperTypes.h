@@ -423,11 +423,11 @@ struct REMCOMMON_API FRemImageWrapper
             DisallowedClasses = "/Script/MediaAssets.MediaTexture", AddFilterUI = true))
     TObjectPtr<const UObject> Image{};
 
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Image, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Image, /*no suffix*/, Cast<T>(Image.Get()))
 
     using IsObjectWrapper = std::true_type;
     REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image.Get())
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Object, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Object, /*no suffix*/, Cast<T>(Image.Get()))
 
     REM_DEFINE_GETTERS_RETURN_VALUE(/*no predicate*/, /*no suffix*/, Image.Get())
 };
@@ -446,11 +446,11 @@ struct REMCOMMON_API FRemWeakImageWrapper
     using ThisType = FRemWeakImageWrapper;
     bool operator==(const ThisType&) const = default;
 
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Image, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Image, /*no suffix*/, Cast<T>(Image.Get()))
 
     using IsObjectWrapper = std::true_type;
     REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Object, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Object, /*no suffix*/, Cast<T>(Image.Get()))
 
     REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Image)
 };
@@ -469,11 +469,11 @@ struct REMCOMMON_API FRemSoftImageWrapper
     using ThisType = FRemSoftImageWrapper;
     bool operator==(const ThisType&) const = default;
 
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Image, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Image, /*no suffix*/, Cast<T>(Image.Get()))
 
     using IsObjectWrapper = std::true_type;
     REM_DEFINE_GETTERS_RETURN_VALUE(Object, /*no suffix*/, Image)
-    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::Concepts::is_image, Object, /*no suffix*/, Cast<T>(Image.Get()))
+    REM_DEFINE_TEMPLATE_GETTER_RETURN_VALUE(Rem::CImage, Object, /*no suffix*/, Cast<T>(Image.Get()))
 
     REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Image)
 };

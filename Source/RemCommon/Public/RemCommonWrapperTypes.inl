@@ -8,7 +8,7 @@
 
 namespace Rem
 {
-template <Concepts::is_uobject TObject, typename TWrapper, typename TTransform>
+template <CUObject TObject, typename TWrapper, typename TTransform>
     requires std::is_same_v<std::true_type, typename TWrapper::IsArrayOfObjectWrapper>
 void ArrayToWrapper(const TArray<TObject*>& Array, TWrapper& Wrapper, TTransform Transform)
 {
@@ -17,7 +17,7 @@ void ArrayToWrapper(const TArray<TObject*>& Array, TWrapper& Wrapper, TTransform
     Algo::Transform(Array, Wrapper.GetElements(), Transform);
 }
 
-template <Concepts::is_uobject TObject, typename TWrapper>
+template <CUObject TObject, typename TWrapper>
     requires std::is_same_v<std::true_type, typename TWrapper::IsArrayOfObjectWrapper>
 void ArrayToWrapper(const TArray<TObject*>& Array, TWrapper& Wrapper)
 {
@@ -28,7 +28,7 @@ void ArrayToWrapper(const TArray<TObject*>& Array, TWrapper& Wrapper)
         });
 }
 
-template <Concepts::is_uobject TObject, typename TWrapper, typename TTransform>
+template <CUObject TObject, typename TWrapper, typename TTransform>
     requires std::is_same_v<std::true_type, typename TWrapper::IsArrayOfObjectWrapper>
 void WrapperToArray(const TWrapper& Wrapper, TArray<TObject*>& Array, TTransform Transform)
 {
@@ -37,7 +37,7 @@ void WrapperToArray(const TWrapper& Wrapper, TArray<TObject*>& Array, TTransform
     Algo::Transform(Wrapper.GetElements(), Array, Transform);
 }
 
-template <Concepts::is_uobject TObject, typename TWrapper>
+template <CUObject TObject, typename TWrapper>
     requires std::is_same_v<std::true_type, typename TWrapper::IsArrayOfObjectWrapper>
 void WrapperToArray(const TWrapper& Wrapper, TArray<TObject*>& Array)
 {

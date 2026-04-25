@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-namespace Rem::Concepts
+namespace Rem
 {
 
 }

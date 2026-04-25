@@ -16,7 +16,7 @@
 namespace Rem::Object
 {
 
-template <Concepts::is_game_instance T = UGameInstance>
+template <CUGameInstance T = UGameInstance>
 T* GetGameInstance(const TNotNull<const UObject*> Object)
 {
     auto* World = Object->GetWorld();
@@ -27,7 +27,7 @@ T* GetGameInstance(const TNotNull<const UObject*> Object)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetGameInstance)
 
-template <Concepts::is_game_state T = AGameStateBase>
+template <CAGameStateBase T = AGameStateBase>
 T* GetGameState(const TNotNull<const UObject*> Object)
 {
     auto* World = Object->GetWorld();
@@ -39,7 +39,7 @@ T* GetGameState(const TNotNull<const UObject*> Object)
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetGameState)
 
 
-template <Concepts::is_player_controller T = APlayerController>
+template <CAPlayerController T = APlayerController>
 T* GetControllerFromPawnOwner(const TNotNull<const UActorComponent*> Component)
 {
     auto* Pawn = Component->GetOwner<APawn>();
@@ -50,9 +50,9 @@ T* GetControllerFromPawnOwner(const TNotNull<const UActorComponent*> Component)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerStateFromPawnOwner)
 
-template <Concepts::is_player_state TPlayerState = APlayerState,
+template <CAPlayerState TPlayerState = APlayerState,
     Enum::ERecursive ShouldRecursive = Enum::ERecursive{Enum::EYesOrNo::No},
-    Concepts::is_actor TActorOfNotNull = AActor>
+    CAActor TActorOfNotNull = AActor>
 TPlayerState* GetPlayerState(const TNotNull<TActorOfNotNull*> Actor)
 {
     TPlayerState* Result{nullptr};
@@ -102,8 +102,8 @@ TPlayerState* GetPlayerState(const TNotNull<TActorOfNotNull*> Actor)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerState)
 
-template <Concepts::is_player_state TPlayerState = APlayerState,
-    Concepts::is_actor TActorOfNotNull = AActor>
+template <CAPlayerState TPlayerState = APlayerState,
+    CAActor TActorOfNotNull = AActor>
 TPlayerState* GetPlayerStateRecursive(const TNotNull<TActorOfNotNull*> Actor)
 {
     return GetPlayerState<TActorOfNotNull, TPlayerState, Enum::ERecursive{Enum::EYesOrNo::Yes}>(Actor);
@@ -111,7 +111,7 @@ TPlayerState* GetPlayerStateRecursive(const TNotNull<TActorOfNotNull*> Actor)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetPlayerStateRecursive)
 
-template <Concepts::is_player_controller T = APlayerController>
+template <CAPlayerController T = APlayerController>
 T* GetFirstLocalPlayerController(const TNotNull<const UObject*> WorldContextObject)
 {
     // ReSharper disable once CommentTypo
@@ -125,7 +125,7 @@ T* GetFirstLocalPlayerController(const TNotNull<const UObject*> WorldContextObje
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerController)
 
-template <Concepts::is_hud T = AHUD>
+template <CAHUD T = AHUD>
 T* GetFirstLocalHUD(const TNotNull<const UObject*> WorldContextObject)
 {
     const auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
@@ -136,7 +136,7 @@ T* GetFirstLocalHUD(const TNotNull<const UObject*> WorldContextObject)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalHUD)
 
-template <Concepts::is_local_player T = ULocalPlayer>
+template <CULocalPlayer T = ULocalPlayer>
 T* GetFirstLocalPlayer(const TNotNull<const UObject*> WorldContextObject)
 {
     const auto* GameInstance = GetGameInstance(WorldContextObject);
@@ -147,7 +147,7 @@ T* GetFirstLocalPlayer(const TNotNull<const UObject*> WorldContextObject)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayer)
 
-template <Concepts::is_pawn T = APawn>
+template <CAPawn T = APawn>
 T* GetFirstLocalPlayerPawn(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
@@ -158,7 +158,7 @@ T* GetFirstLocalPlayerPawn(const TNotNull<const UObject*> WorldContextObject)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerPawn)
 
-template <Concepts::is_player_state T = APlayerState>
+template <CAPlayerState T = APlayerState>
 T* GetFirstLocalPlayerState(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
@@ -169,7 +169,7 @@ T* GetFirstLocalPlayerState(const TNotNull<const UObject*> WorldContextObject)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerState)
 
-template <Concepts::is_player_camera_manager T = APlayerCameraManager>
+template <CAPlayerCameraManager T = APlayerCameraManager>
 T* GetFirstLocalPlayerCameraManager(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
@@ -180,7 +180,7 @@ T* GetFirstLocalPlayerCameraManager(const TNotNull<const UObject*> WorldContextO
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetFirstLocalPlayerCameraManager)
 
-template <Concepts::is_uobject T>
+template <CUObject T>
 [[nodiscard]] uint32 GetHashForObjects(const TConstArrayView<T*> Objects)
 {
     uint32 HashResult{GetTypeHash(Objects.Num())};
@@ -195,7 +195,7 @@ template <Concepts::is_uobject T>
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetHashForObjects)
 
-template <Concepts::is_movement_component T = UMovementComponent, Concepts::is_actor TActorOfNotNull = AActor>
+template <CUMovementComponent T = UMovementComponent, CAActor TActorOfNotNull = AActor>
 T* FindMovementComponent(const TNotNull<TActorOfNotNull*> Actor)
 {
     if (auto* Pawn = Cast<APawn>(Actor))
@@ -208,7 +208,7 @@ T* FindMovementComponent(const TNotNull<TActorOfNotNull*> Actor)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(FindMovementComponent)
 
-template <Concepts::is_actor TActor = AActor,
+template <CAActor TActor = AActor,
     Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn{Enum::EYesOrNo::Yes}>
 [[nodiscard]] TActor* SpawnActor(const TNotNull<UWorld*> World, const TSubclassOf<TActor> Class,
     const FTransform& SpawnTransform,
@@ -232,7 +232,7 @@ template <Concepts::is_actor TActor = AActor,
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(SpawnActor)
 
-template <Concepts::is_actor TActor = AActor,
+template <CAActor TActor = AActor,
     Enum::ECallFinishSpawn CallFinishSpawn = Enum::ECallFinishSpawn{Enum::EYesOrNo::Yes}>
 [[nodiscard]] TActor* SpawnActor(const TNotNull<AActor*> OwnerActor, const TSubclassOf<TActor> Class,
     const FTransform& SpawnTransform,
@@ -248,7 +248,7 @@ template <Concepts::is_actor TActor = AActor,
         OwnerActor, Instigator, ScaleMethod);
 }
 
-template <Concepts::is_uobject TObject>
+template <CUObject TObject>
 [[nodiscard]] TArray<TObject*>& ObjectPtrDecay(TArray<TObjectPtr<TObject>>& Array)
 {
     auto& RawObjectArrayMutable = const_cast<TArray<TObject*>&>(::ObjectPtrDecay(Array));
@@ -257,7 +257,7 @@ template <Concepts::is_uobject TObject>
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(ObjectPtrDecay)
 
-template <Concepts::is_uobject TObject>
+template <CUObject TObject>
 [[nodiscard]] TArrayView<TObject*> MakeArrayView(TArray<TObjectPtr<TObject>>& Array)
 {
     return Object::ObjectPtrDecay(Array);
@@ -265,13 +265,13 @@ template <Concepts::is_uobject TObject>
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(MakeArrayView)
 
-template <Concepts::is_uobject TReturnType,
+template <CUObject TReturnType,
     typename T>
-    requires !Concepts::is_not_null<T>
+    requires !CNotNull<T>
 decltype(auto) GetOwner(const T& Object)
 {
     using FReturnTypeOfGetOwner = decltype(Object.GetOwner());
-    if constexpr (Concepts::has_get<FReturnTypeOfGetOwner>)
+    if constexpr (CHasGet<FReturnTypeOfGetOwner>)
     {
         return ::Cast<TReturnType>(Object.GetOwner().Get());
     }
@@ -281,7 +281,7 @@ decltype(auto) GetOwner(const T& Object)
     }
 }
 
-template <Concepts::is_uobject TReturnType = UObject,
+template <CUObject TReturnType = UObject,
     typename TObjectOfNotNull = UObject>
 decltype(auto) GetOwner(const TNotNull<TObjectOfNotNull*>& Object)
 {
@@ -290,8 +290,8 @@ decltype(auto) GetOwner(const TNotNull<TObjectOfNotNull*>& Object)
 
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetOwner)
 
-template <Concepts::is_actor TReturnType = AActor,
-    Concepts::is_uobject TObjectOfNotNull = UObject>
+template <CAActor TReturnType = AActor,
+    CUObject TObjectOfNotNull = UObject>
 auto GetActorFromObject(const TNotNull<TObjectOfNotNull*> Object)
 {
     auto* Actor = Cast<TReturnType>(Object);

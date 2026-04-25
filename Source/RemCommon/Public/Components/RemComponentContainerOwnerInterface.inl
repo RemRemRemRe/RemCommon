@@ -14,7 +14,7 @@ struct FRemComponentBase;
 namespace Rem::Component
 {
 
-template <Concepts::is_uobject TObject = UObject>
+template <CUObject TObject = UObject>
 decltype(auto) GetComponentContainer(TNotNull<TObject*> Object)
 {
     using FResult = TOptional<decltype(::Cast<IRemComponentContainerOwnerInterface>(Object)->GetComponentContainer())>;
@@ -25,7 +25,7 @@ decltype(auto) GetComponentContainer(TNotNull<TObject*> Object)
     return FResult{Interface->GetComponentContainer()};
 }
 
-template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Concepts::is_uobject TObject = UObject>
+template <std::derived_from<FRemComponentBase> T = FRemComponentBase, CUObject TObject = UObject>
 decltype(auto) FindComponent(TNotNull<TObject*> Object)
 {
     using TResult = decltype(GetComponentContainer(Object).GetValue()->template FindComponent<T>());

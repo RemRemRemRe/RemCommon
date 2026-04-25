@@ -9,7 +9,7 @@
 
 namespace Rem::Struct
 {
-template <Concepts::has_static_struct TStructType, typename StructView>
+template <CHasStaticStruct TStructType, typename StructView>
     requires (std::is_same_v<StructView, FStructView> || std::is_same_v<StructView, FConstStructView>)
 auto MakeView(const StructView View)
 {
@@ -26,7 +26,7 @@ auto MakeView(const StructView View)
     return Result;
 }
 
-template <Concepts::has_static_struct TStructType, typename StructView>
+template <CHasStaticStruct TStructType, typename StructView>
     requires (std::is_same_v<StructView, FStructView> || std::is_same_v<StructView, FConstStructView>)
 auto TryMakeView(const StructView View)
 {
@@ -42,7 +42,7 @@ auto TryMakeView(const StructView View)
 
 namespace Private
 {
-template <bool bConstView, typename TStructType, Concepts::is_struct_utils TStructUtils>
+template <bool bConstView, typename TStructType, CStructUtils TStructUtils>
 auto FindStructViewInternal(TArrayView<TStructUtils> BaseStructsArrayView)
 {
     using FResult    = std::conditional_t<bConstView, TConstStructView<TStructType>, TStructView<TStructType>>;
@@ -68,19 +68,19 @@ auto FindStructViewInternal(TArrayView<TStructUtils> BaseStructsArrayView)
 }
 }
 
-template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+template <typename TStructType, CStructUtils TStructUtils>
 auto FindStructView(TArrayView<TStructUtils> BaseStructsArrayView)
 {
     return Private::FindStructViewInternal<false, TStructType>(BaseStructsArrayView);
 }
 
-template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+template <typename TStructType, CStructUtils TStructUtils>
 auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
 {
     return Private::FindStructViewInternal<true, TStructType>(BaseStructsArrayView);
 }
 
-template <typename TStructType, Concepts::is_struct_utils TStructUtils>
+template <typename TStructType, CStructUtils TStructUtils>
 void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
     TFunctionRef<void(TStructType& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
 {

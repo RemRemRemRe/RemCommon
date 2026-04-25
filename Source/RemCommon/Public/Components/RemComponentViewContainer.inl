@@ -30,7 +30,7 @@ auto FRemComponentViewContainerInstance::FindComponent(const int32 Index) const
     });
 }
 
-template <std::derived_from<FRemComponentViewBase> T, Rem::Concepts::is_scoped_enum EnumClass>
+template <std::derived_from<FRemComponentViewBase> T, Rem::CScopedEnum EnumClass>
 auto FRemComponentViewContainerInstance::FindComponent(EnumClass Enum) const
 {
     return FindComponent<T>(static_cast<int32>(Enum));
@@ -67,7 +67,7 @@ int32 FRemComponentViewContainerInstance::GetComponentIndex() const
     return Rem::Struct::FindConstStructView<TComponentType>(MakeConstArrayView(Components)).template Get<1>();
 }
 
-template <Rem::Concepts::is_uobject TOwner>
+template <Rem::CUObject TOwner>
 TOwner* FRemComponentViewContainerInstance::GetOwner() const
 {
     return Cast<TOwner>(Owner);

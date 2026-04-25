@@ -27,18 +27,18 @@ struct FConstStructView;
 struct FSharedStruct;
 struct FConstSharedStruct;
 
-namespace Rem::Concepts
+namespace Rem
 {
 template <typename TStructUtils>
-concept is_struct_utils_template =
-    Rem::is_instance_v<TStructUtils, TInstancedStruct>
-    || Rem::is_instance_v<TStructUtils, TStructView>
-    || Rem::is_instance_v<TStructUtils, TConstStructView>
-    || Rem::is_instance_v<TStructUtils, TSharedStruct>
-    || Rem::is_instance_v<TStructUtils, TConstSharedStruct>;
+concept CTStructUtils =
+    Rem::CInstanceOf<TStructUtils, TInstancedStruct>
+    || Rem::CInstanceOf<TStructUtils, TStructView>
+    || Rem::CInstanceOf<TStructUtils, TConstStructView>
+    || Rem::CInstanceOf<TStructUtils, TSharedStruct>
+    || Rem::CInstanceOf<TStructUtils, TConstSharedStruct>;
 
 template <typename TStructUtils>
-concept is_struct_utils_non_template =
+concept CFStructUtils =
     std::is_same_v<std::remove_cvref_t<TStructUtils>, FInstancedStruct>
     || std::is_same_v<std::remove_cvref_t<TStructUtils>, FStructView>
     || std::is_same_v<std::remove_cvref_t<TStructUtils>, FConstStructView>
@@ -46,5 +46,5 @@ concept is_struct_utils_non_template =
     || std::is_same_v<std::remove_cvref_t<TStructUtils>, FConstSharedStruct>;
 
 template <typename TStructUtils>
-concept is_struct_utils = is_struct_utils_non_template<TStructUtils> || is_struct_utils_template<TStructUtils>;
+concept CStructUtils = CFStructUtils<TStructUtils> || CTStructUtils<TStructUtils>;
 }

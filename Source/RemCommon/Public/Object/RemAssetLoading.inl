@@ -12,7 +12,7 @@ struct FStreamableHandle;
 namespace Rem
 {
 template <typename TSoftType>
-    requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+    requires CHasToSoftObjectPath<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
 TSharedPtr<FStreamableHandle> LoadAssets(const TConstArrayView<TSoftType> SoftObjects,
     const FStreamableDelegate DelegateToCall = {},
     const TAsyncLoadPriority Priority        = FStreamableManager::DefaultAsyncLoadPriority,
@@ -43,7 +43,7 @@ TSharedPtr<FStreamableHandle> LoadAssets(const TConstArrayView<TSoftType> SoftOb
 }
 
 template <typename TSoftType>
-    requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+    requires CHasToSoftObjectPath<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
 TSharedPtr<FStreamableHandle> LoadAsset(const TSoftType& SoftObject,
     const FStreamableDelegate DelegateToCall = {},
     const TAsyncLoadPriority Priority        = FStreamableManager::DefaultAsyncLoadPriority,
@@ -53,7 +53,7 @@ TSharedPtr<FStreamableHandle> LoadAsset(const TSoftType& SoftObject,
 }
 
 template <typename TSoftType>
-    requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+    requires CHasToSoftObjectPath<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
 bool IsLoaded(const TSoftType& SoftObject)
 {
     if constexpr (std::derived_from<TSoftType, FSoftObjectPath>)
@@ -67,7 +67,7 @@ bool IsLoaded(const TSoftType& SoftObject)
 }
 
 template <typename TSoftType>
-    requires Concepts::has_to_soft_object_path<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
+    requires CHasToSoftObjectPath<TSoftType> || std::derived_from<TSoftType, FSoftObjectPath>
 bool IsLoaded(const TConstArrayView<TSoftType> SoftObjects)
 {
     for (auto& Path : SoftObjects)
@@ -81,7 +81,7 @@ bool IsLoaded(const TConstArrayView<TSoftType> SoftObjects)
     return true;
 }
 
-template <Concepts::is_primary_data_asset T>
+template <CUPrimaryDataAsset T>
 const T* GetPrimaryAsset(const FPrimaryAssetId& AssetId)
 {
     const auto& AssetPath   = UAssetManager::Get().GetPrimaryAssetPath(AssetId);
@@ -89,7 +89,7 @@ const T* GetPrimaryAsset(const FPrimaryAssetId& AssetId)
     return AssetLoaded;
 }
 
-template <Concepts::is_primary_data_asset T>
+template <CUPrimaryDataAsset T>
 const T* GetPrimaryAsset(const FGameplayTag& AssetTag)
 {
     const auto AssetId = GameplayTag::MakePrimaryAssetIdFromTag(AssetTag);

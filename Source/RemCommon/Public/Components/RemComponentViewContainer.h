@@ -109,7 +109,7 @@ public:
     template <std::derived_from<FRemComponentViewBase> T = FRemComponentViewBase>
     auto FindComponent(int32 Index) const;
 
-    template <std::derived_from<FRemComponentViewBase> T = FRemComponentViewBase, Rem::Concepts::is_scoped_enum
+    template <std::derived_from<FRemComponentViewBase> T = FRemComponentViewBase, Rem::CScopedEnum
         EnumClass>
     auto FindComponent(EnumClass Enum) const;
 
@@ -132,7 +132,7 @@ public:
     int32 GetComponentIndex() const;
 
     /**
-     * @return index of the component 
+     * @return index of the component
      */
     int32 GetComponentIndex(const FRemComponentViewBase& InComponent) const;
 
@@ -148,7 +148,7 @@ public:
     void SetComponentsView(TConstArrayView<TInstancedStruct<FRemComponentViewBase>> InComponentsView);
     void SetComponentsView(const FInstancedStructContainer& InStructContainer);
 
-    template <Rem::Concepts::is_uobject TOwner>
+    template <Rem::CUObject TOwner>
     TOwner* GetOwner() const;
 
     FRemComponentViewContainerInstance()                                                         = default;

@@ -30,11 +30,11 @@ bool CompareValue(const T& Left, const T& Right,
         {
             return Math::IsNearlyEqual(Left, Right, ErrorTolerance);
         }
-        else if constexpr (Concepts::has_equals_with_error_tolerance<T>)
+        else if constexpr (CHasEqualsWithErrorTolerance<T>)
         {
             return Left.Equals(Right, ErrorTolerance);
         }
-        else if constexpr (Concepts::has_equals<T>)
+        else if constexpr (CHasEquals<T>)
         {
             return Left.Equals(Right);
         }
