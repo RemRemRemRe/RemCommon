@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-#include "Templates/RemIsInstance.h"
+#include "Templates/RemInstanceOf.h"
 
 template <typename BaseStructT>
 struct TInstancedStruct;

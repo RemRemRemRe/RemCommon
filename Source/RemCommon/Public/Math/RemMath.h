@@ -7,7 +7,7 @@
 #include "RemAlwaysFalse.h"
 #include "Math/RemMathCore.h"
 #include "Enum/RemComparisonOperator.h"
-#include "Templates/RemIsInstance.h"
+#include "Templates/RemInstanceOf.h"
 
 namespace Rem::Math
 {

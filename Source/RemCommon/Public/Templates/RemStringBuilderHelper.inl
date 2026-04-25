@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Templates/RemIsInstance.h"
+#include "Templates/RemInstanceOf.h"
 
 namespace Rem
 {
