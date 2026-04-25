@@ -3,6 +3,8 @@
 #pragma once
 
 #include "StructUtils/InstancedStruct.h"
+#include "RemNotNull.h"
+#include "Templates/CopyQualifiersFromTo.h"
 
 namespace Rem::Property
 {
@@ -10,7 +12,8 @@ namespace Private
 {
 template <CFProperty PropertyType, typename TVoid, typename TFunctor>
     requires std::is_void_v<TVoid>
-void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InContainer, TFunctor InFunction)
+void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InProperty, const TNotNull<TVoid*> InContainer,
+    TFunctor InFunction)
 {
     // Handle container properties
     if (const auto* ArrayProperty = CastField<FArrayProperty>(InProperty))
@@ -30,7 +33,7 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
         for (auto DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
         {
             TVoid* ValuePtr = Helper.GetRawPtr(DynamicIndex);
-            IteratePropertiesOfTypeRecursive<PropertyType>(ArrayProperty->Inner, ValuePtr, InFunction);
+            IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(ArrayProperty->Inner, ValuePtr, InFunction);
         }
     }
     else if (const auto* MapProperty = CastField<FMapProperty>(InProperty))
@@ -47,17 +50,12 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
             InFunction(*InProperty, InContainer);
         }
 
-        int32 Num = Helper.Num();
-        for (auto DynamicIndex = 0; Num; ++DynamicIndex)
+        for (FScriptMapHelper::FIterator It(Helper); It; ++It)
         {
-            if (Helper.IsValidIndex(DynamicIndex))
-            {
-                TVoid* PairPtr = Helper.GetPairPtr(DynamicIndex);
-                IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->KeyProp, PairPtr, InFunction);
-                IteratePropertiesOfTypeRecursive<PropertyType>(MapProperty->ValueProp, PairPtr, InFunction);
-
-                --Num;
-            }
+            TVoid* PairPtr = Helper.GetPairPtr(It);
+            IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(MapProperty->KeyProp, PairPtr, InFunction);
+            IteratePropertiesOfTypeRecursive<
+                PropertyType, TVoid, TFunctor>(MapProperty->ValueProp, PairPtr, InFunction);
         }
     }
     else if (const auto* SetProperty = CastField<FSetProperty>(InProperty))
@@ -74,16 +72,11 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
             InFunction(*InProperty, InContainer);
         }
 
-        int32 Num = Helper.Num();
-        for (auto DynamicIndex = 0; Num; ++DynamicIndex)
+        for (FScriptSetHelper::FIterator It(Helper); It; ++It)
         {
-            if (Helper.IsValidIndex(DynamicIndex))
-            {
-                TVoid* ValuePtr = Helper.GetElementPtr(DynamicIndex);
-                IteratePropertiesOfTypeRecursive<PropertyType>(SetProperty->ElementProp, ValuePtr, InFunction);
-
-                --Num;
-            }
+            TVoid* ValuePtr = Helper.GetElementPtr(It);
+            IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(SetProperty->ElementProp, ValuePtr,
+                InFunction);
         }
     }
     else if (const auto* StructProperty = CastField<FStructProperty>(InProperty))
@@ -131,7 +124,7 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
         // type needs to be FProperty, to handle container properties
         for (TFieldIterator<FProperty> It(ScriptStruct); It; ++It)
         {
-            IteratePropertiesOfTypeRecursive<PropertyType>(*It, StructContainer, InFunction);
+            IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(*It, StructContainer, InFunction);
         }
     }
     else
@@ -161,28 +154,25 @@ void IteratePropertiesOfTypeRecursive(const FProperty* InProperty, TVoid* InCont
 
 template <CFProperty PropertyType, typename TVoid, typename TFunctor>
     requires std::is_void_v<TVoid>
-void IteratePropertiesOfType(const UStruct* InStruct, TVoid* InContainer, TFunctor InFunction)
+void IteratePropertiesOfType(const TNotNull<const UStruct*> InStruct, const TNotNull<TVoid*> InContainer,
+    TFunctor InFunction)
 {
     // type needs to be FProperty, to handle container properties
     for (TFieldIterator<FProperty> It(InStruct); It; ++It)
     {
-        Private::IteratePropertiesOfTypeRecursive<PropertyType>(*It, InContainer, InFunction);
+        Private::IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(*It, InContainer, InFunction);
     }
 }
 
 template <CFProperty PropertyType, typename TObject, typename TFunctor>
     requires Rem::CUObject<std::remove_cvref_t<TObject>> || Rem::CHasStaticStruct<std::remove_cvref_t<TObject>>
-void IteratePropertiesOfType(const UStruct* Struct, TObject&& Object, TFunctor InFunction)
+void IteratePropertiesOfType(const TNotNull<const UStruct*> Struct, const TNotNull<TObject*> Object,
+    TFunctor InFunction)
 {
-    if constexpr (std::is_const_v<TObject>)
-    {
-        IteratePropertiesOfType<PropertyType, const void, TFunctor>(Struct, static_cast<const void*>(&Object),
-            InFunction);
-    }
-    else
-    {
-        IteratePropertiesOfType<PropertyType, void, TFunctor>(Struct, static_cast<void*>(&Object), InFunction);
-    }
+    using TVoid = TCopyQualifiersFromTo_T<TObject, void>;
+
+    IteratePropertiesOfType<PropertyType, TVoid, TFunctor>(Struct, static_cast<TVoid*>(Object),
+        InFunction);
 }
 
 
