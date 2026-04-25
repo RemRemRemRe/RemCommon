@@ -23,11 +23,11 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
         // this property type or any property type
         if constexpr (std::is_same_v<PropertyType, FArrayProperty>)
         {
-            InFunction(*ArrayProperty, InContainer);
+            InFunction(ArrayProperty, InContainer);
         }
         else if constexpr (std::is_same_v<PropertyType, FProperty>)
         {
-            InFunction(*InProperty, InContainer);
+            InFunction(InProperty, InContainer);
         }
 
         for (auto DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
@@ -43,11 +43,11 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
         // this property type or any property type
         if constexpr (std::is_same_v<PropertyType, FMapProperty>)
         {
-            InFunction(*MapProperty, InContainer);
+            InFunction(MapProperty, InContainer);
         }
         else if constexpr (std::is_same_v<PropertyType, FProperty>)
         {
-            InFunction(*InProperty, InContainer);
+            InFunction(InProperty, InContainer);
         }
 
         for (FScriptMapHelper::FIterator It(Helper); It; ++It)
@@ -65,11 +65,11 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
         // this property type or any property type
         if constexpr (std::is_same_v<PropertyType, FSetProperty>)
         {
-            InFunction(*SetProperty, InContainer);
+            InFunction(SetProperty, InContainer);
         }
         else if constexpr (std::is_same_v<PropertyType, FProperty>)
         {
-            InFunction(*InProperty, InContainer);
+            InFunction(InProperty, InContainer);
         }
 
         for (FScriptSetHelper::FIterator It(Helper); It; ++It)
@@ -84,11 +84,11 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
         // this property type or any property type
         if constexpr (std::is_same_v<PropertyType, FStructProperty>)
         {
-            InFunction(*StructProperty, InContainer);
+            InFunction(StructProperty, InContainer);
         }
         else if constexpr (std::is_same_v<PropertyType, FProperty>)
         {
-            InFunction(*InProperty, InContainer);
+            InFunction(InProperty, InContainer);
         }
 
         TVoid* StructContainer;
@@ -134,7 +134,7 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
             for (auto StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
             {
                 TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
-                InFunction(*InProperty, ValuePtr);
+                InFunction(InProperty, ValuePtr);
             }
         }
         else
@@ -144,7 +144,7 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
                 for (auto StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
                 {
                     TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
-                    InFunction(*TargetProperty, ValuePtr);
+                    InFunction(TargetProperty, ValuePtr);
                 }
             }
         }
