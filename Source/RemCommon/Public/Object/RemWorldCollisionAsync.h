@@ -3,7 +3,10 @@
 #pragma once
 
 #include "Macro/RemFunctorMacro.h"
+#include "Containers/ContainersFwd.h"
 
+struct FOverlapResult;
+struct FHitResult;
 class UObject;
 struct FOverlapDatum;
 struct FTraceHandle;
@@ -49,6 +52,9 @@ REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTraceActor);
 template <typename TTraceType>
 REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData);
 REM_FUNCTION_TO_FUNCTOR_SIMPLE(GetTracePrimitive);
+
+REM_API TConstArrayView<FHitResult> GetResultView(const FTraceDatum& Datum);
+REM_API TConstArrayView<FOverlapResult> GetResultView(const FOverlapDatum& Datum);
 }
 
 #undef REM_API

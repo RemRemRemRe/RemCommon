@@ -153,6 +153,16 @@ REM_API UPrimitiveComponent* GetTracePrimitive(const TTraceType& TraceData)
 template REM_API UPrimitiveComponent* GetTracePrimitive<FOverlapResult>(const FOverlapResult& TraceData);
 template REM_API UPrimitiveComponent* GetTracePrimitive<FHitResult>(const FHitResult& TraceData);
 
+TConstArrayView<FHitResult> GetResultView(const FTraceDatum& Datum)
+{
+    return MakeConstArrayView(Datum.OutHits);
+}
+
+TConstArrayView<FOverlapResult> GetResultView(const FOverlapDatum& Datum)
+{
+    return MakeConstArrayView(Datum.OutOverlaps);
+}
+
 }
 
 #undef REM_API
