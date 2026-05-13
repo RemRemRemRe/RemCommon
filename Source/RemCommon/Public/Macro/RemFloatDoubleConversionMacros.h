@@ -22,18 +22,18 @@
 
 #else
 
-#define REM_DOUBLE_QUAT(...) __VA_ARGS__
+#define REM_QUAT_DOUBLE(...) __VA_ARGS__
 #define REM_ROTATOR_DOUBLE(...) FRotator3d{ __VA_ARGS__ }
 
-#define REM_DOUBLE_VECTOR2(...) __VA_ARGS__
-#define REM_DOUBLE_VECTOR3(...) __VA_ARGS__
-#define REM_DOUBLE_VECTOR4(...) __VA_ARGS__
+#define REM_VECTOR2_DOUBLE(...) __VA_ARGS__
+#define REM_VECTOR3_DOUBLE(...) __VA_ARGS__
+#define REM_VECTOR4_DOUBLE(...) __VA_ARGS__
 
-#define REM_FLOAT_QUAT(...) __VA_ARGS__
+#define REM_QUAT_FLOAT(...) __VA_ARGS__
 #define REM_ROTATOR_FLOAT(...) FRotator3f{ __VA_ARGS__ }
 
-#define REM_FLOAT_VECTOR2(...) __VA_ARGS__
-#define REM_FLOAT_VECTOR3(...) __VA_ARGS__
-#define REM_FLOAT_VECTOR4(...) __VA_ARGS__
+#define REM_VECTOR2_FLOAT(...) __VA_ARGS__
+#define REM_VECTOR3_FLOAT(...) __VA_ARGS__
+#define REM_VECTOR4_FLOAT(...) __VA_ARGS__
 
 #endif
