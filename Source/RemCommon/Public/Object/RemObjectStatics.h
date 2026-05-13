@@ -159,6 +159,11 @@ REM_API TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(
 REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(
     const TNotNull<const APlayerController*> PlayerController,
     const FVector& WorldLocation);
+REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2FWorldSpace(
+    const TNotNull<const APlayerController*> PlayerController,
+    const FVector& WorldLocation);
+
+REM_API FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, FVector2f ScreenDirection);
 }
 
 #undef REM_API

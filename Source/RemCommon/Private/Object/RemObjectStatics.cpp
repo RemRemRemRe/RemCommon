@@ -306,10 +306,7 @@ TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(
     const auto Value = GetScreenCenterToMouse2F(PlayerController);
     RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
 
-    const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController->GetControlRotation().Yaw)};
-    const auto RightDirection{Math::PerpendicularCounterClockwiseXY(ForwardDirection)};
-
-    return FVector2f{ForwardDirection * Value->Y + RightDirection * Value->X};
+    return ScreenToWorld(PlayerController, Value.GetValue());
 }
 
 TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController,
@@ -321,6 +318,24 @@ TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APl
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
     return GetScreenPositionToMouse2F(PlayerController, FVector2f{ScreenLocation});
+}
+
+TOptional<FVector2f> GetProjectedWorldPositionToMouse2FWorldSpace(
+    const TNotNull<const APlayerController*> PlayerController, const FVector& WorldLocation)
+{
+    const auto Value = GetProjectedWorldPositionToMouse2F(PlayerController, WorldLocation);
+    RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
+
+    return ScreenToWorld(PlayerController, Value.GetValue());
+}
+
+FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, const FVector2f ScreenDirection)
+{
+    const auto ForwardDirection{Math::AngleToDirectionXY(PlayerController->GetControlRotation().Yaw)};
+    const auto RightDirection{Math::PerpendicularCounterClockwiseXY(ForwardDirection)};
+
+    // y is inverted, and x,y are swapped
+    return FVector2f{ForwardDirection * -ScreenDirection.Y + RightDirection * ScreenDirection.X};
 }
 
 }
