@@ -520,8 +520,9 @@ FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResu
 
     const auto OverlappingActorLocation = OverlappingActor->GetActorLocation();
     const auto ReversedNormal           = (OverlapPoint - OverlappingActorLocation).GetSafeNormal();
-    FHitResult HitResult{OverlappingActor, Overlap.GetComponent(), OverlappingActorLocation, ReversedNormal};
+    FHitResult HitResult{OverlappingActor, Overlap.GetComponent(), OverlapPoint, ReversedNormal};
 
+    HitResult.ImpactPoint = OverlappingActorLocation;
     HitResult.bBlockingHit = true;
 
     return HitResult;
@@ -544,7 +545,7 @@ FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap)
 
     Datum.TraceType = EAsyncTraceType::Multi;
 
-    return {};
+    return Datum;
 }
 
 }
