@@ -282,7 +282,7 @@ TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerCont
     const auto bSuccess = PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
-    return FVector2f{MousePosition.X - ScreenPosition.X, ScreenPosition.Y - MousePosition.Y};
+    return FVector2f{MousePosition.X - ScreenPosition.X, MousePosition.Y - ScreenPosition.Y};
 }
 
 TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<const APlayerController*> PlayerController)
