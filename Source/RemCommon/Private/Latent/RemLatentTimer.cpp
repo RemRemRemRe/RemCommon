@@ -172,7 +172,8 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
             }
             else
             {
-                // no loop, go to finished
+                // only 1 loop, and it's done
+                // go to finished
                 bFinished = true;
             }
         }
@@ -201,7 +202,8 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
             }
             else
             {
-                // no loop, go to finished
+                // only 1 loop, and it's done
+                // go to finished
                 bFinished = true;
             }
         }
