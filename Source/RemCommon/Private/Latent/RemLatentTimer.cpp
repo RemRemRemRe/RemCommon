@@ -152,17 +152,19 @@ void FTimerLatentAction_Delay::UpdateOperation(FLatentResponse& Response)
                 // if Time is zero, bMaxOncePerFrame will be true
                 CallCount = bMaxOncePerFrame
                                 ? 1
-                                : FMath::TruncToInt(Response.ElapsedTime() / TimeOrFrameToDelay.Time) + 1;
+                                : FMath::Min(LoopCount,
+                                    static_cast<uint32>(
+                                        FMath::TruncToInt(Response.ElapsedTime() / TimeOrFrameToDelay.Time) + 1
+                                    ));
 
-                if (LoopCount - CallCount >= 1)
+                if (LoopCount > CallCount)
                 {
                     // we have enough loops left
                     LoopCount -= CallCount;
                 }
                 else
                 {
-                    // clamp it
-                    CallCount = LoopCount;
+                    // LoopCount = 0;
 
                     // run out of loops, stop it
                     bFinished = true;
