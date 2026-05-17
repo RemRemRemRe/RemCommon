@@ -391,7 +391,7 @@ template <typename T>
 }
 
 template <typename T>
-    requires (std::is_floating_point_v<T> || std::is_integral_v<T>)
+    requires (std::is_floating_point_v<T>)
 [[nodiscard]] constexpr T GetWrappedValueInRange(const T Value, UE::Math::TVector2<T> ValueRange)
 {
     const auto Range = ValueRange.Y - ValueRange.X;
