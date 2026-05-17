@@ -398,4 +398,17 @@ template <typename T>
 
     return ValueRange.X + FMath::Modulo(Value, Range);
 }
+
+template <typename T>
+    requires (std::is_floating_point_v<T>)
+[[nodiscard]] constexpr bool IsWithinHalfCircle(UE::Math::TVector<T> CenterOfCircle, T RadiusSquared, UE::Math::TVector<T> Up, UE::Math::TVector<T> Target)
+{
+    if (UE::Math::TVector<T>::DistSquared(CenterOfCircle, Target) <= RadiusSquared)
+    {
+        // angle within 90°
+        return Up.Dot(Target - CenterOfCircle) >= 0.0f;
+    }
+
+    return  false;
+}
 }
