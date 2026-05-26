@@ -57,7 +57,7 @@ struct TFunctionNameParser
 
         const auto PositionOfLastSpace = std::invoke([&]
         {
-            const size_t Position = FunctionSignatureNoArgs.rfind(' ');
+            size_t Position = FunctionSignatureNoArgs.rfind(' ');
 
 #ifdef _MSC_VER
             // ReSharper disable once CommentTypo
