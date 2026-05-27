@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "HAL/PreprocessorHelpers.h"
 
 #include <string_view>
 
@@ -35,6 +36,8 @@
 #define REM_FUNCTION_NAME __FUNCTION__
 
 #endif
+
+#define REM_FUNCTION_LINE REM_FUNCTION_NAME "_" UE_STRINGIZE(__LINE__)
 
 namespace Rem::Private
 {
