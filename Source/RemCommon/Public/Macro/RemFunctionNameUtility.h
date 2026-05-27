@@ -21,7 +21,7 @@
 	[]() \
 	{ \
 		auto View = REM_FUNCTION_NAME_VIEW; \
-		return FString::ConstructFromPtrSize(View.data(), View.size()); \
+		return View.data(); \
 	}()
 
 #elif defined(_MSC_VER)
