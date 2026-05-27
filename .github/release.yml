@@ -1,0 +1,24 @@
+# .github/release.yml
+changelog:
+  categories:
+    - title: ✨ What's New?
+      labels:
+        - New
+    - title: 🆙 Improvements
+      labels:
+        - Improvement
+    - title: 🐛 Bug Fixes
+      labels:
+        - Fixed
+    - title: 🔀 Changes
+      labels:
+        - Changed
+    - title: 🗑️ Removed
+      labels:
+        - Removed
+    - title: 📝 Miscellaneous
+      labels:
+        - Misc
+    - title: 💬 Other Changes
+      labels:
+        - '*'
