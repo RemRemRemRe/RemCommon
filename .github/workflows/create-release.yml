@@ -1,55 +1,13 @@
-name: create release
+name: Create Release
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: ["v*"]
 
 permissions:
   contents: write
 
 jobs:
-  release:
-    name: release pushed tag
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-      - name: create release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        run: |
-          # 1. 获取标题+正文
-          TAG_MSG=$(git tag -l --format='%(contents)' "$tag")
-          # 如果为空，给一个默认占位说明（避免 release 正文空白）
-          # if [ -z "$TAG_MSG" ]; then
-          #   TAG_MSG="Release ${tag#v}"
-          # fi
-
-          # 2. 获取当前 tag 指向的 commit SHA
-          COMMIT_SHA=$(git rev-list -n 1 "$tag")
-
-          # 3. 获取上一个 tag
-          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^$tag$" | head -1)
-
-          # 4. 构造链接
-          if [ -n "$PREV_TAG" ]; then
-            # 有上一个 tag，生成比较链接
-            LINK="**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$PREV_TAG...$tag"
-          else
-            # 首个 tag，生成指向 commits 的链接
-            LINK="**Commit**: https://github.com/$GITHUB_REPOSITORY/commits/$COMMIT_SHA"
-          fi
-
-          # 5. 组合最终的发布说明（tag message + 链接）
-          FULL_NOTES="$TAG_MSG
-
-          $LINK"
-          # 6. 创建 Release
-          gh release create "$tag" \
-              --title="🥳 ${tag#v}" \
-              --notes "$FULL_NOTES"
+  call-shared-workflow:
+    uses: RemRemRemRe/.github/workflow/create-release-notes/workflows/create-release-notes.yml@main
+    secrets: inherit
