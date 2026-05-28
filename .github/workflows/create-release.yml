@@ -37,8 +37,8 @@ jobs:
             # 有上一个 tag，生成比较链接
             LINK="**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$PREV_TAG...$tag"
           else
-            # 首个 tag，生成指向 commit 的链接
-            LINK="**Commit**: https://github.com/$GITHUB_REPOSITORY/commit/$COMMIT_SHA"
+            # 首个 tag，生成指向 commits 的链接
+            LINK="**Commit**: https://github.com/$GITHUB_REPOSITORY/commits/$COMMIT_SHA"
           fi
 
           # 5. 组合最终的发布说明（tag message + 链接）
