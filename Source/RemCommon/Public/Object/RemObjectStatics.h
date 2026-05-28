@@ -7,6 +7,7 @@
 
 #include "RemObjectStatics.generated.h"
 
+struct FBasedMovementInfo;
 class ACharacter;
 class FAudioDeviceHandle;
 class UGameInstance;
@@ -164,6 +165,8 @@ REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2FWorldSpace(
     const FVector& WorldLocation);
 
 REM_API FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, FVector2f ScreenDirection);
+
+REM_API UObject* GetMovementBase(const FBasedMovementInfo& BasedMovement);
 }
 
 #undef REM_API

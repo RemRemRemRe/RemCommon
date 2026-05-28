@@ -338,4 +338,9 @@ FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerControlle
     return FVector2f{ForwardDirection * -ScreenDirection.Y + RightDirection * ScreenDirection.X};
 }
 
+UObject* GetMovementBase(const FBasedMovementInfo& BasedMovement)
+{
+    return BasedMovement.MovementBaseInterfaceData.GetMovementBaseObject();
+}
+
 }
