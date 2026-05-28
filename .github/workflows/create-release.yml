@@ -9,5 +9,5 @@ permissions:
 
 jobs:
   call-shared-workflow:
-    uses: RemRemRemRe/.github/workflow/create-release-notes/workflows/create-release-notes.yml@main
+    uses: RemRemRemRe/.github/workflows/create-release-notes/workflows/create-release-notes.yml@main
     secrets: inherit
