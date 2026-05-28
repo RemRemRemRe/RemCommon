@@ -24,7 +24,7 @@ jobs:
           tag: ${{ github.ref_name }}
         run: |
           # 1. 获取标题+正文
-          TAG_MSG=$(git tag -l --format='%(contents:contents)' "$tag")
+          TAG_MSG=$(git tag -l --format='%(contents)' "$tag")
           # 如果为空，给一个默认占位说明（避免 release 正文空白）
           # if [ -z "$TAG_MSG" ]; then
           #   TAG_MSG="Release ${tag#v}"
