@@ -44,8 +44,7 @@ jobs:
           # 5. 组合最终的发布说明（tag message + 链接）
           FULL_NOTES="$TAG_MSG
 
-      $LINK"
-
+          $LINK"
           # 6. 创建 Release
           gh release create "$tag" \
               --title="🥳 ${tag#v}" \
