@@ -23,13 +23,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          # 1. 获取当前 tag 的 message（仅对 annotated tag 有效）
-          # 优先获取正文
-          TAG_MSG=$(git tag -l --format='%(contents:body)' "$tag")
-          if [ -z "$TAG_BODY" ]; then
-          # 其次获取标题
-            TAG_MSG=$(git tag -l --format='%(contents:subject)' "$tag")
-          fi
+          # 1. 获取标题+正文
+          TAG_MSG=$(git tag -l --format='%(contents:contents)' "$tag")
           # 如果为空，给一个默认占位说明（避免 release 正文空白）
           # if [ -z "$TAG_MSG" ]; then
           #   TAG_MSG="Release ${tag#v}"
