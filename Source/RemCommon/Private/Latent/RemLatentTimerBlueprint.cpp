@@ -7,7 +7,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemLatentTimerBlueprint)
 
-Rem::Latent::FTimerParameterHelper_Time FTimerParameterBlueprintHelper_Time::operator*() const
+Rem::Latent::FTimerParameterHelper_Time FRemTimerParameterBlueprintHelper_Time::operator*() const
 {
     return {
         .TimeToDelay            = TimeToDelay,
@@ -18,7 +18,7 @@ Rem::Latent::FTimerParameterHelper_Time FTimerParameterBlueprintHelper_Time::ope
     };
 }
 
-Rem::Latent::FTimerParameterHelper_Frame FTimerParameterBlueprintHelper_Frame::operator*() const
+Rem::Latent::FTimerParameterHelper_Frame FRemTimerParameterBlueprintHelper_Frame::operator*() const
 {
     return {
         .FrameToDelay           = static_cast<uint32>(FrameToDelay),

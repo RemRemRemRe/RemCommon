@@ -16,7 +16,7 @@ struct FTimerParameterHelper_Frame;
  * @LoopCount 0 means loop forever
  */
 USTRUCT(BlueprintType)
-struct REMCOMMON_API FTimerParameterBlueprintHelper_Time
+struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Time
 {
     GENERATED_BODY()
 
@@ -46,7 +46,7 @@ struct REMCOMMON_API FTimerParameterBlueprintHelper_Time
  * @note the frame format could only be called up to once per frame
  */
 USTRUCT(BlueprintType)
-struct REMCOMMON_API FTimerParameterBlueprintHelper_Frame
+struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Frame
 {
     GENERATED_BODY()
 
