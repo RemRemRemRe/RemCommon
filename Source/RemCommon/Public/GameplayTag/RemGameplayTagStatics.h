@@ -8,6 +8,7 @@
 struct FGameplayTagQuery;
 struct FGameplayTagContainer;
 struct FGameplayTag;
+struct FRemGameplayTagArray;
 
 UCLASS()
 class REMCOMMON_API URemGameplayTagStatics : public UBlueprintFunctionLibrary
@@ -66,4 +67,11 @@ REMCOMMON_API bool IsTagQueryMatches(const FGameplayTagQuery& TagQuery,
     const FGameplayTagContainer& TagsToMatch);
 
 [[nodiscard]] REMCOMMON_API const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag);
+
+[[nodiscard]] REMCOMMON_API TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTagContainer& Container);
+[[nodiscard]] REMCOMMON_API TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTag& Tag);
+[[nodiscard]] REMCOMMON_API TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTagQuery& Query);
+[[nodiscard]] REMCOMMON_API TConstArrayView<FGameplayTag> GetTagArrayView(const FRemGameplayTagArray& Array);
+[[nodiscard]] REMCOMMON_API TConstArrayView<FGameplayTag> GetTagArrayView(const TArray<FGameplayTag>& Array);
+
 }

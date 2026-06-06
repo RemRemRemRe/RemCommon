@@ -4,6 +4,7 @@
 #include "GameplayTag/RemGameplayTagStatics.h"
 
 #include "GameplayTagContainer.h"
+#include "GameplayTag/RemGameplayTagArray.h"
 #include "GameplayTagsManager.h"
 #include "RemCommonLog.h"
 #include "Macro/RemAssertionMacros.h"
@@ -233,5 +234,30 @@ const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag)
             Tag));
 
     return FGameplayTagContainer::EmptyContainer;
+}
+
+TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTagContainer& Container)
+{
+    return Container.GetGameplayTagArray();
+}
+
+TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTag& Tag)
+{
+    return MakeArrayView(&Tag, 1);
+}
+
+TConstArrayView<FGameplayTag> GetTagArrayView(const FGameplayTagQuery& Query)
+{
+    return Query.GetGameplayTagArray();
+}
+
+TConstArrayView<FGameplayTag> GetTagArrayView(const FRemGameplayTagArray& Array)
+{
+    return Array.Get();
+}
+
+TConstArrayView<FGameplayTag> GetTagArrayView(const TArray<FGameplayTag>& Array)
+{
+    return Array;
 }
 }

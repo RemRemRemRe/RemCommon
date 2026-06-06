@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "GameplayTagContainer.h"
-
 namespace Rem::GameplayTag
 {
 
