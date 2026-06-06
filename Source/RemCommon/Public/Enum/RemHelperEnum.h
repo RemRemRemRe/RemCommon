@@ -62,4 +62,29 @@ enum class ETransitionType : uint8
     ToPrevious,
     ToSpecified,
 };
+
+enum class ELogicOperator : uint8
+{
+    All,
+    Any,
+    None,
+
+    And = All,
+    Or = Any,
+    Not = None,
+};
+
+enum class ETimerBehavior : uint8
+{
+    PauseAndUnpause,
+    PauseAdnReset
+};
+
+enum class ELatentTimerType : uint8
+{
+    NextTick,
+    ThisTick,
+    Delay
+};
+
 }
