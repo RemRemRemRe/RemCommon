@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "Engine/World.h"
 #include "Macro/RemAssertionMacros.h"
+#include "RemNotNull.h"
 
 class UWorldSubsystem;
 
