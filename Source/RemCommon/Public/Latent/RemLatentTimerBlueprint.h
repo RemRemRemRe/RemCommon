@@ -23,8 +23,8 @@ struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Time
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "s", ClampMin = 0))
     float TimeToDelay{0.0f};
 
-    int64 LoopCount{1};
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
+    int32 LoopCount{1};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "s", ClampMin = 0))
     float InitialDelay{-1.0f};
@@ -50,14 +50,14 @@ struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Frame
 {
     GENERATED_BODY()
 
-    int64 FrameToDelay{0};
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
+    int32 FrameToDelay{0};
 
-    int64 LoopCount{1};
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "x", ClampMin = 0))
+    int32 LoopCount{1};
 
-    int64 InitialDelay{std::numeric_limits<uint32>::max()};
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
+    int32 InitialDelay{std::numeric_limits<int32>::max()};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
     bool bSkipCountingThisFrame{false};
