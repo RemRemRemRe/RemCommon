@@ -14,7 +14,7 @@ struct REMCOMMON_API FRemAlphaBlend
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend", meta = (ClampMin = "0", ForceUnits = "s"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blend", meta = (ClampMin = "0", Units = "s"))
     float BlendTime{1.0f};
 };
 
