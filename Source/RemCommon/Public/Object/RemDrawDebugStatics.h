@@ -80,6 +80,7 @@ public:
 
 namespace Rem::DrawDebug
 {
+
 constexpr auto DrawImpactPointSize{32.0f};
 constexpr auto DrawLineThickness{1.0f};
 constexpr auto DrawArrowSize{50.0f};
@@ -88,19 +89,25 @@ constexpr auto DrawCircleSidesCount{16};
 /**
  * Draw a crosshair on the screen. By default, it draws the crosshair at center of the screen
  */
-REM_API void DrawDebugCrossHair(TNotNull<const UWorld*> World, float CrossHairLineLength = 20.0f,
-    float LineThickness = 2.f,
-    float AngleToRotate = 0.0f, const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f},
-    const FLinearColor& LineColor = FLinearColor::White);
+REM_API void DrawDebugCrossHair(TNotNull<const UWorld*> World,
+    float CrossHairLineLength                   = 20.0f,
+    float LineThickness                         = 2.f,
+    float AngleToRotate                         = 0.0f,
+    const FVector2f& CrossHairCenterScreenSpace = {-1.0f, -1.0f},
+    const FLinearColor& LineColor               = FLinearColor::White);
 
-REM_API void DrawDebugTraceData(TNotNull<const UWorld*> World, const FTraceDatum& Datum,
+REM_API void DrawDebugTraceData(TNotNull<const UWorld*> World,
+    const FTraceDatum& Datum,
     EDrawDebugTrace::Type DrawDebugType,
-    float DrawTime                    = -1.0f, const FLinearColor& TraceColor = FLinearColor::Green,
+    float DrawTime                    = -1.0f,
+    const FLinearColor& TraceColor    = FLinearColor::Green,
     const FLinearColor& TraceHitColor = FLinearColor::Red);
 
-REM_API void DrawDebugOverlapData(TNotNull<const UWorld*> World, const FOverlapDatum& Datum,
+REM_API void DrawDebugOverlapData(TNotNull<const UWorld*> World,
+    const FOverlapDatum& Datum,
     EDrawDebugTrace::Type DrawDebugType,
-    float DrawTime                    = -1.0f, const FLinearColor& TraceColor = FLinearColor::Green,
+    float DrawTime                    = -1.0f,
+    const FLinearColor& TraceColor    = FLinearColor::Green,
     const FLinearColor& TraceHitColor = FLinearColor::Red);
 
 REM_API FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResult& Overlap);

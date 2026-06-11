@@ -7,6 +7,7 @@
 #include "Object/RemObjectStatics.inl"
 #include "DrawDebugHelpers.h"
 #include "KismetTraceUtils.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/HitResult.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
@@ -411,6 +412,8 @@ void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& 
 
 #if UE_ENABLE_DEBUG_DRAWING
 
+    RemCheckCondition(DrawDebugType != EDrawDebugTrace::None, return;);
+
     auto& Results   = Datum.OutHits;
     const bool bHit = Results.Num() > 0
                           ? Results.Last().bBlockingHit
@@ -506,8 +509,49 @@ void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDat
 
 #if UE_ENABLE_DEBUG_DRAWING
 
-    return DrawDebugTraceData(World, ConvertOverlapDatumToTraceDatum(Datum), DrawDebugType, DrawTime, TraceColor,
-        TraceHitColor);
+    RemCheckCondition(DrawDebugType != EDrawDebugTrace::None, return;);
+
+    const auto bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
+    const auto LifeTime    = (DrawDebugType == EDrawDebugTrace::ForDuration)
+                                 ? DrawTime
+                                 : 0.f;
+
+    const auto& CollisionShape = Datum.CollisionParams.CollisionShape;
+
+    const auto TraceFColor = TraceColor.ToFColor(true);
+    const auto HitFColor   = TraceHitColor.ToFColor(true);
+
+    // draw location of overlapping components
+    for (const auto& Overlap : Datum.OutOverlaps)
+    {
+        const auto* Component = Overlap.GetComponent();
+        RemCheckVariable(Component, continue;);
+
+        ::DrawDebugPoint(World, Component->GetComponentLocation(), DrawImpactPointSize,
+            HitFColor, bPersistent, LifeTime);
+    }
+
+    // draw query shape at the overlap position.
+    if (CollisionShape.IsSphere())
+    {
+        ::DrawDebugSphere(World, Datum.Pos, CollisionShape.GetSphereRadius(), DrawCircleSidesCount,
+            TraceFColor, bPersistent, LifeTime);
+    }
+    else if (CollisionShape.IsBox())
+    {
+        ::DrawDebugBox(World, Datum.Pos, CollisionShape.GetBox(), Datum.Rot,
+            TraceFColor, bPersistent, LifeTime);
+    }
+    else if (CollisionShape.IsCapsule())
+    {
+        ::DrawDebugCapsule(World, Datum.Pos, CollisionShape.GetCapsuleHalfHeight(),
+            CollisionShape.GetCapsuleRadius(), Datum.Rot,
+            TraceFColor, bPersistent, LifeTime);
+    }
+    else if (CollisionShape.IsLine())
+    {
+        ::DrawDebugPoint(World, Datum.Pos, DrawImpactPointSize, TraceFColor, bPersistent, LifeTime);
+    }
 
 #endif
 
@@ -522,7 +566,7 @@ FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResu
     const auto ReversedNormal           = (OverlapPoint - OverlappingActorLocation).GetSafeNormal();
     FHitResult HitResult{OverlappingActor, Overlap.GetComponent(), OverlapPoint, ReversedNormal};
 
-    HitResult.ImpactPoint = OverlappingActorLocation;
+    HitResult.ImpactPoint  = OverlappingActorLocation;
     HitResult.bBlockingHit = true;
 
     return HitResult;
