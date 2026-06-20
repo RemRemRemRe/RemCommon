@@ -41,7 +41,7 @@ void URemDrawDebugStatics::DrawHalfCircle(const UObject* WorldContext, const FVe
     const FVector& YAxis, const float Radius, const FLinearColor& Color,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -73,7 +73,7 @@ void URemDrawDebugStatics::DrawQuarterCircle(const UObject* WorldContext, const 
     const FVector& YAxis, const float Radius, const FLinearColor& Color,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -106,7 +106,7 @@ void URemDrawDebugStatics::DrawSphereAlternative(const UObject* WorldContext, co
     const float Radius, const FLinearColor& Color, const float Duration,
     const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -134,7 +134,7 @@ void URemDrawDebugStatics::DrawSweepSphere(const UObject* WorldContext, const FV
     const float Radius,
     const FLinearColor& Color, const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -160,7 +160,7 @@ void URemDrawDebugStatics::DrawLineTraceSingle(const UObject* WorldContext, cons
     const FHitResult& Hit, const FLinearColor& TraceColor, const FLinearColor& HitColor,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -184,7 +184,7 @@ void URemDrawDebugStatics::DrawSweepSingleSphere(const UObject* WorldContext, co
     const FLinearColor& SweepColor, const FLinearColor& HitColor,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -211,7 +211,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsule(const UObject* WorldContext, c
     const FHitResult& Hit, const FLinearColor& SweepColor, const FLinearColor& HitColor,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -249,7 +249,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsuleAlternative(const UObject* Worl
     const FLinearColor& SweepColor, const FLinearColor& HitColor,
     const float Duration, const float Thickness, const uint8 DepthPriority)
 {
-#if ENABLE_DRAW_DEBUG
+#if REM_DRAW_DEBUG_CODE
     const auto* World{IsValid(WorldContext)
                           ? WorldContext->GetWorld()
                           : nullptr
@@ -355,6 +355,9 @@ namespace Rem::DrawDebug
 void DrawDebugCrossHair(const TNotNull<const UWorld*> World, const float CrossHairLineLength, const float LineThickness,
     const float AngleToRotate, const FVector2f& CrossHairCenterScreenSpace, const FLinearColor& LineColor)
 {
+
+#if REM_DRAW_DEBUG_CODE
+
     auto* HUD = Object::GetFirstLocalHUD(World);
     RemCheckVariable(HUD, return;);
 
@@ -403,6 +406,9 @@ void DrawDebugCrossHair(const TNotNull<const UWorld*> World, const float CrossHa
 
     DrawLine(DirectionX);
     DrawLine(DirectionY);
+
+#endif
+
 }
 
 void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& Datum,
@@ -410,7 +416,7 @@ void DrawDebugTraceData(const TNotNull<const UWorld*> World, const FTraceDatum& 
     const float DrawTime, const FLinearColor& TraceColor, const FLinearColor& TraceHitColor)
 {
 
-#if UE_ENABLE_DEBUG_DRAWING
+#if REM_DRAW_DEBUG_CODE
 
     RemCheckCondition(DrawDebugType != EDrawDebugTrace::None, return;);
 
@@ -507,7 +513,7 @@ void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDat
     const float DrawTime, const FLinearColor& TraceColor, const FLinearColor& TraceHitColor)
 {
 
-#if UE_ENABLE_DEBUG_DRAWING
+#if REM_DRAW_DEBUG_CODE
 
     RemCheckCondition(DrawDebugType != EDrawDebugTrace::None, return;);
 
