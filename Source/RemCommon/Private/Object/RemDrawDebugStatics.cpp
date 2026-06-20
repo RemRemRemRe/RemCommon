@@ -48,7 +48,7 @@ void URemDrawDebugStatics::DrawHalfCircle(const UObject* WorldContext, const FVe
     };
     RemCheckVariable(World, return;);
 
-    const auto FColor{Color.ToFColor(true)};
+    const auto FColor{Color.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     auto PreviousVertex{Location + XAxis * Radius};
@@ -80,7 +80,7 @@ void URemDrawDebugStatics::DrawQuarterCircle(const UObject* WorldContext, const 
     };
     RemCheckVariable(World, return;);
 
-    const auto FColor{Color.ToFColor(true)};
+    const auto FColor{Color.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     auto PreviousVertex{Location + XAxis * Radius};
@@ -113,7 +113,7 @@ void URemDrawDebugStatics::DrawSphereAlternative(const UObject* WorldContext, co
     };
     RemCheckVariable(World, return;);
 
-    const auto FColor{Color.ToFColor(true)};
+    const auto FColor{Color.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     const FRotationMatrix RotationMatrix{Rotation};
@@ -141,7 +141,7 @@ void URemDrawDebugStatics::DrawSweepSphere(const UObject* WorldContext, const FV
     };
     RemCheckVariable(World, return;);
 
-    const auto FColor{Color.ToFColor(true)};
+    const auto FColor{Color.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     const auto SweepVector{End - Start};
@@ -169,11 +169,11 @@ void URemDrawDebugStatics::DrawLineTraceSingle(const UObject* WorldContext, cons
 
     const auto bPersistent{Duration < 0.0f};
 
-    DrawDebugLine(World, Start, End, TraceColor.ToFColor(true), bPersistent, Duration, DepthPriority, Thickness);
+    DrawDebugLine(World, Start, End, TraceColor.ToFColorSRGB(), bPersistent, Duration, DepthPriority, Thickness);
 
     if (bHit && Hit.bBlockingHit)
     {
-        DrawDebugPoint(World, Hit.ImpactPoint, DrawImpactPointSize, HitColor.ToFColor(true), bPersistent, Duration,
+        DrawDebugPoint(World, Hit.ImpactPoint, DrawImpactPointSize, HitColor.ToFColorSRGB(), bPersistent, Duration,
             DepthPriority);
     }
 #endif
@@ -191,11 +191,11 @@ void URemDrawDebugStatics::DrawSweepSingleSphere(const UObject* WorldContext, co
     };
     RemCheckVariable(World, return;);
 
-    DrawSweepSphere(World, Start, End, Radius, SweepColor.ToFColor(true), Duration, Thickness, DepthPriority);
+    DrawSweepSphere(World, Start, End, Radius, SweepColor.ToFColorSRGB(), Duration, Thickness, DepthPriority);
 
     if (bHit && Hit.bBlockingHit)
     {
-        const auto HitFColor{HitColor.ToFColor(true)};
+        const auto HitFColor{HitColor.ToFColorSRGB()};
 
         DrawSphereAlternative(World, Hit.Location, (End - Start).ToOrientationRotator(),
             Radius, HitFColor, Duration, Thickness, DepthPriority);
@@ -218,7 +218,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsule(const UObject* WorldContext, c
     };
     RemCheckVariable(World, return;);
 
-    const auto SweepFColor{SweepColor.ToFColor(true)};
+    const auto SweepFColor{SweepColor.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     const auto Quaternion{Rotation.Quaternion()};
@@ -233,7 +233,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsule(const UObject* WorldContext, c
 
     if (bHit && Hit.bBlockingHit)
     {
-        const auto HitFColor{HitColor.ToFColor(true)};
+        const auto HitFColor{HitColor.ToFColorSRGB()};
 
         DrawDebugCapsule(World, Hit.Location, HalfHeight, Radius, Quaternion,
             HitFColor, bPersistent, Duration, DepthPriority, Thickness);
@@ -256,7 +256,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsuleAlternative(const UObject* Worl
     };
     RemCheckVariable(World, return;);
 
-    const auto SweepFColor{SweepColor.ToFColor(true)};
+    const auto SweepFColor{SweepColor.ToFColorSRGB()};
     const auto bPersistent{Duration < 0.0f};
 
     const auto Rotation{(End - Start).ToOrientationQuat()};
@@ -338,7 +338,7 @@ void URemDrawDebugStatics::DrawSweepSingleCapsuleAlternative(const UObject* Worl
 
     if (bHit && Hit.bBlockingHit)
     {
-        const auto HitFColor{HitColor.ToFColor(true)};
+        const auto HitFColor{HitColor.ToFColorSRGB()};
 
         DrawDebugCapsule(World, Hit.Location, HalfHeight, Radius, Rotation,
             HitFColor, bPersistent, Duration, DepthPriority, Thickness);
@@ -524,8 +524,8 @@ void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDat
 
     const auto& CollisionShape = Datum.CollisionParams.CollisionShape;
 
-    const auto TraceFColor = TraceColor.ToFColor(true);
-    const auto HitFColor   = TraceHitColor.ToFColor(true);
+    const auto TraceFColor = TraceColor.ToFColorSRGB();
+    const auto HitFColor   = TraceHitColor.ToFColorSRGB();
 
     // draw location of overlapping components
     for (const auto& Overlap : Datum.OutOverlaps)
