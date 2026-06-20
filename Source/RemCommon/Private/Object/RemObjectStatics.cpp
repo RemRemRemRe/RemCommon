@@ -17,8 +17,24 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
 #include "Math/RemMath.h"
+#include "Object/RemDrawDebugStatics.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemObjectStatics)
+
+namespace
+{
+
+#if REM_DRAW_DEBUG_CODE
+
+TAutoConsoleVariable CVarDeprojectMousePositionDrawDebug{
+    TEXT("Rem.Object.DeprojectMousePosition.EnableDrawDebug"),
+    false,
+    TEXT("")
+};
+
+#endif
+
+}
 
 UObject* URemObjectStatics::GetObject(const TSoftObjectPtr<>& SoftObjectPtr, UClass*)
 {
@@ -318,6 +334,15 @@ TOptional<FVector> GetScreenCenterToMouseWorldSpace(
 
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
+#if REM_DRAW_DEBUG_CODE
+
+    if (CVarDeprojectMousePositionDrawDebug.GetValueOnGameThread())
+    {
+        DrawDebug::DrawDebugTwoPointsLinked(PlayerController->GetWorld(),
+            ViewportCenterWorldLocation, MouseWorldLocation, FLinearColor::Green);
+    }
+
+#endif
 
     return MouseWorldLocation - ViewportCenterWorldLocation;
 }
@@ -334,6 +359,16 @@ TOptional<FVector> GetPositionToMouseWorldSpace(const TNotNull<const APlayerCont
     // the formular : TargetPlaneZ = MouseWorldLocation.Z + ScalerOfZAxis * MouseWorldDirection.Z
     const auto ScalerOfZAxis = (TargetPlaneZ - MouseWorldLocation.Z) / MouseWorldDirection.Z;
     RemEnsureCondition(ScalerOfZAxis > 0.0f, return {});
+
+#if REM_DRAW_DEBUG_CODE
+
+    if (CVarDeprojectMousePositionDrawDebug.GetValueOnGameThread())
+    {
+        DrawDebug::DrawDebugTwoPointsLinked(PlayerController->GetWorld(),
+            WorldLocation, MouseWorldLocation);
+    }
+
+#endif
 
     const auto MouseWorldPositionOnPlane = MouseWorldLocation + MouseWorldDirection * ScalerOfZAxis;
     return MouseWorldPositionOnPlane - WorldLocation;
