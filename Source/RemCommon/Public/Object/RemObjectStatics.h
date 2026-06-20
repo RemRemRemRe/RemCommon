@@ -149,20 +149,21 @@ REM_API FVector GetActorFeetLocation(TNotNull<const AActor*> Actor);
 REM_API FTransform GetRootBoneTransform(TNotNull<const ACharacter*> Character);
 REM_API FVector GetRootBoneLocation(TNotNull<const ACharacter*> Character);
 
-REM_API TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController,
+REM_API TOptional<FVector2f> GetPositionToMouseScreenSpace(const TNotNull<const APlayerController*> PlayerController,
     const FVector2f& ScreenPosition);
 
-REM_API TOptional<FVector2f> GetScreenCenterToMouse2F(
+REM_API FVector2f GetViewportSize(const TNotNull<const APlayerController*> PlayerController);
+REM_API FVector2f GetViewportCenter(const TNotNull<const APlayerController*> PlayerController);
+
+REM_API TOptional<FVector2f> GetScreenCenterToMouse(
     const TNotNull<const APlayerController*> PlayerController);
-REM_API TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(
+REM_API TOptional<FVector> GetScreenCenterToMouseWorldSpace(
     const TNotNull<const APlayerController*> PlayerController);
 
-REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(
+REM_API TOptional<FVector> GetPositionToMouseWorldSpace(
     const TNotNull<const APlayerController*> PlayerController,
-    const FVector& WorldLocation);
-REM_API TOptional<FVector2f> GetProjectedWorldPositionToMouse2FWorldSpace(
-    const TNotNull<const APlayerController*> PlayerController,
-    const FVector& WorldLocation);
+    const FVector& WorldLocation,
+    const TOptional<double>& CustomPlaneZ = {});
 
 REM_API FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, FVector2f ScreenDirection);
 

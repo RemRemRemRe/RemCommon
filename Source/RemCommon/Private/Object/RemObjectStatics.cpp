@@ -274,7 +274,7 @@ FVector GetRootBoneLocation(const TNotNull<const ACharacter*> Character)
     return GetRootBoneTransform(Character).GetLocation();
 }
 
-TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController,
+TOptional<FVector2f> GetPositionToMouseScreenSpace(const TNotNull<const APlayerController*> PlayerController,
     const FVector2f& ScreenPosition)
 {
     FVector2f MousePosition;
@@ -285,48 +285,58 @@ TOptional<FVector2f> GetScreenPositionToMouse2F(const TNotNull<const APlayerCont
     return FVector2f{MousePosition.X - ScreenPosition.X, MousePosition.Y - ScreenPosition.Y};
 }
 
-TOptional<FVector2f> GetScreenCenterToMouse2F(const TNotNull<const APlayerController*> PlayerController)
+FVector2f GetViewportSize(const TNotNull<const APlayerController*> PlayerController)
 {
-    FVector2f ViewportCenter;
-    {
-        FIntVector2 ViewportSize;
-        PlayerController->GetViewportSize(ViewportSize.X, ViewportSize.Y);
+    FIntVector2 ViewportSize;
+    PlayerController->GetViewportSize(ViewportSize.X, ViewportSize.Y);
 
-        ViewportCenter = FVector2f{static_cast<float>(ViewportSize.X) / 2.0f,
-            static_cast<float>(ViewportSize.Y) / 2.0f
-        };
-    }
-
-    return GetScreenPositionToMouse2F(PlayerController, ViewportCenter);
+    return {static_cast<float>(ViewportSize.X), static_cast<float>(ViewportSize.Y)};
 }
 
-TOptional<FVector2f> GetScreenCenterToMouse2FWorldSpace(
+FVector2f GetViewportCenter(const TNotNull<const APlayerController*> PlayerController)
+{
+    return GetViewportSize(PlayerController) / 2.0f;
+}
+
+TOptional<FVector2f> GetScreenCenterToMouse(const TNotNull<const APlayerController*> PlayerController)
+{
+    return GetPositionToMouseScreenSpace(PlayerController, GetViewportCenter(PlayerController));
+}
+
+TOptional<FVector> GetScreenCenterToMouseWorldSpace(
     const TNotNull<const APlayerController*> PlayerController)
 {
-    const auto Value = GetScreenCenterToMouse2F(PlayerController);
-    RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
-
-    return ScreenToWorld(PlayerController, Value.GetValue());
-}
-
-TOptional<FVector2f> GetProjectedWorldPositionToMouse2F(const TNotNull<const APlayerController*> PlayerController,
-    const FVector& WorldLocation)
-{
-    FVector2D ScreenLocation;
-
-    const auto bSuccess = PlayerController->ProjectWorldLocationToScreen(WorldLocation, ScreenLocation);
+    FVector MouseWorldLocation, MouseWorldDirection;
+    auto bSuccess = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
-    return GetScreenPositionToMouse2F(PlayerController, FVector2f{ScreenLocation});
+    const auto ViewportCenter = GetViewportCenter(PlayerController);
+
+    FVector ViewportCenterWorldLocation, ViewportCenterWorldDirection;
+    bSuccess = PlayerController->DeprojectScreenPositionToWorld(ViewportCenter.X, ViewportCenter.Y,
+        ViewportCenterWorldLocation, ViewportCenterWorldDirection);
+
+    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+
+
+    return MouseWorldLocation - ViewportCenterWorldLocation;
 }
 
-TOptional<FVector2f> GetProjectedWorldPositionToMouse2FWorldSpace(
-    const TNotNull<const APlayerController*> PlayerController, const FVector& WorldLocation)
+TOptional<FVector> GetPositionToMouseWorldSpace(const TNotNull<const APlayerController*> PlayerController,
+    const FVector& WorldLocation, const TOptional<double>& CustomPlaneZ)
 {
-    const auto Value = GetProjectedWorldPositionToMouse2F(PlayerController, WorldLocation);
-    RemEnsureCondition(Value, return {}, REM_NO_LOG_OR_ASSERTION);
+    FVector MouseWorldLocation, MouseWorldDirection;
+    const auto bSuccess = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
-    return ScreenToWorld(PlayerController, Value.GetValue());
+    const auto TargetPlaneZ{CustomPlaneZ.Get(WorldLocation.Z)};
+
+    // the formular : TargetPlaneZ = MouseWorldLocation.Z + ScalerOfZAxis * MouseWorldDirection.Z
+    const auto ScalerOfZAxis = (TargetPlaneZ - MouseWorldLocation.Z) / MouseWorldDirection.Z;
+    RemEnsureCondition(ScalerOfZAxis > 0.0f, return {});
+
+    const auto MouseWorldPositionOnPlane = MouseWorldLocation + MouseWorldDirection * ScalerOfZAxis;
+    return MouseWorldPositionOnPlane - WorldLocation;
 }
 
 FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, const FVector2f ScreenDirection)
