@@ -592,4 +592,19 @@ FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap)
     return Datum;
 }
 
+void DrawDebugTwoPointsLinked(const TNotNull<const UWorld*> World, const FVector& Point1,
+    const FVector& Point2, const FLinearColor& Point1Color, const FLinearColor& Point2Color,
+    const float PointSize, const FLinearColor& LineColor, const float DrawTime)
+{
+
+#if REM_DRAW_DEBUG_CODE
+
+    DrawDebugPoint(World, Point1, PointSize, Point1Color.ToFColorSRGB(), false, DrawTime);
+    DrawDebugPoint(World, Point2, PointSize, Point2Color.ToFColorSRGB(), false, DrawTime);
+    DrawDebugLine(World, Point1, Point2, LineColor.ToFColorSRGB(), false, DrawTime);
+
+#endif
+
+}
+
 }

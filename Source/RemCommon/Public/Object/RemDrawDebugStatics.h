@@ -113,6 +113,14 @@ REM_API void DrawDebugOverlapData(TNotNull<const UWorld*> World,
 REM_API FHitResult ConvertOverlapToTrace(const FVector& OverlapPoint, const FOverlapResult& Overlap);
 REM_API FTraceDatum ConvertOverlapDatumToTraceDatum(const FOverlapDatum& Overlap);
 
+REM_API void DrawDebugTwoPointsLinked(const TNotNull<const UWorld*> World,
+    const FVector& Point1,
+    const FVector& Point2,
+    const FLinearColor& Point1Color = FLinearColor::Blue,
+    const FLinearColor& Point2Color = FLinearColor::Red,
+    float PointSize                 = 10.0f,
+    const FLinearColor& LineColor   = FLinearColor::Yellow,
+    float DrawTime                  = 5.0f);
 }
 
 #undef REM_API
