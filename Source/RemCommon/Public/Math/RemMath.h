@@ -401,14 +401,24 @@ template <typename T>
 
 template <typename T>
     requires (std::is_floating_point_v<T>)
-[[nodiscard]] constexpr bool IsWithinHalfCircle(UE::Math::TVector<T> CenterOfCircle, T RadiusSquared, UE::Math::TVector<T> Up, UE::Math::TVector<T> Target)
+[[nodiscard]] constexpr bool IsTargetInDirection(UE::Math::TVector<T> StartLocation, UE::Math::TVector<T> Direction,
+    UE::Math::TVector<T> TargetLocation)
+{
+    // by default, check if angle is within 90°
+    return Direction.Dot(TargetLocation - StartLocation) >= 0.0f;
+}
+
+template <typename T>
+    requires (std::is_floating_point_v<T>)
+[[nodiscard]] constexpr bool IsWithinHalfCircle(UE::Math::TVector<T> CenterOfCircle, T RadiusSquared,
+    UE::Math::TVector<T> Up, UE::Math::TVector<T> Target)
 {
     if (UE::Math::TVector<T>::DistSquared(CenterOfCircle, Target) <= RadiusSquared)
     {
-        // angle within 90°
-        return Up.Dot(Target - CenterOfCircle) >= 0.0f;
+        // check if angle is within 90°
+        return IsTargetInDirection<T>(CenterOfCircle, Up, Target);
     }
 
-    return  false;
+    return false;
 }
 }
