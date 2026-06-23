@@ -347,31 +347,61 @@ TOptional<FVector> GetScreenCenterToMouseWorldSpace(
     return MouseWorldLocation - ViewportCenterWorldLocation;
 }
 
-TOptional<FVector> GetPositionToMouseWorldSpace(const TNotNull<const APlayerController*> PlayerController,
-    const FVector& WorldLocation, const TOptional<double>& CustomPlaneZ)
+TOptional<FVector> GetMousePositionWorldSpace(const TNotNull<const APlayerController*> PlayerController,
+    const double PlaneZ)
 {
     FVector MouseWorldLocation, MouseWorldDirection;
     const auto bSuccess = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
     RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
 
+    RemCheckCondition(!FMath::IsNearlyZero(MouseWorldDirection.Z, UE_DOUBLE_KINDA_SMALL_NUMBER), return {});
+
+    // the formular : PlaneZ = MouseWorldLocation.Z + ScalerOfZAxis * MouseWorldDirection.Z
+    const auto ScalerOfZAxis = (PlaneZ - MouseWorldLocation.Z) / MouseWorldDirection.Z;
+
+    // allow it to be negative for now
+    // RemEnsureCondition(ScalerOfZAxis > 0.0f, return {});
+
+    const auto MouseWorldPositionOnPlane = MouseWorldLocation + MouseWorldDirection * ScalerOfZAxis;
+    return MouseWorldPositionOnPlane;
+}
+
+TOptional<FVector> GetMousePositionWorldSpace(const TNotNull<const APlayerController*> PlayerController,
+    const FVector& WorldLocation, const TOptional<double>& CustomPlaneZ)
+{
     const auto TargetPlaneZ{CustomPlaneZ.Get(WorldLocation.Z)};
 
-    // the formular : TargetPlaneZ = MouseWorldLocation.Z + ScalerOfZAxis * MouseWorldDirection.Z
-    const auto ScalerOfZAxis = (TargetPlaneZ - MouseWorldLocation.Z) / MouseWorldDirection.Z;
-    RemEnsureCondition(ScalerOfZAxis > 0.0f, return {});
+    if (const auto MouseWorldPositionOnPlane = GetMousePositionWorldSpace(PlayerController, TargetPlaneZ);
+        MouseWorldPositionOnPlane.IsSet())
+    {
 
 #if REM_DRAW_DEBUG_CODE
 
-    if (CVarDeprojectMousePositionDrawDebug.GetValueOnGameThread())
-    {
-        DrawDebug::DrawDebugTwoPointsLinked(PlayerController->GetWorld(),
+        if (CVarDeprojectMousePositionDrawDebug.GetValueOnGameThread())
+        {
+            DrawDebug::DrawDebugTwoPointsLinked(PlayerController->GetWorld(),
             WorldLocation, MouseWorldLocation);
-    }
+        }
 
 #endif
 
-    const auto MouseWorldPositionOnPlane = MouseWorldLocation + MouseWorldDirection * ScalerOfZAxis;
-    return MouseWorldPositionOnPlane - WorldLocation;
+        return MouseWorldPositionOnPlane.GetValue();;
+    }
+
+    return {};
+}
+
+TOptional<FVector> GetPositionToMouseWorldSpace(const TNotNull<const APlayerController*> PlayerController,
+    const FVector& WorldLocation, const TOptional<double>& CustomPlaneZ)
+{
+    if (auto MouseWorldPositionOnPlane = GetMousePositionWorldSpace(PlayerController, WorldLocation, CustomPlaneZ);
+        MouseWorldPositionOnPlane.IsSet())
+    {
+        // point to mouse world position
+        return MouseWorldPositionOnPlane.GetValue() - WorldLocation;
+    }
+
+    return {};
 }
 
 FVector2f ScreenToWorld(const TNotNull<const APlayerController*> PlayerController, const FVector2f ScreenDirection)

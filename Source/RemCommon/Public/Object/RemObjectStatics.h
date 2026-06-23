@@ -160,6 +160,15 @@ REM_API TOptional<FVector2f> GetScreenCenterToMouse(
 REM_API TOptional<FVector> GetScreenCenterToMouseWorldSpace(
     const TNotNull<const APlayerController*> PlayerController);
 
+REM_API TOptional<FVector> GetMousePositionWorldSpace(
+    const TNotNull<const APlayerController*> PlayerController,
+    double PlaneZ);
+
+REM_API TOptional<FVector> GetMousePositionWorldSpace(
+    const TNotNull<const APlayerController*> PlayerController,
+    const FVector& WorldLocation,
+    const TOptional<double>& CustomPlaneZ = {});
+
 REM_API TOptional<FVector> GetPositionToMouseWorldSpace(
     const TNotNull<const APlayerController*> PlayerController,
     const FVector& WorldLocation,
