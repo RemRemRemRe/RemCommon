@@ -380,7 +380,7 @@ TOptional<FVector> GetMousePositionWorldSpace(const TNotNull<const APlayerContro
         if (CVarDeprojectMousePositionDrawDebug.GetValueOnGameThread())
         {
             DrawDebug::DrawDebugTwoPointsLinked(PlayerController->GetWorld(),
-            WorldLocation, MouseWorldLocation);
+                WorldLocation, MouseWorldPositionOnPlane.GetValue());
         }
 
 #endif
