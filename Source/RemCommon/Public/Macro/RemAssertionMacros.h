@@ -124,7 +124,7 @@
     REM_ENSURE_CONDITION_6(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message, AssertionMacro)
 
 #define REM_ENSURE_VARIABLE_5(Pointer, InvalidHandlingStatement, CategoryName, Verbosity, Message) \
-    REM_ENSURE_CONDITION_5(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
+    REM_ENSURE_CONDITION_5(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, Message)
 
 #define REM_ENSURE_VARIABLE_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
 	REM_ENSURE_CONDITION_4(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
