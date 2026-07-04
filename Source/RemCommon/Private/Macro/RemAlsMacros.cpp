@@ -8,113 +8,117 @@
 #include "Containers/StaticArray.h"
 #include "HAL/IConsoleManager.h"
 #include "HAL/PlatformTime.h"
+#include "Misc/CoreDelegates.h"
 #include "Templates/Function.h"
 
 #if DO_ENSURE && !USING_CODE_ANALYSIS
 
 namespace Rem::AlsEnsure
 {
-static uint8 GEnsureResetState{1};
+	static bool CanExecute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo)
+	{
+		static const auto* EnsureStateConsoleVariable{
+			IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsureState"))
+		};
+		check(EnsureStateConsoleVariable != nullptr)
 
-// TODO Use "core.ResetEnsureState" instead.
-static FAutoConsoleCommand ConsoleCommandResetEnsureState{
-    TEXT("Rem.als.ResetEnsureState"),
-    TEXT("Reset all ensures so they will fire again."),
-    FConsoleCommandDelegate::CreateLambda([]
-    {
-        GEnsureResetState += 1;
-    })
-};
+		static const auto* EnsureAlwaysEnabledConsoleVariable{
+			IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsureAlwaysEnabled"))
+		};
+		check(EnsureAlwaysEnabledConsoleVariable != nullptr)
 
-static bool CanExecute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo)
-{
-    static const auto* EnsureAlwaysEnabledConsoleVariable{
-        IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsureAlwaysEnabled"))
-    };
-    check(EnsureAlwaysEnabledConsoleVariable != nullptr)
+		const auto EnsureState{EnsureStateConsoleVariable->GetInt()};
 
-    if ((bExecuted.load(std::memory_order_relaxed) == GEnsureResetState &&
-         (!EnsureInfo.bEnsureAlways || !EnsureAlwaysEnabledConsoleVariable->GetBool())) ||
-        !FPlatformMisc::IsEnsureAllowed())
-    {
-        return false;
-    }
+		if ((bExecuted.load(std::memory_order_relaxed) == EnsureState &&
+		     (!EnsureInfo.bEnsureAlways || !EnsureAlwaysEnabledConsoleVariable->GetBool())) ||
+		    !FPlatformMisc::IsEnsureAllowed())
+		{
+			return false;
+		}
 
-    return bExecuted.exchange(GEnsureResetState, std::memory_order_release) != GEnsureResetState || EnsureInfo.
-           bEnsureAlways;
-}
+		return bExecuted.exchange(EnsureState, std::memory_order_release) != EnsureState || EnsureInfo.bEnsureAlways;
+	}
 
-static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Message)
-{
-    if (UNLIKELY(GetEnsureHandler() && GetEnsureHandler()({EnsureInfo.Expression, Message})))
-    {
-        return false;
-    }
+	static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Message)
+	{
+		if (UNLIKELY(GetEnsureHandler() && GetEnsureHandler()({EnsureInfo.Expression, Message})))
+		{
+			return false;
+		}
 
-    if (FPlatformTime::GetSecondsPerCycle() != 0.0f)
-    {
-        static const auto* EnsuresAreErrorsConsoleVariable{
-            IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsuresAreErrors"))
-        };
-        check(EnsuresAreErrorsConsoleVariable != nullptr)
+		if (FPlatformTime::GetSecondsPerCycle() != 0.0f)
+		{
+			TStringBuilder<512> EnsureBuilder{
+				InPlace, ANSITEXTVIEW("Ensure failed: "), EnsureInfo.Expression, ANSITEXTVIEW(", File: "),
+				EnsureInfo.FilePath ? EnsureInfo.FilePath : "Unknown", ANSITEXTVIEW(", Line: "), EnsureInfo.LineNumber, ANSITEXTVIEW(".")
+			};
+
+			FCoreDelegates::OnEnsureFailed.Broadcast(EnsureInfo.Expression, EnsureInfo.FilePath,
+			                                         EnsureInfo.LineNumber, Message, EnsureBuilder.ToString());
+
+			static const auto* EnsuresAreErrorsConsoleVariable{
+				IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsuresAreErrors"))
+			};
+			check(EnsuresAreErrorsConsoleVariable != nullptr)
 
 #if !NO_LOGGING
-        if (EnsuresAreErrorsConsoleVariable->GetBool())
-        {
-            UE_LOG(LogOutputDevice, Error, TEXT("Ensure failed: %hs, File: %hs, Line: %d."),
-                EnsureInfo.Expression, EnsureInfo.FilePath ? EnsureInfo.FilePath : "Unknown", EnsureInfo.LineNumber)
-
-            UE_LOG(LogOutputDevice, Error, TEXT("%s"), Message)
-        }
-        else
-        {
-            UE_LOG(LogOutputDevice, Error, TEXT("Ensure failed: %hs, File: %hs, Line: %d."),
-                EnsureInfo.Expression, EnsureInfo.FilePath ? EnsureInfo.FilePath : "Unknown", EnsureInfo.LineNumber)
-
-            UE_LOG(LogOutputDevice, Warning, TEXT("%s"), Message)
-        }
+			if (EnsuresAreErrorsConsoleVariable->GetBool())
+			{
+				UE_LOGF(LogOutputDevice, Error, "%ls", EnsureBuilder.ToString())
+				UE_LOGF(LogOutputDevice, Error, "%ls", Message)
+			}
+			else
+			{
+				UE_LOGF(LogOutputDevice, Warning, "%ls", EnsureBuilder.ToString())
+				UE_LOGF(LogOutputDevice, Warning, "%ls", Message)
+			}
 #endif
 
-        PrintScriptCallstack();
-    }
+			PrintScriptCallstack();
+		}
 
-    if (!FPlatformMisc::IsDebuggerPresent())
-    {
-        FPlatformMisc::PromptForRemoteDebugging(true);
-        return false;
-    }
+		if (!FPlatformMisc::IsDebuggerPresent())
+		{
+			FPlatformMisc::PromptForRemoteDebugging(true);
+			return false;
+		}
+
+		static const auto* EnsureBreakEnabledConsoleVariable{
+			IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsureBreakEnabled"))
+		};
+		check(EnsureBreakEnabledConsoleVariable != nullptr)
 
 #if UE_BUILD_SHIPPING
-    return true;
+		return EnsureBreakEnabledConsoleVariable->GetBool();
 #else
-    return !GIgnoreDebugger;
+		return !GIgnoreDebugger && EnsureBreakEnabledConsoleVariable->GetBool();
 #endif
-}
+	}
 
-UE_COLD UE_DEBUG_SECTION bool Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo)
-{
-    return CanExecute(bExecuted, EnsureInfo) && ExecuteInternal(EnsureInfo, TEXT(""));
-}
+	bool UE_COLD UE_DEBUG_SECTION Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo)
+	{
+		return CanExecute(bExecuted, EnsureInfo) && ExecuteInternal(EnsureInfo, TEXT(""));
+	}
 
-UE_COLD UE_DEBUG_SECTION bool ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo,
-    const TCHAR* Format, ...)
-{
-    if (!CanExecute(bExecuted, EnsureInfo))
-    {
-        return false;
-    }
+	bool UE_COLD UE_DEBUG_SECTION ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo,
+	                                            const TCHAR* Format, ...)
+	{
+		if (!CanExecute(bExecuted, EnsureInfo))
+		{
+			return false;
+		}
 
-    static UE::FWordMutex FormatMutex;
-    static constexpr auto MessageSize{65535};
-    static TStaticArray<TCHAR, MessageSize> Message;
+		static UE::FWordMutex FormatMutex;
+		static constexpr auto MessageSize{std::numeric_limits<uint16>::max()};
+		static TStaticArray<TCHAR, MessageSize> Message;
 
-    // ReSharper disable once CppLocalVariableWithNonTrivialDtorIsNeverUsed
-    UE::TUniqueLock Lock{FormatMutex};
+		// ReSharper disable once CppLocalVariableWithNonTrivialDtorIsNeverUsed
+		UE::TUniqueLock Lock{FormatMutex};
 
-    GET_TYPED_VARARGS(TCHAR, Message.GetData(), MessageSize, FormattedMessageSize - 1, Format, Format);
+		GET_TYPED_VARARGS(TCHAR, Message.GetData(), MessageSize, FormattedMessageSize - 1, Format, Format);
 
-    return ExecuteInternal(EnsureInfo, Message.GetData());
-}
+		return ExecuteInternal(EnsureInfo, Message.GetData());
+	}
 }
 
 #endif
