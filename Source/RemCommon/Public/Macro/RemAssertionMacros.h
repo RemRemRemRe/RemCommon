@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RemMacroAsFunctionOverloads.h"
-#include "RemMisc.h"
+#include "RemMisc.h" // for Rem::IsValid
 #include "RemEnsureMacro.h"
 
 #pragma region Config Macro
@@ -95,13 +95,13 @@
     REM_ENSURE_CONDITION_5(Condition, InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
 #define REM_ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, CategoryName) \
-    REM_ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Log)
+	REM_ENSURE_CONDITION_4(Condition, InvalidHandlingStatement, CategoryName, Log)
 
 #define REM_ENSURE_CONDITION_2(Condition, InvalidHandlingStatement) \
     REM_ENSURE_CONDITION_3(Condition, InvalidHandlingStatement, LogTemp)
 
 #define REM_ENSURE_CONDITION_1(Condition) \
-    REM_ENSURE_CONDITION_2(Condition, /* InvalidHandlingStatement */)
+    REM_ENSURE_CONDITION_2(Condition, /* Empty HandlingStatement */)
 
 /**
  * Use this to validate a condition.
@@ -127,7 +127,7 @@
     REM_ENSURE_CONDITION_5(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Verbosity, /* Empty Message */)
 
 #define REM_ENSURE_VARIABLE_4(Pointer, InvalidHandlingStatement, CategoryName, Verbosity) \
-    REM_ENSURE_CONDITION_4(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
+	REM_ENSURE_CONDITION_4(Rem::IsValid(Pointer), InvalidHandlingStatement, CategoryName, Log)
 
 #define REM_ENSURE_VARIABLE_3(Pointer, InvalidHandlingStatement, CategoryName) \
     REM_ENSURE_CONDITION_3(Rem::IsValid(Pointer), InvalidHandlingStatement, LogTemp)
