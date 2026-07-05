@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Interface/RemScriptStructInterface.h"
+
 #include "RemCppConcepts.h"
 #include "RemConcepts.h"
 #include "Macro/RemGenerateMembersMacro.h"
@@ -72,22 +73,22 @@ protected:
 
 public:
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
-    auto FindComponent();
+    [[nodiscard]] auto FindComponent();
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
-    auto FindComponent() const;
+    [[nodiscard]] auto FindComponent() const;
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
-    auto FindComponent(int32 Index);
+    [[nodiscard]] auto FindComponent(int32 Index);
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
-    auto FindComponent(int32 Index) const;
+    [[nodiscard]] auto FindComponent(int32 Index) const;
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::CScopedEnum EnumClass>
-    auto FindComponent(EnumClass Enum);
+    [[nodiscard]] auto FindComponent(EnumClass Enum);
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::CScopedEnum EnumClass>
-    auto FindComponent(EnumClass Enum) const;
+    [[nodiscard]] auto FindComponent(EnumClass Enum) const;
 
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
     void ForEachComponent(

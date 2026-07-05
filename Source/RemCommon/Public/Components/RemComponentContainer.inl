@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RemComponentContainer.h"
+
 #include "Macro/RemAssertionMacros.h"
 #include "Struct/RemInstancedStructStaics.inl"
 #include "Components/ActorComponent.h"
@@ -23,19 +24,19 @@ template <Rem::CAActor TOwnerActor>
 }
 
 template <std::derived_from<FRemComponentBase> T>
-auto FRemComponentContainer::FindComponent()
+[[nodiscard]] auto FRemComponentContainer::FindComponent()
 {
     return Rem::Struct::FindStructView<T>(MakeArrayView(Components)).template Get<0>();
 }
 
 template <std::derived_from<FRemComponentBase> T>
-auto FRemComponentContainer::FindComponent() const
+[[nodiscard]] auto FRemComponentContainer::FindComponent() const
 {
     return Rem::Struct::FindConstStructView<T>(MakeConstArrayView(Components)).template Get<0>();
 }
 
 template <std::derived_from<FRemComponentBase> T>
-auto FRemComponentContainer::FindComponent(const int32 Index)
+[[nodiscard]] auto FRemComponentContainer::FindComponent(const int32 Index)
 {
     RemCheckCondition(Components.IsValidIndex(Index), return {});
 
@@ -45,7 +46,7 @@ auto FRemComponentContainer::FindComponent(const int32 Index)
 }
 
 template <std::derived_from<FRemComponentBase> T>
-auto FRemComponentContainer::FindComponent(const int32 Index) const
+[[nodiscard]] auto FRemComponentContainer::FindComponent(const int32 Index) const
 {
     RemCheckCondition(Components.IsValidIndex(Index), return {});
 
@@ -55,13 +56,13 @@ auto FRemComponentContainer::FindComponent(const int32 Index) const
 }
 
 template <std::derived_from<FRemComponentBase> T, Rem::CScopedEnum EnumClass>
-auto FRemComponentContainer::FindComponent(EnumClass Enum)
+[[nodiscard]] auto FRemComponentContainer::FindComponent(EnumClass Enum)
 {
     return FindComponent<T>(static_cast<int32>(Enum));
 }
 
 template <std::derived_from<FRemComponentBase> T, Rem::CScopedEnum EnumClass>
-auto FRemComponentContainer::FindComponent(EnumClass Enum) const
+[[nodiscard]] auto FRemComponentContainer::FindComponent(EnumClass Enum) const
 {
     return FindComponent<T>(static_cast<int32>(Enum));
 }
