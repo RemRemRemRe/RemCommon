@@ -5,6 +5,22 @@
 #include "RemComponentContainer.h"
 #include "Macro/RemAssertionMacros.h"
 #include "Struct/RemInstancedStructStaics.inl"
+#include "Components/ActorComponent.h"
+
+template <Rem::CUObject TOwner>
+[[nodiscard]] TOwner* FRemComponentBase::GetOwner(const FContext& Context)
+{
+    return Context.OwnerInstance->GetOwner<TOwner>();
+}
+
+template <Rem::CAActor TOwnerActor>
+[[nodiscard]] TOwnerActor* FRemComponentBase::GetOwnerOfOwner(const FContext& Context)
+{
+    auto* Owner = GetOwner<UActorComponent>(Context);
+    RemCheckVariable(Owner, return {});
+
+    return Owner->GetOwner<TOwnerActor>();
+}
 
 template <std::derived_from<FRemComponentBase> T>
 auto FRemComponentContainer::FindComponent()

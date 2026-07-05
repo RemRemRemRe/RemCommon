@@ -38,6 +38,12 @@ struct REMCOMMON_API FRemComponentBase
     virtual void Tick(const FContext& Context, float DeltaSeconds);
 
     virtual void Uninitialize(const FContext& Context);
+
+    template <Rem::CUObject TOwner>
+    [[nodiscard]] static TOwner* GetOwner(const FContext& Context);
+
+    template <Rem::CAActor TOwnerActor = AActor>
+    [[nodiscard]] static TOwnerActor* GetOwnerOfOwner(const FContext& Context);
 };
 
 /**
