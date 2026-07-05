@@ -84,7 +84,7 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
     // make sure Initialize can't be called by TryInitialize
     bInitialized = true;
 
-    REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("initializing components, Owner:{0}"), OwnerRef);
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", OwnerRef);
 
     {
         TArray<FConstStructView> InstanceDataTypes;
@@ -128,7 +128,7 @@ void FRemComponentViewContainerInstance::Uninitialize()
     const auto CopyOwner = Owner;
     Owner                = nullptr;
 
-    REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("uninitializing components, Owner:{0}"), Owner);
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, "uninitializing components, Owner:{0}", Owner);
 
     RemCheckVariable(CopyOwner, return;);
 
@@ -150,7 +150,7 @@ void FRemComponentViewContainerInstance::TryInitialize(UObject& OwnerRef)
 {
     if (bInitialized)
     {
-        REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("already initialized, Owner:{0}"), OwnerRef);
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, "already initialized, Owner:{0}", OwnerRef);
         return;
     }
 
@@ -161,7 +161,7 @@ void FRemComponentViewContainerInstance::TryUninitialize()
 {
     if (!bInitialized)
     {
-        REM_LOG_FUNCTION(LogRemCommon, Verbose, TEXT("it's not initialized, Owner:{0}"), Owner);
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, "it's not initialized, Owner:{0}", Owner);
         return;
     }
 

@@ -37,7 +37,9 @@
 
 #endif
 
-#define REM_FUNCTION_LINE REM_FUNCTION_NAME "_" UE_STRINGIZE(__LINE__)
+#define REM_FUNCTION_LINE_NAME REM_FUNCTION_NAME "_" UE_STRINGIZE(__LINE__)
+#define REM_FUNCTION_LINE_FORMATED "[Function:" REM_FUNCTION_NAME "] [Line:" UE_STRINGIZE(__LINE__) "]"
+
 
 namespace Rem::Private
 {

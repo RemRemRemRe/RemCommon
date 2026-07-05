@@ -8,6 +8,7 @@
 #include "GameplayTagsManager.h"
 #include "RemCommonLog.h"
 #include "Macro/RemAssertionMacros.h"
+#include "Macro/RemLogMacros.h"
 #include "UObject/PrimaryAssetId.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemGameplayTagStatics)
@@ -42,9 +43,9 @@ uint32 GetHashForTags(const FGameplayTagContainer& Tags)
     return GetHashForTags(Tags.GetGameplayTagArray());
 }
 
-FString TagToStringWithoutDot(const FGameplayTag& Tag)
+FUtf8String TagToStringWithoutDot(const FGameplayTag& Tag)
 {
-    return Tag.GetTagName().ToString().Replace(TEXTVIEW(".").GetData(), TEXTVIEW("").GetData());
+    return FUtf8String(Tag.GetTagName().ToString().Replace(TEXT("."), TEXT("")));
 }
 
 FName TagToNameWithoutDot(const FGameplayTag& Tag)
@@ -52,10 +53,10 @@ FName TagToNameWithoutDot(const FGameplayTag& Tag)
     return FName{TagToStringWithoutDot(Tag)};
 }
 
-FGameplayTag TryGetTagFromString(const FString& TagString)
+FGameplayTag TryGetTagFromString(const FUtf8String& TagString)
 {
     if (auto& Manager = UGameplayTagsManager::Get();
-        Manager.IsValidGameplayTagString(TagString))
+        Manager.IsValidGameplayTagString(StringCast<FStringView::ElementType>(*TagString)))
     {
         const auto Tag = FGameplayTag::RequestGameplayTag(*TagString, false);
         return Tag;
@@ -63,18 +64,18 @@ FGameplayTag TryGetTagFromString(const FString& TagString)
     return FGameplayTag::EmptyTag;
 }
 
-bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag)
+bool TryUpdateTagString(FUtf8String& StringRef, const FGameplayTag& Tag)
 {
     if (StringRef.IsEmpty())
     {
         // empty string, use tag name string by default
-        StringRef = Tag.GetTagName().ToString();
+        StringRef = Tag.GetTagName().ToUtf8String();
     }
     else if (const auto TagFromComment = TryGetTagFromString(StringRef);
         TagFromComment.IsValid() && TagFromComment != Tag)
     {
         // used tag name string but not matched
-        StringRef = Tag.GetTagName().ToString();
+        StringRef = Tag.GetTagName().ToUtf8String();
     }
     else
     {
@@ -86,14 +87,14 @@ bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag)
     return true;
 }
 
-TArray<FString> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
+TArray<FUtf8String> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
 {
-    TArray<FString> TagsString{};
+    TArray<FUtf8String> TagsString{};
     TagsString.Reserve(Tags.Num());
 
     for (auto& TagOne : Tags)
     {
-        TagsString.Add(TagOne.ToString());
+        TagsString.Add(TagOne.GetTagName().ToUtf8String());
     }
 
     return TagsString;
@@ -104,27 +105,27 @@ FGameplayTagContainer ToTagContainer(const TConstArrayView<FGameplayTag> Tags)
     return FGameplayTagContainer::CreateFromArray(TArray<FGameplayTag>(Tags));
 }
 
-FString ToString(const TConstArrayView<FGameplayTag> Tags, const bool bQuoted)
+FUtf8String ToString(const TConstArrayView<FGameplayTag> Tags, const bool bQuoted)
 {
-    FString RetString;
+    TUtf8StringBuilder<256> Builder;
     for (auto Index = 0; Index < Tags.Num(); ++Index)
     {
         if (bQuoted)
         {
-            RetString += TEXT("\"");
+            Builder << '"';
         }
-        RetString += Tags[Index].ToString();
+        Builder << Tags[Index].ToString();
         if (bQuoted)
         {
-            RetString += TEXT("\"");
+            Builder << '"';
         }
 
         if (Index < Tags.Num() - 1)
         {
-            RetString += TEXT(", ");
+            Builder << ", ";
         }
     }
-    return RetString;
+    return FUtf8String(Builder);
 }
 
 FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo)
@@ -138,13 +139,13 @@ FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag&
     }
 
     // could we get string view of tag?
-    const auto StringOne = TagOne.ToString();
-    const auto StringTwo = TagTwo.ToString();
+    const auto StringOne = TagOne.GetTagName().ToUtf8String();
+    const auto StringTwo = TagTwo.GetTagName().ToUtf8String();
 
     return FindCommonParentTag(StringOne, StringTwo);
 }
 
-FGameplayTag FindCommonParentTag(const FStringView TagStringOne, const FStringView TagStringTwo)
+FGameplayTag FindCommonParentTag(const FUtf8StringView TagStringOne, const FUtf8StringView TagStringTwo)
 {
     const auto MinLength = FMath::Min(TagStringOne.Len(), TagStringTwo.Len());
     int32 DotIndex{INDEX_NONE};
@@ -229,9 +230,11 @@ const FGameplayTagContainer& GetSingleTagContainer(const FGameplayTag& Tag)
     }
 
     // This tag should always be invalid if the node is missing
-    RemCheckVariable(Tag, REM_NO_HANDLING, LogRemCommon, Error,
-        StringFormat(TEXT("GetSingleTagContainer passed invalid gameplay tag {0}, only registered tags can be queried"),
-            Tag));
+    RemCheckVariable(Tag,
+        {
+        REM_LOG_FUNCTION(LogRemCommon, Error,
+            "GetSingleTagContainer passed invalid gameplay tag {0}, only registered tags can be queried", Tag);
+        });
 
     return FGameplayTagContainer::EmptyContainer;
 }

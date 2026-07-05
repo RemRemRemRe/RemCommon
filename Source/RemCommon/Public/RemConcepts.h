@@ -114,6 +114,18 @@ concept CHasIsNetMode = requires(ENetMode Mode, const T Object, bool Result)
 };
 
 template <class T>
+concept CHasToUtf8String = requires(FUtf8String& String, const T Object)
+{
+    String = Object.ToUtf8String();
+};
+
+template <class T>
+concept CHasToUtf8StringOut = requires(FUtf8StringBuilderBase& StringBuilderBase, const T Object)
+{
+    Object.ToUtf8String(StringBuilderBase);
+};
+
+template <class T>
 concept CHasToCompactString = requires(FString& String, const T Object)
 {
     String = Object.ToCompactString();
@@ -135,6 +147,12 @@ template <class T>
 concept CHasToString = requires(FString& String, const T Object)
 {
     String = Object.ToString();
+};
+
+template <class T>
+concept CHasToStringOut = requires(FWideStringBuilderBase& StringBuilderBase, const T Object)
+{
+    Object.ToString(StringBuilderBase);
 };
 
 template <class T>
@@ -176,6 +194,9 @@ concept CUEnum = std::is_enum_v<T> && requires(UEnum* Enum)
 template <class T>
 concept CStringable =
     std::is_same_v<bool, std::remove_cvref_t<T>>
+    || CHasToUtf8StringOut<T>
+    || CHasToStringOut<T>
+    || CHasToUtf8String<T>
     || CHasToCompactString<T>
     || CHasToStringSimple<T>
     || CHasToSimpleString<T>

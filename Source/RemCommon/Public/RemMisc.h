@@ -3,6 +3,9 @@
 #pragma once
 
 #include <type_traits>
+#include <string_view>
+
+#include "fmt/format.h"
 
 #include "RemAlwaysFalse.h"
 #include "RemConcepts.h"
@@ -11,8 +14,7 @@
 #include "UObject/Object.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/EngineBaseTypes.h"
-#include "Macro/RemFunctorMacro.h"
-#include "Traits/IsCharType.h"
+#include "Containers/AnsiString.h"
 
 struct FRealCurve;
 struct FGameplayTag;
@@ -133,25 +135,68 @@ bool IsNetMode(const T& Object, const ENetMode NetMode)
 
 REMCOMMON_API bool IsClassDefaultObject(const UObject* Object);
 
-constexpr FStringView BoolToString(const bool bValue)
+constexpr FAnsiStringView BoolToString(const bool bValue)
 {
     return bValue
-               ? TEXTVIEW("True")
-               : TEXTVIEW("False");
+               ? ANSITEXTVIEW("True")
+               : ANSITEXTVIEW("False");
 }
 
-REMCOMMON_API FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath);
+template <typename TCharType>
+void GetObjectNameFromSoftObjectPath(TStringBuilderBase<TCharType>& Builder, const FSoftObjectPath& SoftObjectPath)
+{
+    const auto& SubPathString = SoftObjectPath.GetSubPathUtf8String();
 
-REMCOMMON_API FString PointerToString(const void* Value);
+    if (int32 ObjectNameIndex;
+        SubPathString.FindLastChar(TEXT('.'), ObjectNameIndex))
+    {
+        Builder << SubPathString.RightChop(ObjectNameIndex + 1);
+    }
+}
 
-REMCOMMON_API FString ToString(const UScriptStruct& ScriptStruct, const void* Value);
+inline FUtf8String GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath)
+{
+    TUtf8StringBuilder<64> Builder;
+    Rem::GetObjectNameFromSoftObjectPath(Builder, SoftObjectPath);
+    return FUtf8String(Builder);
+}
 
-template <typename T>
-FString ToString(const T& Data)
+template <typename TCharType>
+void PointerToString(TStringBuilderBase<TCharType>& Builder, const TNotNull<const void*> Value)
+{
+    Builder << FAnsiString::Printf("%p", NotNullGet(Value));
+}
+
+inline FUtf8String PointerToString(const TNotNull<const void*> Value)
+{
+    TUtf8StringBuilder<64> Builder;
+    Rem::PointerToString(Builder, Value);
+    return FUtf8String(Builder);
+}
+
+template <typename TCharType>
+void ToString(TStringBuilderBase<TCharType>& Builder, const TNotNull<const UScriptStruct*> ScriptStruct,
+    const TNotNull<const void*> Value)
+{
+    FString HumanReadableMessage;
+    ScriptStruct->ExportText(/*out*/ HumanReadableMessage, Value,
+        /*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
+    Builder << HumanReadableMessage;
+}
+
+inline FUtf8String ToString(const TNotNull<const UScriptStruct*> ScriptStruct, const TNotNull<const void*> Value)
+{
+    TUtf8StringBuilder<256> Builder;
+    Rem::ToString(Builder, ScriptStruct, Value);
+    return FUtf8String(Builder);
+}
+
+template <typename TCharType, typename T>
+void ToString(TStringBuilderBase<TCharType>& Builder, const T& Data)
 {
     if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
-        return Rem::ToString(*Data);
+        Rem::ToString(Builder, *Data);
     }
     else
     {
@@ -159,52 +204,148 @@ FString ToString(const T& Data)
 
         if constexpr (std::is_same_v<bool, RawType>)
         {
-            return Rem::BoolToString(Data).GetData();
+            Builder << Rem::BoolToString(Data);
+        }
+        else if constexpr (CHasToUtf8StringOut<RawType>)
+        {
+            Data.ToUtf8String(Builder);
+        }
+        else if constexpr (CHasToStringOut<RawType>)
+        {
+            Data.ToString(Builder);
+        }
+        else if constexpr (CHasToUtf8String<RawType>)
+        {
+            Builder << Data.ToUtf8String();
         }
         else if constexpr (CHasToCompactString<RawType>)
         {
-            return Data.ToCompactString();
+            Builder << Data.ToCompactString();
         }
         else if constexpr (CHasToStringSimple<RawType>)
         {
-            return Data.ToStringSimple();
+            Builder << Data.ToStringSimple();
         }
         else if constexpr (CHasToSimpleString<RawType>)
         {
-            return Data.ToSimpleString();
+            Builder << Data.ToSimpleString();
         }
         else if constexpr (CHasToString<RawType>)
         {
-            return Data.ToString();
+            Builder << Data.ToString();
         }
         else if constexpr (CHasGetName<RawType>)
         {
-            return Data.GetName();
+            Builder << Data.GetName();
         }
         else if constexpr (std::is_same_v<FDelegateHandle, RawType>)
         {
-            // print FDelegateHandle as uint64
-            return FString::Format(TEXT("{0}"), {*reinterpret_cast<const uint64*>(&Data)});
+            Builder << *reinterpret_cast<const uint64*>(&Data);
         }
         else if constexpr (CUEnum<T> || TIsUEnumClass<RawType>::Value)
         {
-            return UEnum::GetValueAsString(Data);
+            Builder << UEnum::GetValueAsString(Data);
         }
         else if constexpr (CHasStaticStruct<RawType>)
         {
-            return Rem::ToString(*RawType::StaticStruct(), &Data);
+            Rem::ToString(Builder, RawType::StaticStruct(), &Data);
+        }
+        else if constexpr (requires { Builder << Data; })
+        {
+            Builder << Data;
         }
         else if constexpr (CCanLexToString<RawType>)
         {
-            return LexToString(Data);
+            Builder << LexToString(Data);
         }
         else
         {
             static_assert(always_false<T>::value, "T is not supported for ToString");
-            return {};
         }
     }
 }
+
+template <typename T>
+FUtf8String ToString(const T& Data)
+{
+    TUtf8StringBuilder<256> Builder;
+    Rem::ToString(Builder, Data);
+    return FUtf8String(Builder);
+}
+
+namespace Private
+{
+
+template <typename TCharType>
+struct TFormatOutputIterator
+{
+    TNotNull<TStringBuilderBase<TCharType>*> Builder;
+
+    TFormatOutputIterator& operator*() { return *this; }
+    TFormatOutputIterator& operator++() { return *this; }
+    TFormatOutputIterator& operator++(int) { return *this; }
+
+    TFormatOutputIterator& operator=(TCharType C)
+    {
+        Builder->AppendChar(C);
+        return *this;
+    }
+};
+
+template <typename T>
+consteval bool IsCharacterPointerType()
+{
+    using Raw = std::remove_cvref_t<T>;
+    if constexpr (std::is_pointer_v<Raw>)
+    {
+        using CVStripped = std::remove_cv_t<std::remove_pointer_t<Raw>>;
+        return std::is_same_v<CVStripped, ANSICHAR>
+               || std::is_same_v<CVStripped, WIDECHAR>
+               || std::is_same_v<CVStripped, UTF8CHAR>;
+    }
+    return false;
+}
+
+template <typename T>
+decltype(auto) ForwardFormatArg(T&& Arg)
+{
+    using Raw = std::remove_cvref_t<T>;
+    if constexpr (std::is_pointer_v<Raw> && !std::is_void_v<std::remove_pointer_t<Raw>>
+                  && !IsCharacterPointerType<T>())
+    {
+        return *Arg;
+    }
+    else
+    {
+        return std::forward<T>(Arg);
+    }
+}
+
+template <typename T>
+using TForwardedArg = std::conditional_t<
+    std::is_rvalue_reference_v<decltype(Private::ForwardFormatArg(std::declval<T&&>()))>,
+    std::remove_reference_t<decltype(Private::ForwardFormatArg(std::declval<T&&>()))>,
+    decltype(Private::ForwardFormatArg(std::declval<T&&>()))>;
+
+}
+
+
+template <typename TCharType, typename... TArgs>
+void Format(TStringBuilderBase<TCharType>& Builder, fmt::format_string<Private::TForwardedArg<TArgs>...> Fmt,
+    TArgs&&... Args)
+{
+    auto Out = Private::TFormatOutputIterator<TCharType>{&Builder};
+    fmt::format_to(Out, Fmt, Private::ForwardFormatArg(std::forward<TArgs>(Args))...);
+}
+
+template <typename... TArgs>
+FUtf8String Format(fmt::format_string<Private::TForwardedArg<TArgs>...> Fmt, TArgs&&... Args)
+{
+    TUtf8StringBuilder<256> Builder;
+    Rem::Format(Builder, Fmt, std::forward<TArgs>(Args)...);
+    return FUtf8String(Builder);
+}
+
 
 template <typename T>
 concept CToStringable = requires(T&& Object)
@@ -244,71 +385,83 @@ ENetRole GetNetRole(const T& Object)
     }
 }
 
-template <typename T, bool bConstantStringLength = false>
-FString GetNetModeString(const T& Object)
+template <typename TCharType, typename T, bool bConstantStringLength = false>
+void GetNetModeString(TStringBuilderBase<TCharType>& Builder, const T& Object)
 {
     if (Rem::IsNetMode(Object, NM_DedicatedServer) || Rem::IsNetMode(Object, NM_ListenServer))
     {
         if constexpr (bConstantStringLength)
         {
-            return FString(TEXT("Server  "));
+            Builder << UTF8TEXTVIEW("Server  ");
         }
         else
         {
-            return FString(TEXT("Server"));
+            Builder << UTF8TEXTVIEW("Server");
         }
-    }
-
-    return FString::Format(TEXT("Client:{0}"), {UE::GetPlayInEditorID()});
-}
-
-/**
- * @brief Append spaces to the string
- * @note better to make sure String has enough capacity using FString::Reserve
- */
-REMCOMMON_API void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat);
-
-template <typename T, bool bConstantStringLength = false>
-FString GetNetRoleString(const T& Object)
-{
-    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
-    {
-        return Rem::GetNetRoleString(*Object);
     }
     else
     {
-        FString NetRoleString = StaticEnum<ENetRole>()->GetValueAsString(Rem::GetNetRole(Object));
+        Rem::Format(Builder, "Client:{}", UE::GetPlayInEditorID());
+    }
+}
+
+template <typename T, bool bConstantStringLength = false>
+FUtf8String GetNetModeString(const T& Object)
+{
+    TUtf8StringBuilder<16> Builder;
+    Rem::GetNetModeString<UTF8CHAR, T, bConstantStringLength>(Builder, Object);
+    return FUtf8String(Builder);
+}
+
+template <typename TCharType, typename T, bool bConstantStringLength = false>
+void GetNetRoleString(TStringBuilderBase<TCharType>& Builder, const T& Object)
+{
+    if constexpr (std::is_pointer_v<T> || CNotNull<T>)
+    {
+        Rem::GetNetRoleString(Builder, *Object);
+    }
+    else
+    {
+        Builder << UEnum::GetValueAsString(Rem::GetNetRole(Object));
 
         if constexpr (bConstantStringLength)
         {
-            constexpr auto MaxLength = TEXTVIEW("ROLE_AutonomousProxy").Len();
-
-            NetRoleString.Reserve(MaxLength);
-            AppendCharRepeated(NetRoleString, TEXT(' '), MaxLength - NetRoleString.Len());
+            constexpr auto MaxLength = UTF8TEXTVIEW("ROLE_AutonomousProxy").Len();
+            const auto CurrentLen    = Builder.Len();
+            for (auto Counter = CurrentLen; Counter < MaxLength; ++Counter)
+            {
+                Builder.AppendChar(UTF8CHAR{' '});
+            }
         }
-
-        return NetRoleString;
     }
+}
+
+template <typename T, bool bConstantStringLength = false>
+FUtf8String GetNetRoleString(const T& Object)
+{
+    TUtf8StringBuilder<32> Builder;
+    Rem::GetNetRoleString<UTF8CHAR, T, bConstantStringLength>(Builder, Object);
+    return FUtf8String(Builder);
 }
 
 template <typename T>
 FName GetNetRoleName(const T& Object)
 {
-    return StaticEnum<ENetRole>()->GetValueAsName(Rem::GetNetRole(Object));
+    return UEnum::GetValueAsName(Rem::GetNetRole(Object));
 }
 
 template <typename T>
 FText GetNetRoleText(const T& Object)
 {
-    return StaticEnum<ENetRole>()->GetDisplayValueAsText(Rem::GetNetRole(Object));
+    return UEnum::GetDisplayValueAsText(Rem::GetNetRole(Object));
 }
 
-template <typename T>
-FString GetNetDebugString(const T& Object)
+template <typename TCharType, typename T>
+void GetNetDebugString(TStringBuilderBase<TCharType>& Builder, const T& Object)
 {
     if constexpr (std::is_pointer_v<T> || CNotNull<T>)
     {
-        return Rem::GetNetDebugString(*Object);
+        Rem::GetNetDebugString(Builder, *Object);
     }
     else
     {
@@ -316,59 +469,28 @@ FString GetNetDebugString(const T& Object)
 
         if constexpr (TIsTObjectPtr<RawType>::Value)
         {
-            return Rem::GetNetDebugString(*Object);
+            Rem::GetNetDebugString(Builder, *Object);
         }
         else
         {
-            const FString NetModeString = Rem::GetNetModeString<T, true>(Object);
+            Rem::GetNetModeString(Builder, Object);
 
             if constexpr (CHasGetLocalRole<T> || CHasGetOwnerRole<T>)
             {
-                const FString NetRoleString = Rem::GetNetRoleString<T, true>(Object);
-
-                return FString::Format(TEXT("{0} {1}"), {NetModeString, NetRoleString});
-            }
-            else
-            {
-                return FString::Format(TEXT("{0}"), {NetModeString});
+                constexpr auto Space = UTF8CHAR{' '};
+                Builder.AppendChar(Space);
+                Rem::GetNetRoleString(Builder, Object);
             }
         }
     }
 }
 
-namespace Impl
+template <typename T>
+FUtf8String GetNetDebugString(const T& Object)
 {
-// recursion ends with this empty implementation:
-inline void FillStringFormatArgs(FStringFormatOrderedArguments&)
-{
-}
-
-template <typename F, typename... R>
-void FillStringFormatArgs(FStringFormatOrderedArguments& Args, F&& First, R&&... Rest)
-{
-    using RawType = std::remove_cvref_t<F>;
-
-    if constexpr (!TIsCharType_V<std::remove_pointer_t<RawType>>
-                  && CToStringable<RawType>)
-    {
-        Args.Add(Rem::ToString(std::forward<F>(First)));
-    }
-    else
-    {
-        Args.Add(std::forward<F>(First));
-    }
-
-    Impl::FillStringFormatArgs(Args, std::forward<R>(Rest)...);
-}
-}
-
-template <typename... T>
-FString StringFormat(const TCHAR* Format, T&&... Args)
-{
-    FStringFormatOrderedArguments OrderedArgs;
-    Impl::FillStringFormatArgs(OrderedArgs, std::forward<T>(Args)...);
-
-    return FString::Format(Format, std::move(OrderedArgs));
+    TUtf8StringBuilder<64> Builder;
+    Rem::GetNetDebugString(Builder, Object);
+    return FUtf8String(Builder);
 }
 
 template <CUObject T>
@@ -394,3 +516,18 @@ REMCOMMON_API IConsoleVariable* FindConsoleVariable(const TCHAR* Name);
 REMCOMMON_API float EvaluateCurve01(const FRealCurve& RichCurve, const float Alpha);
 REMCOMMON_API float EvaluateCurve01Clamped(const FRealCurve& RichCurve, const float Alpha);
 }
+
+template <typename T, typename Char>
+    requires (fmt::detail::type_constant<T, Char>::value == fmt::detail::type::custom_type
+              && !std::is_void_v<std::remove_cvref_t<T>>)
+struct fmt::formatter<T, Char> : fmt::formatter<std::string_view>
+{
+    template <typename FormatContext>
+    auto format(const T& Value, FormatContext& Ctx) const
+    {
+        TUtf8StringBuilder<256> Builder;
+        Rem::ToString(Builder, Value);
+        return fmt::formatter<std::string_view>::format(
+            std::string_view(reinterpret_cast<const ANSICHAR*>(Builder.GetData()), Builder.Len()), Ctx);
+    }
+};

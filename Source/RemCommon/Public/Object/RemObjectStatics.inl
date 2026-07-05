@@ -118,7 +118,7 @@ T* GetFirstLocalPlayerController(const TNotNull<const UObject*> WorldContextObje
     // https://wizardcell.com/unreal/multiplayer-tips-and-tricks/#2-beware-of-getplayerxxx0-static-functions
 
     const auto* GameInstance = GetGameInstance(WorldContextObject);
-    RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, GameInstance, return nullptr;);
 
     return Cast<T>(GameInstance->GetFirstLocalPlayerController());
 }
@@ -129,7 +129,7 @@ template <CAHUD T = AHUD>
 T* GetFirstLocalHUD(const TNotNull<const UObject*> WorldContextObject)
 {
     const auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return nullptr;);
 
     return PlayerController->GetHUD<T>();
 }
@@ -140,7 +140,7 @@ template <CULocalPlayer T = ULocalPlayer>
 T* GetFirstLocalPlayer(const TNotNull<const UObject*> WorldContextObject)
 {
     const auto* GameInstance = GetGameInstance(WorldContextObject);
-    RemCheckVariable(GameInstance, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, GameInstance, return nullptr;);
 
     return Cast<T>(GameInstance->GetFirstGamePlayer());
 }
@@ -151,7 +151,7 @@ template <CAPawn T = APawn>
 T* GetFirstLocalPlayerPawn(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return nullptr;);
 
     return PlayerController->GetPawn<T>();
 }
@@ -162,7 +162,7 @@ template <CAPlayerState T = APlayerState>
 T* GetFirstLocalPlayerState(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return nullptr;);
 
     return PlayerController->GetPlayerState<T>();
 }
@@ -173,7 +173,7 @@ template <CAPlayerCameraManager T = APlayerCameraManager>
 T* GetFirstLocalPlayerCameraManager(const TNotNull<const UObject*> WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return nullptr;);
 
     return Cast<T>(PlayerController->PlayerCameraManager);
 }

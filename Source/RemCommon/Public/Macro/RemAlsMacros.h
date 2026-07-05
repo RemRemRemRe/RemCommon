@@ -8,7 +8,7 @@
 #define REM_API REMCOMMON_API
 
 // #define REM_GET_TYPE_STRING(Type) \
-// 	((void) sizeof UEAsserts_Private::GetMemberNameCheckedJunk(static_cast<Type*>(nullptr)), TEXTVIEW(#Type))
+// 	((void) sizeof UEAsserts_Private::GetMemberNameCheckedJunk(static_cast<Type*>(nullptr)), ANSITEXTVIEW(#Type))
 
 // A lightweight version of the ensure() macro that doesn't generate a C++ call stack and doesn't send a
 // crash report, because it doesn't happen instantly and causes the editor to freeze, which can be annoying.

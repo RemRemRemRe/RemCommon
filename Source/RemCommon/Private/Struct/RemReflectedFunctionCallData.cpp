@@ -21,13 +21,19 @@ void FRemReflectedFunctionCallData::Execute()
 
         // TODO: if this is required?
         const auto* Class = ContextObject.GetClass();
-        RemCheckCondition(Class->IsChildOf(FunctionData.FunctionOwnerClass), return;, LogRemCommon, Error,
-            TEXT("class of ContextObject is different from FunctionOwnerClass"));
+        RemCheckCondition(Class->IsChildOf(FunctionData.FunctionOwnerClass),
+            {
+            REM_LOG_FUNCTION(LogRemCommon, Error, "class of ContextObject is different from FunctionOwnerClass");
+            return;
+            });
     }
     else
     {
-        RemCheckCondition(LocalFunction->HasAllFunctionFlags(EFunctionFlags::FUNC_Static), return;, LogRemCommon, Error,
-            TEXT("ContextObject is required for member function"));
+        RemCheckCondition(LocalFunction->HasAllFunctionFlags(EFunctionFlags::FUNC_Static),
+            {
+            REM_LOG_FUNCTION(LogRemCommon, Error, "ContextObject is required for member function");
+            return;
+            });
 
         LocalObject = GetMutableDefault<UObject>(FunctionData.FunctionOwnerClass);
     }
@@ -60,7 +66,7 @@ bool FRemReflectedFunctionCallData::TryFillParameters()
 
         if (Desc.ValueType == EPropertyBagPropertyType::None)
         {
-            REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("parameter type:{0} of function:{1} is not supported"), Desc,
+            REM_LOG_FUNCTION(LogRemCommon, Error, "parameter type:{0} of function:{1} is not supported", Desc,
                 FunctionData);
 
             FunctionData.FunctionName = {};

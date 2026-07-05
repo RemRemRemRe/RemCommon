@@ -23,11 +23,11 @@ UAnimInstance* GetAnimInstance(const TNotNull<const AActor*> Actor)
             return Character->GetMesh()->GetAnimInstance();
         }
 
-        REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("mesh is missing on Character:{0}"), Character);
+        REM_LOG_FUNCTION(LogRemCommon, Error, "mesh is missing on Character:{0}", Character);
     }
     else
     {
-        REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("Actor:{0} is not an ACharacter "), Actor);
+        REM_LOG_FUNCTION(LogRemCommon, Error, "Actor:{0} is not an ACharacter", Actor);
     }
 
     return nullptr;

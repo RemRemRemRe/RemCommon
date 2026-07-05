@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include "Macro/RemLogMacros.h"
+#include "Macro/RemMacroUtilities.h"
+#include "Macro/RemFunctionNameUtility.h"
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
 // An alternative for PURE_VIRTUAL which will cause unwanted process terminated
 #define REM_VIRTUAL_WARN(CategoryName, ...) \
 	{ \
-		REM_INITIALIZE_SOURCE_LOCATION_STRING(SourceLocation) \
-		UE_LOG(CategoryName, Error, TEXT("Frame:%d Called a virtual function which is not implemented (%s)"), ::GFrameNumber, *SourceLocation); \
+		UE_LOGF(CategoryName, Error, "Frame:%d Called a virtual function which is not implemented (%hs)", ::GFrameNumber, REM_FUNCTION_LINE_FORMATED); \
 		__VA_ARGS__ \
 	}
 

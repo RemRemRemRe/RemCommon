@@ -7,7 +7,7 @@ public class RemCommon : ModuleRules
 {
 	public RemCommon(ReadOnlyTargetRules target) : base(target)
 	{
-        RemSharedModuleRules.Apply(this);
+		RemSharedModuleRules.Apply(this);
 
 		PrivateDependencyModuleNames.AddRange(
 			[
@@ -17,8 +17,14 @@ public class RemCommon : ModuleRules
 
 				"DeveloperSettings",
 				"GameplayTags",
-                
+
 				"strong_alias",
+			]
+		);
+
+		PublicDependencyModuleNames.AddRange(
+			[
+				"RemFmtLib",
 			]
 		);
 	}
@@ -26,20 +32,20 @@ public class RemCommon : ModuleRules
 
 namespace Rem.BuildRule
 {
-    public static class RemSharedModuleRules
-    {
-        public static void Apply(ModuleRules target)
-        {
-            target.CppCompileWarningSettings.ShadowVariableWarningLevel = WarningLevel.Error;
-            target.IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
-            target.DefaultBuildSettings = BuildSettingsVersion.Latest;
-            target.CppStandard = CppStandardVersion.EngineDefault;
-            target.CppCompileWarningSettings.UnsafeTypeCastWarningLevel = WarningLevel.Warning;
-            
-            target.CppCompileWarningSettings.NonInlinedGenCppWarningLevel = WarningLevel.Warning;
-            target.bUseUnity = false;
-            
-            target.bAllowUETypesInNamespaces = true;
-        }
-    }
+	public static class RemSharedModuleRules
+	{
+		public static void Apply(ModuleRules target)
+		{
+			target.CppCompileWarningSettings.ShadowVariableWarningLevel = WarningLevel.Error;
+			target.IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+			target.DefaultBuildSettings = BuildSettingsVersion.Latest;
+			target.CppStandard = CppStandardVersion.EngineDefault;
+			target.CppCompileWarningSettings.UnsafeTypeCastWarningLevel = WarningLevel.Warning;
+
+			target.CppCompileWarningSettings.NonInlinedGenCppWarningLevel = WarningLevel.Warning;
+			target.bUseUnity = false;
+
+			target.bAllowUETypesInNamespaces = true;
+		}
+	}
 }

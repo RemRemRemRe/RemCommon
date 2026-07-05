@@ -10,7 +10,7 @@
 FStructView FRemInstancedStructContainer::TryGetView(const FKeyType Key)
 {
     auto* Index = IndexMap.Find(Key);
-    RemEnsureVariable(Index, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureVariable(REM_NO_ASSERTION, Index, return {});
 
     return StructContainer[*Index];
 }
@@ -18,7 +18,7 @@ FStructView FRemInstancedStructContainer::TryGetView(const FKeyType Key)
 FConstStructView FRemInstancedStructContainer::TryGetView(const FKeyType Key) const
 {
     auto* Index = IndexMap.Find(Key);
-    RemEnsureVariable(Index, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureVariable(REM_NO_ASSERTION, Index, return {});
 
     return StructContainer[*Index];
 }
@@ -36,7 +36,7 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
     }
 
     // StructMemory is optional
-    RemEnsureVariable(NewStruct.GetScriptStruct(), return false, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureVariable(REM_NO_ASSERTION, NewStruct.GetScriptStruct(), return false);
 
     const auto IndexToInsert = Rem::Algo::LowerBound(StructContainer,
         NewStruct.GetScriptStruct()->GetMinAlignment(),

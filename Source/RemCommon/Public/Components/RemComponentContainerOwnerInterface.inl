@@ -20,7 +20,7 @@ decltype(auto) GetComponentContainer(TNotNull<TObject*> Object)
     using FResult = TOptional<decltype(::Cast<IRemComponentContainerOwnerInterface>(Object)->GetComponentContainer())>;
 
     auto* Interface = ::Cast<IRemComponentContainerOwnerInterface>(Object);
-    RemEnsureVariable(Interface, return FResult{}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureVariable(REM_NO_ASSERTION, Interface, return FResult{});
 
     return FResult{Interface->GetComponentContainer()};
 }
@@ -31,7 +31,7 @@ decltype(auto) FindComponent(TNotNull<TObject*> Object)
     using TResult = decltype(GetComponentContainer(Object).GetValue()->template FindComponent<T>());
 
     auto ComponentContainer = GetComponentContainer(Object);
-    RemEnsureCondition(ComponentContainer, return TResult{}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureCondition(REM_NO_ASSERTION, ComponentContainer, return TResult{});
 
     auto ComponentView = ComponentContainer.GetValue()->template FindComponent<T>();
 

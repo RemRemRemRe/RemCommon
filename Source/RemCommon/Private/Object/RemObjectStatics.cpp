@@ -87,38 +87,38 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 
 APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
 {
-    RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerController(WorldContextObject);
 }
 
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
-    RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayer(WorldContextObject);
 }
 
 APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
 {
-    RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerPawn(WorldContextObject);
 }
 
 APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
 {
-    RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerState(WorldContextObject);
 }
 
 APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
 {
-    RemCheckVariable(WorldContextObject, return nullptr;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerCameraManager(WorldContextObject);
 }
 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return;);
 
     // Dedicated server does not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -129,7 +129,7 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(PlayerController, return;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, PlayerController, return;);
 
     // Dedicated server does not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -139,7 +139,7 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 
 bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* NewRootComponent)
 {
-    RemCheckVariable(Actor, return false;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckVariable(ensure, Actor, return false;);
 
     return Actor->SetRootComponent(NewRootComponent);
 }
@@ -148,7 +148,7 @@ bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* Ne
 namespace Rem::Object
 {
 
-const FName RootBone{TEXTVIEW("root")};
+const FName RootBone{ANSITEXTVIEW("root")};
 
 FAudioDeviceHandle GetAudioDevice(const TNotNull<const UObject*> Object)
 {
@@ -271,7 +271,7 @@ FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
         return MovementComponent->GetActorFeetLocation();
     }
 
-    RemCheckCondition(Actor->GetRootComponent(), return FVector::ZeroVector, REM_NO_LOG_BUT_ENSURE);
+    RemCheckCondition(ensure, Actor->GetRootComponent(), return FVector::ZeroVector);
 
     return Actor->GetRootComponent()->GetComponentTransform().TransformPosition(
         FVector{0.0f, 0.0f, Actor->GetRootComponent()->Bounds.BoxExtent.Z});
@@ -280,7 +280,7 @@ FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
 FTransform GetRootBoneTransform(const TNotNull<const ACharacter*> Character)
 {
     auto* Mesh = Character->GetMesh();
-    RemEnsureVariable(Mesh, return FTransform::Identity, REM_NO_LOG_BUT_ENSURE);
+    RemEnsureVariable(ensure, Mesh, return FTransform::Identity);
 
     return Mesh->GetSocketTransform(RootBone);
 }
@@ -296,7 +296,7 @@ TOptional<FVector2f> GetPositionToMouseScreenSpace(const TNotNull<const APlayerC
     FVector2f MousePosition;
 
     const auto bSuccess = PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
-    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureCondition(REM_NO_ASSERTION, bSuccess, return {});
 
     return FVector2f{MousePosition.X - ScreenPosition.X, MousePosition.Y - ScreenPosition.Y};
 }
@@ -324,7 +324,7 @@ TOptional<FVector> GetScreenCenterToMouseWorldSpace(
 {
     FVector MouseWorldLocation, MouseWorldDirection;
     auto bSuccess = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
-    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureCondition(REM_NO_ASSERTION, bSuccess, return {});
 
     const auto ViewportCenter = GetViewportCenter(PlayerController);
 
@@ -332,7 +332,7 @@ TOptional<FVector> GetScreenCenterToMouseWorldSpace(
     bSuccess = PlayerController->DeprojectScreenPositionToWorld(ViewportCenter.X, ViewportCenter.Y,
         ViewportCenterWorldLocation, ViewportCenterWorldDirection);
 
-    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureCondition(REM_NO_ASSERTION, bSuccess, return {});
 
 #if REM_DRAW_DEBUG_CODE
 
@@ -352,7 +352,7 @@ TOptional<FVector> GetMousePositionWorldSpace(const TNotNull<const APlayerContro
 {
     FVector MouseWorldLocation, MouseWorldDirection;
     const auto bSuccess = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
-    RemEnsureCondition(bSuccess, return {}, REM_NO_LOG_OR_ASSERTION);
+    RemEnsureCondition(REM_NO_ASSERTION, bSuccess, return {});
 
     RemCheckCondition(!FMath::IsNearlyZero(MouseWorldDirection.Z, UE_DOUBLE_KINDA_SMALL_NUMBER), return {});
 

@@ -40,4 +40,4 @@
 #define REM_SET_FALSE_IF(Variable) REM_IF_THEN(Variable, Variable = false;)
 
 #define REM_GET_TYPE_STRING(Type) \
-	((void) sizeof UEAsserts_Private::GetMemberNameCheckedJunk(static_cast<Type*>(nullptr)), TEXTVIEW(#Type))
+	((void) sizeof UEAsserts_Private::GetMemberNameCheckedJunk(static_cast<Type*>(nullptr)), ANSITEXTVIEW(#Type))

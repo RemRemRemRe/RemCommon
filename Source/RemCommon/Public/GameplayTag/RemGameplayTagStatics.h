@@ -35,24 +35,24 @@ REMCOMMON_API FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag)
 [[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const TConstArrayView<FGameplayTag> Tags);
 [[nodiscard]] REMCOMMON_API uint32 GetHashForTags(const FGameplayTagContainer& Tags);
 
-[[nodiscard]] REMCOMMON_API FString TagToStringWithoutDot(const FGameplayTag& Tag);
+[[nodiscard]] REMCOMMON_API FUtf8String TagToStringWithoutDot(const FGameplayTag& Tag);
 [[nodiscard]] REMCOMMON_API FName TagToNameWithoutDot(const FGameplayTag& Tag);
 
-[[nodiscard]] REMCOMMON_API FGameplayTag TryGetTagFromString(const FString& TagString);
+[[nodiscard]] REMCOMMON_API FGameplayTag TryGetTagFromString(const FUtf8String& TagString);
 
 /**
  * @param StringRef string to modify
  * @param Tag string source
  * @return true if StringRef get modified
  */
-REMCOMMON_API bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag);
+REMCOMMON_API bool TryUpdateTagString(FUtf8String& StringRef, const FGameplayTag& Tag);
 
-[[nodiscard]] REMCOMMON_API TArray<FString> GetTagsString(TConstArrayView<FGameplayTag> Tags);
+[[nodiscard]] REMCOMMON_API TArray<FUtf8String> GetTagsString(TConstArrayView<FGameplayTag> Tags);
 [[nodiscard]] REMCOMMON_API FGameplayTagContainer ToTagContainer(TConstArrayView<FGameplayTag> Tags);
-[[nodiscard]] REMCOMMON_API FString ToString(TConstArrayView<FGameplayTag> Tags, bool bQuoted = false);
+[[nodiscard]] REMCOMMON_API FUtf8String ToString(TConstArrayView<FGameplayTag> Tags, bool bQuoted = false);
 
 REMCOMMON_API FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag& TagTwo);
-REMCOMMON_API FGameplayTag FindCommonParentTag(FStringView TagStringOne, FStringView TagStringTwo);
+REMCOMMON_API FGameplayTag FindCommonParentTag(FUtf8StringView TagStringOne, FUtf8StringView TagStringTwo);
 [[nodiscard]] REMCOMMON_API TArray<FGameplayTag> FindCommonParentTags(TConstArrayView<FGameplayTag> TagsOne,
     TConstArrayView<FGameplayTag> TagsTwo);
 

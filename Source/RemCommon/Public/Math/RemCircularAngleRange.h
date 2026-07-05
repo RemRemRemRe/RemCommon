@@ -330,19 +330,19 @@ public:
         return Rem::Math::IsNearlyZero(StartAngle) && Rem::Math::IsNearlyZero(EndAngle);
     }
 
-    FString ToString() const
+    FUtf8String ToString() const
     {
         if (IsFullCircle())
         {
-            return FString("[0°-360°]");
+            return FUtf8String("[0°-360°]");
         }
 
         if (!IsWrappingZero())
         {
-            return FString::Printf(TEXT("[%.3f°-%.3f°]"), StartAngle, EndAngle);
+            return FUtf8String::Printf("[%.3f°-%.3f°]", StartAngle, EndAngle);
         }
 
-        return FString::Printf(TEXT("[%.3f°-360°) and [0°-%.3f°]"), StartAngle, EndAngle);
+        return FUtf8String::Printf("[%.3f°-360°) and [0°-%.3f°]", StartAngle, EndAngle);
     }
 
     /**

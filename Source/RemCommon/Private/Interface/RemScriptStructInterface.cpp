@@ -11,7 +11,7 @@
 
 UScriptStruct& IRemScriptStructInterface::GetScriptStruct() const
 {
-    REM_LOG_FUNCTION(LogRemCommon, Error, TEXT("interface is not implemented, address:{0}"),
+    REM_LOG_FUNCTION(LogRemCommon, Error, "interface is not implemented, address:{0}",
         Rem::PointerToString(this));
 
     return *FRemEmptyStruct::StaticStruct();

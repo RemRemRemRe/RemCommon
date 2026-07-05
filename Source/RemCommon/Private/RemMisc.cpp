@@ -22,44 +22,6 @@ bool IsClassDefaultObject(const UObject* Object)
     return Class->GetDefaultObject(false) == Object;
 }
 
-FString GetObjectNameFromSoftObjectPath(const FSoftObjectPath& SoftObjectPath)
-{
-    const FString& SubPathString = SoftObjectPath.GetSubPathString();
-
-    // may just construct a FCoreRedirectObjectName to help doing this,
-    // but will that do too much extra work?
-    if (int32 ObjectNameIndex;
-        SubPathString.FindLastChar(TEXT('.'), ObjectNameIndex))
-    {
-        // + 1 to get rid of the '.'
-        return SubPathString.RightChop(ObjectNameIndex + 1);
-    }
-
-    return {};
-}
-
-FString PointerToString(const void* Value)
-{
-    return FString::Printf(TEXT("%p"), Value);
-}
-
-FString ToString(const UScriptStruct& ScriptStruct, const void* Value)
-{
-    FString HumanReadableMessage;
-    ScriptStruct.ExportText(/*out*/ HumanReadableMessage, Value,
-        /*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-    return HumanReadableMessage;
-}
-
-void AppendCharRepeated(FString& String, const TCHAR Char, const int32 TimesToRepeat)
-{
-    String.Reserve(String.Len() + TimesToRepeat);
-    for (auto Counter = 0; Counter < TimesToRepeat; ++Counter)
-    {
-        String.AppendChar(Char);
-    }
-}
-
 uint8* AllocateStructMemory(const UStruct& Struct)
 {
     auto StructMemory = static_cast<uint8*>(

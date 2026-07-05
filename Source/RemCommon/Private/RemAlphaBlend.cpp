@@ -13,7 +13,7 @@
 FVector3f FRemAlphaBlendCurveAndOption::GetAlpha(const float Time, const float BlendTime,
     const EAlphaBlendOption BlendOption, const FRemCurveBaseWrapper& CurveWrapper, bool& bOutVectorAlpha)
 {
-    RemCheckCondition(BlendTime > 0.0f, return FVector3f::OneVector;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckCondition(ensure, BlendTime > 0.0f, return FVector3f::OneVector;);
 
     const auto Alpha = FMath::Clamp(Time / BlendTime, 0.0f, 1.0f);
 
@@ -27,7 +27,7 @@ FVector3f FRemAlphaBlendCurveAndOption::GetAlpha(const float Time, const float B
     TArray<FRichCurveEditInfoConst, TInlineAllocator<4>> Curves;
     Curve->GetCurves(Curves);
 
-    RemCheckCondition(Curves.Num() > 0, return FVector3f::OneVector;, REM_NO_LOG_BUT_ENSURE);
+    RemCheckCondition(ensure, Curves.Num() > 0, return FVector3f::OneVector;);
     bOutVectorAlpha = Curves.Num() >= 3;
 
     auto VectorAlpha{FVector3f::OneVector};
