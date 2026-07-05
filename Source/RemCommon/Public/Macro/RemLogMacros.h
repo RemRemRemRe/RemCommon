@@ -143,8 +143,8 @@
 #define REM_SCOPED_LOG(Object, CategoryName, Verbosity, LogStart, LogEnd) \
 	ON_SCOPE_EXIT \
 	{ \
-		REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, LogStart); \
+		REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, LogEnd); \
 	}; \
-	REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, LogEnd);
+	REM_LOG_ROLE_FUNCTION(Object, CategoryName, Verbosity, LogStart);
 
 #endif
