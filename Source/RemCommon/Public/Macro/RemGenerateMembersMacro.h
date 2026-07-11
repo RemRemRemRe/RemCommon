@@ -134,9 +134,3 @@
 	~Type() noexcept = default;
 
 #pragma endregion Rule Of Five
-
-#define REM_DEFINE_GET_SCRIPT_STRUCT_INTERFACE \
-	virtual UScriptStruct& GetScriptStruct() const override \
-	{ \
-		return *StaticStruct(); \
-	}

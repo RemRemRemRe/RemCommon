@@ -21,3 +21,9 @@ class REMCOMMON_API IRemScriptStructInterface
 public:
     virtual Rem::TNotNull<const UScriptStruct*> GetScriptStruct() const;
 };
+
+#define REM_DEFINE_GET_SCRIPT_STRUCT_INTERFACE \
+	virtual Rem::TNotNull<const UScriptStruct*> GetScriptStruct() const override \
+	{ \
+		return StaticStruct(); \
+	}
