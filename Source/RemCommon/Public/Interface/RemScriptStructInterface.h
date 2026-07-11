@@ -4,6 +4,8 @@
 
 #include "UObject/Interface.h"
 
+#include "RemNotNull.h"
+
 #include "RemScriptStructInterface.generated.h"
 
 UINTERFACE(MinimalAPI)
@@ -17,5 +19,5 @@ class REMCOMMON_API IRemScriptStructInterface
     GENERATED_BODY()
 
 public:
-    virtual UScriptStruct& GetScriptStruct() const;
+    virtual Rem::TNotNull<const UScriptStruct*> GetScriptStruct() const;
 };

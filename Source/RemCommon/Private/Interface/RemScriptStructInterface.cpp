@@ -9,10 +9,10 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemScriptStructInterface)
 
-UScriptStruct& IRemScriptStructInterface::GetScriptStruct() const
+Rem::TNotNull<const UScriptStruct*> IRemScriptStructInterface::GetScriptStruct() const
 {
     REM_LOG_FUNCTION(LogRemCommon, Error, "interface is not implemented, address:{0}",
         Rem::PointerToString(this));
 
-    return *FRemEmptyStruct::StaticStruct();
+    return FRemEmptyStruct::StaticStruct();
 }
