@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "UObject/SoftObjectPtr.h"
+
 #include "RemConcepts.h"
 #include "Macro/RemGenerateMembersMacro.h"
 
