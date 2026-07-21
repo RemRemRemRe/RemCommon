@@ -46,6 +46,7 @@ REMCOMMON_API FPrimaryAssetId MakePrimaryAssetIdFromTag(const FGameplayTag& Tag)
  * @return true if StringRef get modified
  */
 REMCOMMON_API bool TryUpdateTagString(FUtf8String& StringRef, const FGameplayTag& Tag);
+REMCOMMON_API bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag);
 
 [[nodiscard]] REMCOMMON_API TArray<FUtf8String> GetTagsString(TConstArrayView<FGameplayTag> Tags);
 [[nodiscard]] REMCOMMON_API FGameplayTagContainer ToTagContainer(TConstArrayView<FGameplayTag> Tags);

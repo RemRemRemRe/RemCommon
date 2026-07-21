@@ -87,6 +87,16 @@ bool TryUpdateTagString(FUtf8String& StringRef, const FGameplayTag& Tag)
     return true;
 }
 
+bool TryUpdateTagString(FString& StringRef, const FGameplayTag& Tag)
+{
+    FUtf8String Utf8String{StringRef};
+    ON_SCOPE_EXIT
+    {
+        StringRef = FString{Utf8String};
+    };
+    return TryUpdateTagString(Utf8String, Tag);
+}
+
 TArray<FUtf8String> GetTagsString(const TConstArrayView<FGameplayTag> Tags)
 {
     TArray<FUtf8String> TagsString{};
