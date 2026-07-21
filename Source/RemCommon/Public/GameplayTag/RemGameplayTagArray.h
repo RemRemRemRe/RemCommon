@@ -22,5 +22,14 @@ struct REMCOMMON_API FRemGameplayTagArray
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (EditInline, TitleProperty = TagName))
     TArray<FGameplayTag> Tags;
 
+    template<class AllocatorType>
+    FGameplayTagContainer ToTagContainer() const;
+
     REM_DEFINE_GETTERS_RETURN_REFERENCE(/*no predicate*/, /*no suffix*/, Tags)
 };
+
+template <class TAllocatorType>
+FGameplayTagContainer FRemGameplayTagArray::ToTagContainer() const
+{
+    return FGameplayTagContainer::CreateFromArray<TAllocatorType>(Tags);
+}
