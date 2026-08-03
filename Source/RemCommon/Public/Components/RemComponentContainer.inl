@@ -38,7 +38,7 @@ template <std::derived_from<FRemComponentBase> T>
 template <std::derived_from<FRemComponentBase> T>
 [[nodiscard]] auto FRemComponentContainer::FindComponent(const int32 Index)
 {
-    RemCheckCondition(Components.IsValidIndex(Index), return {});
+    RemCheckCondition(Components.IsValidIndex(Index), return TStructView<T>{});
 
     return Rem::Struct::TryMakeView<T>(FStructView{Components[Index].GetScriptStruct(),
         Components[Index].GetMutableMemory()
@@ -48,7 +48,7 @@ template <std::derived_from<FRemComponentBase> T>
 template <std::derived_from<FRemComponentBase> T>
 [[nodiscard]] auto FRemComponentContainer::FindComponent(const int32 Index) const
 {
-    RemCheckCondition(Components.IsValidIndex(Index), return {});
+    RemCheckCondition(Components.IsValidIndex(Index), return TConstStructView<T>{});
 
     return Rem::Struct::TryMakeView<T>(FConstStructView{Components[Index].GetScriptStruct(),
         Components[Index].GetMemory()

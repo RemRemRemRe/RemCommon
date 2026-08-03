@@ -23,7 +23,7 @@ auto FRemComponentViewContainerInstance::FindComponent() const
 template <std::derived_from<FRemComponentViewBase> T>
 auto FRemComponentViewContainerInstance::FindComponent(const int32 Index) const
 {
-    RemCheckCondition(Components.IsValidIndex(Index), return {});
+    RemCheckCondition(Components.IsValidIndex(Index), return TConstStructView<T>{});
 
     return Rem::Struct::TryMakeView<T>(FConstStructView{Components[Index].GetScriptStruct(),
         Components[Index].GetMemory()
