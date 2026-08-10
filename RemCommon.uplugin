@@ -21,6 +21,11 @@
             "Name": "RemCommon",
             "Type": "Runtime",
             "LoadingPhase": "Default"
+        },
+        {
+            "Name": "RemCommonTest",
+            "Type": "UncookedOnly",
+            "LoadingPhase": "Default"
         }
     ],
     "Plugins": [

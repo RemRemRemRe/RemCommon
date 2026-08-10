@@ -5,7 +5,7 @@
 #include "RemComponentContainer.h"
 
 #include "Macro/RemAssertionMacros.h"
-#include "Struct/RemInstancedStructStaics.inl"
+#include "Struct/RemInstancedStructStatics.inl"
 #include "Components/ActorComponent.h"
 
 template <Rem::CUObject TOwner>

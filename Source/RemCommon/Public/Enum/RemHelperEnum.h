@@ -87,4 +87,10 @@ enum class ELatentTimerType : uint8
     Delay
 };
 
+enum class EConstness : uint8
+{
+    Const,
+    Mutable,
+};
+
 }

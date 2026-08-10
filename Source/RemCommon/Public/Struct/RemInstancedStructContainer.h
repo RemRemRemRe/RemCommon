@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "RemInstancedStructStaics.inl"
+#include "RemInstancedStructStatics.inl"
 #include "StructUtils/InstancedStructContainer.h"
 
 #include "RemInstancedStructContainer.generated.h"

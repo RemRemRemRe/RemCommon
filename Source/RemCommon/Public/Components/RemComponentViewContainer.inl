@@ -4,7 +4,7 @@
 
 #include "RemComponentViewContainer.h"
 #include "Macro/RemAssertionMacros.h"
-#include "Struct/RemInstancedStructStaics.inl"
+#include "Struct/RemInstancedStructStatics.inl"
 
 template <std::derived_from<FRemComponentViewBase> TComponentType>
 TComponentType::FInstanceDataType* FRemComponentViewBase::GetInstanceData(const FContext& Context) const

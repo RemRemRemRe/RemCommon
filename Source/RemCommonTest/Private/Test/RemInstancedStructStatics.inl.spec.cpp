@@ -1,17 +1,16 @@
-// Copyright RemRemRemRe. 2025. All Rights Reserved.
+// Copyright RemRemRemRe. 2026. All Rights Reserved.
 
 #include "Misc/AutomationTest.h"
 #include "Object/RemEmptyStruct.h"
-#include "Struct/RemInstancedStructStaics.inl"
+#include "Struct/RemInstancedStructStatics.inl"
 #include "StructUtils/StructView.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FRemInstancedStructStaicsInlineTest, "Rem.Struct.Statics.Inline",
+DEFINE_SPEC(FRemInstancedStructStaticsInlineTest, "Rem.Struct.Statics.Inline",
     EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter);
 
-
-void FRemInstancedStructStaicsInlineTest::Define()
+void FRemInstancedStructStaticsInlineTest::Define()
 {
     Describe(TEXT("Test API FindStructView"), [this]
     {
@@ -68,8 +67,10 @@ void FRemInstancedStructStaicsInlineTest::Define()
         {
             FRemEmptyStruct EmptyStruct;
 
-            //TArray<TSharedStruct<FRemEmptyStruct>> A{EmptyStruct};
-            TArray<TInstancedStruct<FRemEmptyStruct>> B{TInstancedStruct<FRemEmptyStruct>::Make(EmptyStruct)};
+            // TSharedStruct<T> has no implicit ctor from T (shared ownership must be
+            // explicit via Make) - unlike TStructView<T>, so {EmptyStruct} does not compile.
+            TArray A{TSharedStruct<FRemEmptyStruct>::Make(EmptyStruct)};
+            TArray B{TInstancedStruct<FRemEmptyStruct>::Make(EmptyStruct)};
             TArray<TStructView<FRemEmptyStruct>> C{EmptyStruct};
             TArray<TConstStructView<FRemEmptyStruct>> D{EmptyStruct};
 
@@ -79,7 +80,8 @@ void FRemInstancedStructStaicsInlineTest::Define()
             TArray H{FConstStructView::Make<FRemEmptyStruct>(EmptyStruct)};
 
             constexpr TStructView<FRemEmptyStruct> EmptyView{};
-            //TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(A)), EmptyView);
+            TestNotEqual(TEXT("EmptyView"),
+                Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(A)).Get<0>(), EmptyView);
             TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(B)).Get<0>(),
                 EmptyView);
             TestNotEqual(TEXT("EmptyView"), Rem::Struct::FindStructView<FRemEmptyStruct>(MakeArrayView(C)).Get<0>(),
@@ -96,7 +98,8 @@ void FRemInstancedStructStaicsInlineTest::Define()
                 EmptyView);
 
             constexpr TConstStructView<FRemEmptyStruct> ConstEmptyView{};
-            //TestNotEqual(TEXT("ConstEmptyView"), Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)), ConstEmptyView);
+            TestNotEqual(TEXT("ConstEmptyView"),
+                Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(A)).Get<0>(), ConstEmptyView);
             TestNotEqual(TEXT("ConstEmptyView"),
                 Rem::Struct::FindConstStructView<FRemEmptyStruct>(MakeConstArrayView(B)).Get<0>(), ConstEmptyView);
             TestNotEqual(TEXT("ConstEmptyView"),
