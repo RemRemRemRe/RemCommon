@@ -81,7 +81,7 @@ struct FRemScopedStructContainerTestOversized
     int32 Id{};
 
     UPROPERTY()
-    uint8 Payload[4096];
+    uint8 Payload[4096]{};
 };
 
 /** alignas(32) via a non-reflected member: Emplace aligns to alignof(T) = 32,
@@ -95,7 +95,7 @@ struct FRemScopedStructContainerTestWideAligned
     UPROPERTY()
     int32 Id{};
 
-    alignas(32) uint8 Payload[4096];
+    alignas(32) uint8 Payload[4096]{};
 };
 
 /**
