@@ -66,10 +66,11 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
         // Engine workaround (ue5-main regression): FInstancedStructContainer::InsertAt
         // shifts tail item offsets before calling ReserveBytes, whose
         // check(ValuesSize <= AllocatedSize) then fails on any middle insert that grows
-        // the allocation. Rebuild the container in order instead: middle inserts
-        // invalidate views either way, and this container is a small keyed config store.
-        // The items are deep-copied out first (operator= destroys the old items).
-        TArray<FInstancedStruct> Reordered;
+        // the allocation. Rebuild the container in order instead: collect views (no
+        // struct copies), append them into a fresh container, then move-assign. Each
+        // item is copied exactly once, and the old items are destroyed only after the
+        // new container is fully built.
+        TArray<FConstStructView> Reordered;
         Reordered.Reserve(StructContainer.Num() + 1);
         for (int32 Index = 0; Index <= StructContainer.Num(); ++Index)
         {
@@ -83,7 +84,9 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
             }
         }
 
-        StructContainer = Reordered;
+        FInstancedStructContainer NewContainer;
+        NewContainer.Append(Reordered);
+        StructContainer = MoveTemp(NewContainer);
     }
 
     IndexMap.Add(Key, IndexToInsert);
