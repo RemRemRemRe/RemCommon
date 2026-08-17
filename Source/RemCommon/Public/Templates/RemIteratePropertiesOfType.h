@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RemConcepts.h"
 #include "StructUtils/InstancedStruct.h"
 #include "RemNotNull.h"
 #include "Templates/CopyQualifiersFromTo.h"
@@ -30,7 +31,7 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
             InFunction(InProperty, InContainer);
         }
 
-        for (auto DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
+        for (int32 DynamicIndex = 0; DynamicIndex < Helper.Num(); ++DynamicIndex)
         {
             TVoid* ValuePtr = Helper.GetRawPtr(DynamicIndex);
             IteratePropertiesOfTypeRecursive<PropertyType, TVoid, TFunctor>(ArrayProperty->Inner, ValuePtr, InFunction);
@@ -131,7 +132,7 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
     {
         if constexpr (std::is_same_v<PropertyType, FProperty>)
         {
-            for (auto StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
+            for (int32 StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
             {
                 TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
                 InFunction(InProperty, ValuePtr);
@@ -141,7 +142,7 @@ void IteratePropertiesOfTypeRecursive(const TNotNull<const FProperty*> InPropert
         {
             if (const auto* TargetProperty = CastField<PropertyType>(InProperty))
             {
-                for (auto StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
+                for (int32 StaticIndex = 0; StaticIndex != InProperty->ArrayDim; ++StaticIndex)
                 {
                     TVoid* ValuePtr = InProperty->ContainerPtrToValuePtr<TVoid>(InContainer, StaticIndex);
                     InFunction(TargetProperty, ValuePtr);
