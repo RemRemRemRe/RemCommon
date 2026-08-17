@@ -21,7 +21,7 @@ SizeType LowerBound(RangeValueType& Range, const SizeType Num, const PredicateVa
     // Current start of sequence to check
     SizeType Start = 0;
     // Size of sequence to check
-    SizeType Size = Num;
+    SizeType Size  = Num;
 
     // With this method, if Size is even it will do one more comparison than necessary, but because Size can be predicted by the CPU it is faster in practice
     while (Size > 0)
@@ -33,9 +33,10 @@ SizeType LowerBound(RangeValueType& Range, const SizeType Num, const PredicateVa
         const SizeType StartIfLess = CheckIndex + LeftoverSize;
 
         auto&& CheckValue = Invoke(Projection, Range[CheckIndex]);
-        Start             = /*!*/SortPredicate(Value, CheckValue)
-                         ? StartIfLess
-                         : Start;
+
+        Start = SortPredicate(CheckValue, Value)
+                    ? StartIfLess
+                    : Start;
     }
 
     return Start;
@@ -49,7 +50,7 @@ SizeType UpperBound(RangeValueType& Range, const SizeType Num, const PredicateVa
     // Current start of sequence to check
     SizeType Start = 0;
     // Size of sequence to check
-    SizeType Size = Num;
+    SizeType Size  = Num;
 
     // With this method, if Size is even it will do one more comparison than necessary, but because Size can be predicted by the CPU it is faster in practice
     while (Size > 0)
@@ -61,7 +62,8 @@ SizeType UpperBound(RangeValueType& Range, const SizeType Num, const PredicateVa
         const SizeType StartIfLess = CheckIndex + LeftoverSize;
 
         auto&& CheckValue = Invoke(Projection, Range[CheckIndex]);
-        Start             = !SortPredicate(Value, CheckValue)
+
+        Start = !SortPredicate(Value, CheckValue)
                     ? StartIfLess
                     : Start;
     }
