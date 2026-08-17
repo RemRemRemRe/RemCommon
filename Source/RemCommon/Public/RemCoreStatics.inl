@@ -12,9 +12,9 @@ template <typename Container>
     requires (TIsTMap_V<Container> && CHasIsValid<typename Container::KeyType>)
 void RemoveInvalidKey(Container& Map)
 {
-    for (auto Iter{Map.CreateKeyIterator()}; Iter; ++Iter)
+    for (auto Iter{Map.CreateIterator()}; Iter; ++Iter)
     {
-        if (!Iter->IsValid())
+        if (!Iter->Key.IsValid())
         {
             Iter.RemoveCurrent();
         }
