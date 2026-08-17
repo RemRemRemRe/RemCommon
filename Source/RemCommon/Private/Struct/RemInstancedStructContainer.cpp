@@ -63,8 +63,27 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
             }
         }
 
-        // insert new one
-        StructContainer.InsertAt(IndexToInsert, MakeConstArrayView(&NewStruct, 1));
+        // Engine workaround (ue5-main regression): FInstancedStructContainer::InsertAt
+        // shifts tail item offsets before calling ReserveBytes, whose
+        // check(ValuesSize <= AllocatedSize) then fails on any middle insert that grows
+        // the allocation. Rebuild the container in order instead: middle inserts
+        // invalidate views either way, and this container is a small keyed config store.
+        // The items are deep-copied out first (operator= destroys the old items).
+        TArray<FInstancedStruct> Reordered;
+        Reordered.Reserve(StructContainer.Num() + 1);
+        for (int32 Index = 0; Index <= StructContainer.Num(); ++Index)
+        {
+            if (Index == IndexToInsert)
+            {
+                Reordered.Emplace(NewStruct);
+            }
+            if (Index < StructContainer.Num())
+            {
+                Reordered.Emplace(StructContainer[Index]);
+            }
+        }
+
+        StructContainer = Reordered;
     }
 
     IndexMap.Add(Key, IndexToInsert);
