@@ -14,6 +14,7 @@ public class RemCommonTest : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
+				"RenderCore",
 
 				"RemCommon",
 			]
