@@ -16,7 +16,10 @@ public class RemCommonTest : ModuleRules
 				"Engine",
 				"RenderCore",
 
+				"GameplayTags",
+
 				"RemCommon",
+				"strong_alias",
 			]
 		);
 	}
