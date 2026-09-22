@@ -98,7 +98,7 @@ public:
 
 namespace Rem::Object
 {
-REM_API extern const FName RootBone;
+constexpr FLazyName RootBone{"root"};
 
 REM_API FAudioDeviceHandle GetAudioDevice(TNotNull<const UObject*> Object);
 

@@ -148,8 +148,6 @@ bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* Ne
 namespace Rem::Object
 {
 
-const FName RootBone{ANSITEXTVIEW("root")};
-
 FAudioDeviceHandle GetAudioDevice(const TNotNull<const UObject*> Object)
 {
     const auto* World = Object->GetWorld();
