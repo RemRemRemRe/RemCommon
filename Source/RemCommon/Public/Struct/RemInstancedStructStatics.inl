@@ -4,6 +4,8 @@
 
 #include "Struct/RemStructViewStatics.inl"
 
+#include "RemNotNull.h"
+
 namespace Rem::Struct
 {
 template <typename TStructType, CStructUtils TStructUtils>
@@ -20,7 +22,7 @@ auto FindConstStructView(TConstArrayView<TStructUtils> BaseStructsArrayView)
 
 template <typename TStructType, CStructUtils TStructUtils>
 void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
-    TFunctionRef<void(TStructType& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
+    TFunctionRef<void(TNotNull<TStructType*>, int32, TNotNull<const UScriptStruct*>)> FunctionRef)
 {
     for (auto Index = 0; Index < BaseStructsArrayView.Num(); ++Index)
     {
@@ -35,14 +37,14 @@ void ForEachStructView(TArrayView<TStructUtils> BaseStructsArrayView,
         {
             if (auto* Ptr = BaseStruct.template GetMutablePtr<TStructType>())
             {
-                FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
+                FunctionRef(MakeNotNull(Ptr), Index, MakeNotNull(BaseStruct.GetScriptStruct()));
             }
         }
         else
         {
             if (auto* Ptr = BaseStruct.template GetPtr<TStructType>())
             {
-                FunctionRef(*Ptr, Index, *BaseStruct.GetScriptStruct());
+                FunctionRef(MakeNotNull(Ptr), Index, MakeNotNull(BaseStruct.GetScriptStruct()));
             }
         }
     }

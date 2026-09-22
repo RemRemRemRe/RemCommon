@@ -90,13 +90,21 @@ public:
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase, Rem::CScopedEnum EnumClass>
     [[nodiscard]] auto FindComponent(EnumClass Enum) const;
 
+    /**
+     * @brief Iterates the container's T components.
+     * @param FunctionRef receives element and script-struct pointers that are never null; the element pointer aliases the container's stored element.
+     */
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
     void ForEachComponent(
-        TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef);
+        TFunctionRef<void(Rem::TNotNull<T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef);
 
+    /**
+     * @brief Iterates the container's T components.
+     * @param FunctionRef receives element and script-struct pointers that are never null; the element pointer aliases the container's stored element.
+     */
     template <std::derived_from<FRemComponentBase> T = FRemComponentBase>
     void ForEachComponent(
-        TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const;
+        TFunctionRef<void(Rem::TNotNull<const T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef) const;
 
     /**
      * @return index of first component that matches the class exactly
@@ -105,9 +113,9 @@ public:
     int32 GetComponentIndex() const;
 
     /**
-     * @return index of the component
+     * @return index of the component, or INDEX_NONE if the instance is not stored in this container
      */
-    int32 GetComponentIndex(const FRemComponentBase& InComponent) const;
+    [[nodiscard]] int32 GetComponentIndex(Rem::TNotNull<const FRemComponentBase*> InComponent) const;
 
     void Initialize(Rem::TNotNull<UObject*> OwnerRef);
     void Uninitialize();

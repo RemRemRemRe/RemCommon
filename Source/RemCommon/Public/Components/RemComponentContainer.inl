@@ -69,14 +69,14 @@ template <std::derived_from<FRemComponentBase> T, Rem::CScopedEnum EnumClass>
 
 template <std::derived_from<FRemComponentBase> T>
 void FRemComponentContainer::ForEachComponent(
-    TFunctionRef<void(T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef)
+    TFunctionRef<void(Rem::TNotNull<T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef)
 {
     Rem::Struct::ForEachStructView(MakeArrayView(Components), FunctionRef);
 }
 
 template <std::derived_from<FRemComponentBase> T>
 void FRemComponentContainer::ForEachComponent(
-    TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const
+    TFunctionRef<void(Rem::TNotNull<const T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef) const
 {
     Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
 }

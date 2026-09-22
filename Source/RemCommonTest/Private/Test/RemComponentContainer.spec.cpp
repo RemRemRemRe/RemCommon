@@ -248,12 +248,12 @@ void FRemComponentContainerTest::Define()
 
             auto Iterated = 0;
             Container.ForEachComponent<FRemComponentBase>(
-                [&](const FRemComponentBase& Component, const int32 Index, const UScriptStruct& ScriptStruct)
+                [&](const FRemComponentBase* Component, const int32 Index, const UScriptStruct* ScriptStruct)
                 {
                     TestEqual(TEXT("index"), Index, Iterated);
                     TestTrue(TEXT("script struct is a component type"),
-                        ScriptStruct.IsChildOf(FRemComponentBase::StaticStruct()));
-                    TestTrue(TEXT("view points at component"), &Component != nullptr);
+                        ScriptStruct->IsChildOf(FRemComponentBase::StaticStruct()));
+                    TestTrue(TEXT("view points at component"), Component != nullptr);
                     ++Iterated;
                 });
 
@@ -267,9 +267,9 @@ void FRemComponentContainerTest::Define()
 
             auto ACount = 0;
             Container.ForEachComponent<FRemComponentContainerTestA>(
-                [&](FRemComponentContainerTestA& Component, const int32, const UScriptStruct&)
+                [&](FRemComponentContainerTestA* Component, const int32, const UScriptStruct*)
                 {
-                    Component.Value = ACount;
+                    Component->Value = ACount;
                     ++ACount;
                 });
 
@@ -306,7 +306,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             const auto B = Container.FindComponent<FRemComponentContainerTestB>();
-            TestEqual(TEXT("instance index"), Container.GetComponentIndex(*B.GetPtr()), 1);
+            TestEqual(TEXT("instance index"), Container.GetComponentIndex(B.GetPtr()), 1);
         });
     });
 

@@ -38,7 +38,7 @@ auto FRemComponentViewContainerInstance::FindComponent(EnumClass Enum) const
 
 template <std::derived_from<FRemComponentViewBase> T>
 void FRemComponentViewContainerInstance::ForEachComponent(
-    TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const
+    TFunctionRef<void(Rem::TNotNull<const T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef) const
 {
     Rem::Struct::ForEachStructView(MakeConstArrayView(Components), FunctionRef);
 }

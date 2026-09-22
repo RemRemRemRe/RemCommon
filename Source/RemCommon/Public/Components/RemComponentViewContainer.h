@@ -113,9 +113,13 @@ public:
         EnumClass>
     auto FindComponent(EnumClass Enum) const;
 
+    /**
+     * @brief Iterates the container's T component views.
+     * @param FunctionRef receives element and script-struct pointers that are never null; the element pointer aliases the container's stored element.
+     */
     template <std::derived_from<FRemComponentViewBase> T = FRemComponentViewBase>
     void ForEachComponent(
-        TFunctionRef<void(const T& Struct, int32 Index, const UScriptStruct& ScriptStruct)> FunctionRef) const;
+        TFunctionRef<void(Rem::TNotNull<const T*>, int32, Rem::TNotNull<const UScriptStruct*>)> FunctionRef) const;
 
     FStructView GetInstanceDataView(int32 ComponentIndex);
 
@@ -132,9 +136,9 @@ public:
     int32 GetComponentIndex() const;
 
     /**
-     * @return index of the component
+     * @return index of the component, or INDEX_NONE if the instance is not stored in this container
      */
-    int32 GetComponentIndex(const FRemComponentViewBase& InComponent) const;
+    [[nodiscard]] int32 GetComponentIndex(Rem::TNotNull<const FRemComponentViewBase*> InComponent) const;
 
     void Initialize(Rem::TNotNull<UObject*> OwnerRef);
     void Uninitialize();

@@ -28,11 +28,11 @@ void FRemComponentBase::Uninitialize(const FContext&)
 }
 
 
-int32 FRemComponentContainer::GetComponentIndex(const FRemComponentBase& InComponent) const
+int32 FRemComponentContainer::GetComponentIndex(Rem::TNotNull<const FRemComponentBase*> InComponent) const
 {
     for (auto Index = 0; Index < Components.Num(); ++Index)
     {
-        if (reinterpret_cast<const uint8*>(&InComponent) == Components[Index].GetMemory())
+        if (reinterpret_cast<const uint8*>(&*InComponent) == Components[Index].GetMemory())
         {
             return Index;
         }
@@ -60,9 +60,9 @@ void FRemComponentContainer::Initialize(Rem::TNotNull<UObject*> OwnerRef)
     REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", *OwnerRef);
 
     ForEachComponent<FRemComponentBase>(
-        [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
+        [&](FRemComponentBase* Component, const int32 Index, const UScriptStruct*)
         {
-            Component.Initialize(FRemComponentBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
+            Component->Initialize(FRemComponentBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 }
 
@@ -85,9 +85,9 @@ void FRemComponentContainer::Uninitialize()
     REM_LOG_FUNCTION(LogRemCommon, Verbose, "uninitializing components, Owner:{0}", Owner);
 
     ForEachComponent<FRemComponentBase>(
-        [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
+        [&](FRemComponentBase* Component, const int32 Index, const UScriptStruct*)
         {
-            Component.Uninitialize(FRemComponentBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
+            Component->Uninitialize(FRemComponentBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 
     Owner = nullptr;

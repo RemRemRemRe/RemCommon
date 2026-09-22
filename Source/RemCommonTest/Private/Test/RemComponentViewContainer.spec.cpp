@@ -84,6 +84,20 @@ void FRemComponentViewContainerTest::Define()
             const auto View = Context.Instance.FindComponent<FRemComponentViewContainerTestOtherComponent>();
             TestFalse(TEXT("no view"), View.IsValid());
         });
+
+        It(TEXT("should return the index of a passed component view, or INDEX_NONE outside the container"), [this]
+        {
+            const FRemComponentViewContainerTestContext Context;
+
+            const auto View = Context.Instance.FindComponent<FRemComponentViewContainerTestComponent>();
+            TestTrue(TEXT("component found"), View.IsValid());
+            TestEqual(TEXT("index of the passed view"),
+                Context.Instance.GetComponentIndex(View.GetPtr()), 0);
+
+            const FRemComponentViewContainerTestOtherComponent NotInContainer;
+            TestEqual(TEXT("index of a component outside the container"),
+                Context.Instance.GetComponentIndex(&NotInContainer), INDEX_NONE);
+        });
     });
 
     Describe(TEXT("Instance data"), [this]
@@ -121,15 +135,15 @@ void FRemComponentViewContainerTest::Define()
             Context.Instance.Initialize(Owner);
 
             Context.Instance.ForEachComponent<FRemComponentViewBase>(
-                [&Context](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
+                [&Context](const FRemComponentViewBase* Component, const int32 Index, const UScriptStruct*)
                 {
                     const FRemComponentViewBase::FContext TickContext{
                         .OwnerInstance  = Rem::MakeNotNull(&Context.Instance),
                         .ComponentIndex = Index
                     };
-                    if (Component.ShouldTick(TickContext))
+                    if (Component->ShouldTick(TickContext))
                     {
-                        Component.Tick(TickContext, 0.5f);
+                        Component->Tick(TickContext, 0.5f);
                     }
                 });
 

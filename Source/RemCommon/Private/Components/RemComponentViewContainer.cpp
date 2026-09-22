@@ -55,11 +55,12 @@ FStructView FRemComponentViewContainerInstance::GetInstanceDataView(const int32 
     return InstanceDataContainer[ComponentIndex];
 }
 
-int32 FRemComponentViewContainerInstance::GetComponentIndex(const FRemComponentViewBase& InComponent) const
+int32 FRemComponentViewContainerInstance::GetComponentIndex(
+    Rem::TNotNull<const FRemComponentViewBase*> InComponent) const
 {
     for (auto Index = 0; Index < Components.Num(); ++Index)
     {
-        if (reinterpret_cast<const uint8*>(&InComponent) == Components[Index].GetMemory())
+        if (reinterpret_cast<const uint8*>(&*InComponent) == Components[Index].GetMemory())
         {
             return Index;
         }
@@ -90,9 +91,9 @@ void FRemComponentViewContainerInstance::Initialize(Rem::TNotNull<UObject*> Owne
         TArray<FConstStructView> InstanceDataTypes;
         InstanceDataTypes.Reserve(Components.Num());
         ForEachComponent<FRemComponentViewBase>(
-            [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
+            [&](const FRemComponentViewBase* Component, const int32 Index, const UScriptStruct*)
             {
-                InstanceDataTypes.Add(Component.GetInstanceDataType(
+                InstanceDataTypes.Add(Component->GetInstanceDataType(
                     FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index}));
             });
 
@@ -106,9 +107,9 @@ void FRemComponentViewContainerInstance::Initialize(Rem::TNotNull<UObject*> Owne
     }
 
     ForEachComponent<FRemComponentViewBase>(
-        [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
+        [&](const FRemComponentViewBase* Component, const int32 Index, const UScriptStruct*)
         {
-            Component.Initialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
+            Component->Initialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 }
 
@@ -134,9 +135,9 @@ void FRemComponentViewContainerInstance::Uninitialize()
     RemCheckVariable(CopyOwner, return;);
 
     ForEachComponent<FRemComponentViewBase>(
-        [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
+        [&](const FRemComponentViewBase* Component, const int32 Index, const UScriptStruct*)
         {
-            Component.Uninitialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
+            Component->Uninitialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 
     InstanceDataContainer.Reset();
