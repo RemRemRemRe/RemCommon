@@ -148,12 +148,19 @@ void FRemEnumUtilitiesTest::Define()
 
     Describe(TEXT("GetTypeName"), [this]
     {
-        It(TEXT("should contain the type name"), [this]
+        It(TEXT("should contain the type name and nothing of the function signature"), [this]
         {
-            constexpr auto Name = Rem::GetTypeName<int32>();
+            // Read at run time: the IDE's constant evaluator mis-models the compiler's signature macro
+            const auto Name = Rem::GetTypeName<int32>();
 
             TestTrue(TEXT("contains int"),
                 Name.find("int") != std::string_view::npos);
+            // the prefix constants name the function as its namespace qualifies it: a stale constant
+            // leaves signature text behind, which the contains-check alone cannot see
+            TestTrue(TEXT("no function name"), Name.find("GetTypeName") == std::string_view::npos);
+            TestTrue(TEXT("no calling convention"), Name.find("__cdecl") == std::string_view::npos);
+            TestTrue(TEXT("no template brackets"), Name.find('<') == std::string_view::npos);
+            TestTrue(TEXT("no parameter list"), Name.find("(void)") == std::string_view::npos);
         });
     });
 

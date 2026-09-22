@@ -14,15 +14,15 @@ constexpr auto GetTypeName()
     std::string_view Name, Prefix, Suffix;
 #ifdef __clang__
     name   = __PRETTY_FUNCTION__;
-    prefix = "auto GetTypeName() [T = ";
+    prefix = "auto Rem::GetTypeName() [T = ";
     suffix = "]";
 #elif defined(__GNUC__)
     name   = __PRETTY_FUNCTION__;
-    prefix = "constexpr auto GetTypeName() [with T = ";
+    prefix = "constexpr auto Rem::GetTypeName() [with T = ";
     suffix = "]";
 #elif defined(_MSC_VER)
     Name   = __FUNCSIG__;
-    Prefix = "auto __cdecl GetTypeName<";
+    Prefix = "auto __cdecl Rem::GetTypeName<";
     Suffix = ">(void)";
 #endif
     Name.remove_prefix(Prefix.size());
