@@ -72,7 +72,7 @@
     }
 
 #define REM_ENSURE_CONDITION_2(Condition, InvalidHandlingStatement) \
-    REM_ENSURE_CONDITION_3(ensureAlways, Condition, InvalidHandlingStatement)
+    REM_ENSURE_CONDITION_3(REM_ENSURE_ALWAYS, Condition, InvalidHandlingStatement)
 
 #define REM_ENSURE_CONDITION_1(Condition) \
     REM_ENSURE_CONDITION_2(Condition, /* no handling */)
@@ -81,7 +81,7 @@
  * Use this to validate a condition.
  *  - Condition is necessary, other parameters are optional.
  *
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
+ * @param AssertionMacro            assertion macro to use when condition is false. defaults to REM_ENSURE_ALWAYS
  * @param Condition                 the condition to assert
  * @param InvalidHandlingStatement  statements to execute when condition is false. can be any number of statements as you want (surround them with '{}' if ',' is used)
  */
@@ -104,7 +104,7 @@
  * Use this to validate a variable.
  *  - variable is necessary, other parameters are optional.
  *
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
+ * @param AssertionMacro            assertion macro to use when condition is false. defaults to REM_ENSURE_ALWAYS
  * @param Condition                 the condition to assert
  * @param InvalidHandlingStatement  statements to execute when condition is false. can be any number of statements as you want (surround them with '{}' if ',' is used)
  */
@@ -125,7 +125,7 @@
  * Use this to validate a condition.
  *  - Condition is necessary, other parameters are optional.
  *
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
+ * @param AssertionMacro            assertion macro to use when condition is false. defaults to REM_ENSURE_ALWAYS
  * @param Condition                 the condition to assert
  * @param InvalidHandlingStatement  statements to execute when condition is false. can be any number of statements as you want (surround them with '{}' if ',' is used)
  */
@@ -135,7 +135,7 @@
  * Use this to validate a variable.
  *  - variable is necessary, other parameters are optional.
  *
- * @param AssertionMacro            assertion macro to use when condition is false. default to ensureAlways (or "similarities")
+ * @param AssertionMacro            assertion macro to use when condition is false. defaults to REM_ENSURE_ALWAYS
  * @param Condition                 the condition to assert
  * @param InvalidHandlingStatement  statements to execute when condition is false. can be any number of statements as you want (surround them with '{}' if ',' is used)
  */
