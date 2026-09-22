@@ -8,15 +8,15 @@
 #include "Interface/RemGetLifetimeBoundObjectPtrInterface.h"
 #include "Interface/RemGetLifetimeBoundOwnerInterface.h"
 #include "Interface/RemGetTagEventSourceInterface.h"
+#include "Templates/Casts.h"
 
 namespace Rem::GameplayTag
 {
 /** the family's single registry: this definition is its one home */
 TFeatureRegistry<FTagEventSourceFamily> FTagEventSourceFamily::Instance;
 
-// the explicit instantiation keeps the walk's code in this module; the exported class makes the
-// callers import it (TFeatureRegistry documents the reasoning). The template keeps its namespace
-// qualifier here: an unqualified name is only valid in the namespace that declares it.
+// The two instantiations keep the `Rem::` qualifier: at a cross-namespace instantiation site, naming
+// the owning namespace is the clearer spelling.
 template class Rem::TFeatureRegistry<FTagEventSourceFamily>;
 template class Rem::TFeatureRegistration<FTagEventSourceFamily>;
 
@@ -25,7 +25,7 @@ namespace Private
 FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceFeature::FRequest& Actor)
 {
     // the not-null contract is checked at the boundary; the body works with the raw pointer
-    AActor* ActorPtr = Actor;
+    AActor* const ActorPtr = Actor;
 
     // the worker declares its own identity when it implements IRemGetLifetimeBoundOwnerInterface (a component
     // belongs to its actor, a self-implementing actor to itself); a worker without the protocol is

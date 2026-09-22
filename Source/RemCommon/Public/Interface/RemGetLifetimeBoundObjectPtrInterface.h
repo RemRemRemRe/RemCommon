@@ -5,7 +5,9 @@
 #include <concepts>
 #include <type_traits>
 #include <utility>
+#include "Templates/Casts.h"
 #include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
 #include "Macro/RemAssertionMacros.h"
 #include "Templates/RemLifetimeBoundPtr.h"
@@ -23,7 +25,7 @@ namespace Private
 template <typename TPointee, typename TLiveness, typename TDerived>
 [[nodiscard]] TLifetimeBoundPtr<TWeakObjectPtr<TLiveness>, TPointee> MakeLifetimeBoundHandle(TDerived& Object)
 {
-    using FHandle = TLifetimeBoundPtr<TWeakObjectPtr<TLiveness>, TPointee>;
+    using FHandleType = TLifetimeBoundPtr<TWeakObjectPtr<TLiveness>, TPointee>;
 
     UObject* const Owner   = Object.GetLifetimeBoundOwner();
     auto* const TypedOwner = Cast<TLiveness>(Owner);
@@ -40,14 +42,14 @@ template <typename TPointee, typename TLiveness, typename TDerived>
 
     const auto Liveness = TWeakObjectPtr<TLiveness>{TypedOwner};
 
-    if constexpr (FHandle::bCompactStorage)
+    if constexpr (FHandleType::bCompactStorage)
     {
         // the pointee is derivable from the liveness payload, so nothing else is stored
-        return FHandle{Liveness};
+        return FHandleType{Liveness};
     }
     else
     {
-        return FHandle{Liveness, MakeNotNull(static_cast<TPointee*>(&Object))};
+        return FHandleType{Liveness, MakeNotNull(static_cast<TPointee*>(&Object))};
     }
 }
 }

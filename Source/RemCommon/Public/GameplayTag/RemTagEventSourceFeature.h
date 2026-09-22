@@ -41,14 +41,14 @@ struct FTagEventSourceFamily
 /** The family's public surface, spelled once so a call site reads after the family. */
 struct FTagEventSourceFeature
 {
-    using FStorage = TFeatureRegistry<FTagEventSourceFamily>;
+    using FRegistry = TFeatureRegistry<FTagEventSourceFamily>;
 
-    using FContribution = FStorage::FContribution;
-    using FRequest      = FStorage::FRequest;
-    using FHandle       = FStorage::FHandle;
+    using FContribution = FRegistry::FContribution;
+    using FRequest      = FRegistry::FRequest;
+    using FHandle       = FRegistry::FHandle;
 
     template <typename TLiveness>
-    using TTypedHandle = FStorage::TTypedHandle<TLiveness>;
+    using TTypedHandle = FRegistry::TTypedHandle<TLiveness>;
 };
 
 /**
@@ -58,10 +58,6 @@ struct FTagEventSourceFeature
  * and the providing module owns the registration - see `Rem::TFeatureRegistry` for both.
  */
 using FTagEventSourceRegistration = TFeatureRegistration<FTagEventSourceFamily>;
-
-// the registry's code lives in RemCommon: the class is exported and instantiated explicitly in
-// the family's .cpp, so a caller imports the walk instead of carrying a copy of it
-
 
 namespace Private
 {

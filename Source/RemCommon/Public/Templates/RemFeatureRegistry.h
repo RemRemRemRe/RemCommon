@@ -5,8 +5,10 @@
 #include "Templates/Casts.h"
 #include "Templates/Function.h"
 #include "Templates/RemLifetimeBoundPtr.h"
+#include "Templates/RemTypeString.h"
 #include "UObject/Class.h"
 #include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
 #include "Macro/RemAssertionMacros.h"
 #include "Macro/RemLogMacros.h"
@@ -107,13 +109,18 @@ struct TFeatureHandleTraits
  * "I do not apply" and "I have nothing" are the same answer.
  * @note The chain keeps registration order across removals: the first registered contribution that
  * answers wins, and a removal must not change which survivor that is.
+ * @note The registry is not synchronized: a registration is made at module load, a query on the game
+ * thread, and the walk is not safe against a concurrent registration.
  * @note **The mechanism's one structural bet is the key**: a contribution is keyed by the owner type it
  * answers for (`UObject` = the wildcard). A family that needs another key extends the traits (a `TKey`
  * plus a way to derive it from the request) rather than bending this one - that axis has a single user
  * today, so generalizing it is cheap now and expensive later.
- * @note The class is exported and every family instantiates it explicitly in its own `.cpp`
- * (`template class TFeatureRegistry<FMyFamily>;`): the walk's code then lives in the owning module and
- * the callers import it, so only the class layout stays a cross-DLL contract.
+ * @note The class is exported, so an instantiation is emitted in the module that owns the mechanism:
+ * a family in this module gets its walk compiled and exported with it, and a family in another module
+ * only imports what this module exported - which, today, is this module's own family. A family whose
+ * registry lives elsewhere therefore needs the export model extended, which is an open decision and is
+ * not attempted here. The export exists for the reason it always did: the walk's code lives in one DLL
+ * and the callers import it, so only the class layout stays a cross-DLL contract.
  */
 template <typename TFamily>
 class REMCOMMON_API TFeatureRegistry
@@ -163,9 +170,8 @@ public:
 
         for (const FEntry& Entry : Entries)
         {
-            const UClass* const ContributionOwner = Entry.Contribution.OwnerType;
-
-            if (OwnerType && ContributionOwner != Wildcard && ContributionOwner != OwnerType)
+            if (const UClass* const ContributionOwner = Entry.Contribution.OwnerType;
+                OwnerType && ContributionOwner != Wildcard && ContributionOwner != OwnerType)
             {
                 continue;
             }
@@ -189,6 +195,9 @@ public:
     /**
      * @brief The typed form of `Provide`: only the contributions registered for @p TLiveness, or for the
      * `UObject` wildcard.
+     * @note For a consumer that knows the owner's type - a module that declares the handle's liveness
+     * itself. The family's specs are its only consumer today, so the typed surface stays as it is
+     * instead of growing an unproven caller's shape.
      */
     template <typename TLiveness>
     [[nodiscard]] TTypedHandle<TLiveness> ProvideTyped(const FRequest& Request) const
@@ -202,12 +211,10 @@ public:
      * @note A second contribution for an owner type that already has one is reported in development
      * only: the walk's winner is decided by registration order, so it would otherwise stay invisible.
      */
-    int32 Add(FContribution Contribution)
+    [[nodiscard]] int32 Add(FContribution Contribution)
     {
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
-        // the walk's outcome is decided by registration order, so a second contribution for an owner
-        // type that already has one is reported - otherwise the winner is invisible
         const UClass* const NewOwner = Contribution.OwnerType;
         const bool bAlreadyClaimed   = Entries.ContainsByPredicate([NewOwner](const FEntry& Entry)
         {
@@ -217,8 +224,8 @@ public:
         if (bAlreadyClaimed)
         {
             REM_LOG_FUNCTION(LogRemCommon, Warning,
-                "a second contribution registers for {0}: the first registered one is asked first",
-                NewOwner->GetName());
+                "a second contribution registers for {0} ({1}): the first registered one is asked first and stays the winner",
+                NewOwner->GetPathName(), Rem::GetTypeName<TFamily>());
         }
 
 #endif
@@ -276,9 +283,13 @@ private:
  * };
  * ```
  *
- * @note Registering from a module's file scope is safe: nothing runs the contribution until a request
- * arrives, and the family's own registry is initialized before any of its dependents (the loader
- * initializes a DLL's dependencies first).
+ * @note Registering from a module's file scope is safe in a *dependent* module: nothing runs the
+ * contribution until a request arrives, and the family's own registry is initialized before any of
+ * its dependents (the loader initializes a DLL's dependencies first). A file-scope registration in
+ * the family's *own* module is not safe - static destruction order is unspecified, so it can be
+ * destroyed after the registry's static storage, and its destructor would then touch a dead registry.
+ * The family's module object owns the registration instead: its destructor runs while the module is
+ * still loaded.
  */
 template <typename TFamily>
 class REMCOMMON_API TFeatureRegistration
@@ -310,6 +321,8 @@ public:
 
     TFeatureRegistration(const TFeatureRegistration&)            = delete;
     TFeatureRegistration& operator=(const TFeatureRegistration&) = delete;
+    TFeatureRegistration(TFeatureRegistration&&)                 = delete;
+    TFeatureRegistration& operator=(TFeatureRegistration&&)      = delete;
 
 private:
     int32 Id{INDEX_NONE};

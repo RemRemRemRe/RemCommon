@@ -4,6 +4,7 @@
 
 #include "UObject/Object.h"
 #include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
 #include "Interface/RemTagEventSourceInterface.h"
 #include "Templates/RemLifetimeBoundPtr.h"
