@@ -4,6 +4,7 @@
 
 #include "Macro/RemFunctorMacro.h"
 #include "Containers/ContainersFwd.h"
+#include "RemNotNull.h"
 
 struct FOverlapResult;
 struct FHitResult;
@@ -22,27 +23,23 @@ namespace Rem::Collision
 /**
  * Get trace data of CURRENT FRAME
  */
-REM_API FTraceDatum* QueryTraceDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+REM_API FTraceDatum* QueryTraceDataCurrentFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle);
 
 /**
  * Get trace data of PREVIOUS FRAME
  */
-REM_API FTraceDatum* QueryTraceDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle);
+REM_API FTraceDatum* QueryTraceDataPreviousFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle);
 
 /**
  * Get overlap data of CURRENT FRAME
  */
-REM_API FOverlapDatum* QueryOverlapDataCurrentFrame(const UObject& WorldContext,
+REM_API FOverlapDatum* QueryOverlapDataCurrentFrame(TNotNull<const UObject*> WorldContext,
     const FTraceHandle& Handle);
 
 /**
  * Get overlap data of PREVIOUS FRAME
  */
-REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext,
-    const FTraceHandle& Handle);
-
-
-REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext,
+REM_API FOverlapDatum* QueryOverlapDataPreviousFrame(TNotNull<const UObject*> WorldContext,
     const FTraceHandle& Handle);
 
 template <typename TTraceType>

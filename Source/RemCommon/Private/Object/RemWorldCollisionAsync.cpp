@@ -72,12 +72,13 @@ using EQueryTraceData        = Rem::Enum::EYesOrNo;
 template <EUseCurrentFrameBuffer UseCurrentFrameBuffer = EUseCurrentFrameBuffer::Yes,
           EQueryTraceData QueryTraceData = EQueryTraceData::Yes>
 std::conditional_t<
-    QueryTraceData == EQueryTraceData::Yes, FTraceDatum*, FOverlapDatum*> QueryDataInternal(const UObject& WorldContext,
+    QueryTraceData == EQueryTraceData::Yes, FTraceDatum*, FOverlapDatum*> QueryDataInternal(
+    TNotNull<const UObject*> WorldContext,
     const FTraceHandle& Handle)
 {
     RemCheckVariable(Handle, return {});
 
-    auto* World = WorldContext.GetWorld();
+    auto* World = WorldContext->GetWorld();
     RemCheckVariable(World, return {});
 
     auto& AsyncTrace = GWorldAsyncTraceStateAccessor::Access(*World);
@@ -115,22 +116,22 @@ std::conditional_t<
 namespace Rem::Collision
 {
 
-FTraceDatum* QueryTraceDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+FTraceDatum* QueryTraceDataCurrentFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle)
 {
     return QueryDataInternal<EUseCurrentFrameBuffer::Yes, EQueryTraceData::Yes>(WorldContext, Handle);
 }
 
-FTraceDatum* QueryTraceDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+FTraceDatum* QueryTraceDataPreviousFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle)
 {
     return QueryDataInternal<EUseCurrentFrameBuffer::No, EQueryTraceData::Yes>(WorldContext, Handle);
 }
 
-FOverlapDatum* QueryOverlapDataCurrentFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+FOverlapDatum* QueryOverlapDataCurrentFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle)
 {
     return QueryDataInternal<EUseCurrentFrameBuffer::Yes, EQueryTraceData::No>(WorldContext, Handle);
 }
 
-FOverlapDatum* QueryOverlapDataPreviousFrame(const UObject& WorldContext, const FTraceHandle& Handle)
+FOverlapDatum* QueryOverlapDataPreviousFrame(TNotNull<const UObject*> WorldContext, const FTraceHandle& Handle)
 {
     return QueryDataInternal<EUseCurrentFrameBuffer::No, EQueryTraceData::No>(WorldContext, Handle);
 }

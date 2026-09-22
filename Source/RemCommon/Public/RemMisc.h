@@ -520,8 +520,8 @@ template <CUObject T>
 constexpr uint8 RoleCount    = ROLE_MAX - 1u;
 constexpr uint8 NetModeCount = NM_MAX;
 
-REMCOMMON_API uint8* AllocateStructMemory(const UStruct& Struct);
-REMCOMMON_API void FreeStructMemory(const UStruct& Struct, uint8& Memory);
+[[nodiscard]] REMCOMMON_API uint8* AllocateStructMemory(TNotNull<const UStruct*> Struct);
+REMCOMMON_API void FreeStructMemory(TNotNull<const UStruct*> Struct, uint8& Memory);
 
 REMCOMMON_API IConsoleVariable* FindConsoleVariable(const TCHAR* Name);
 

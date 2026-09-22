@@ -98,7 +98,7 @@ void FRemMiscTest::Define()
         It(TEXT("AllocateStructMemory and FreeStructMemory should round trip a struct"), [this]
         {
             const auto* Struct = FRemScopedStructContainerTestTrivial::StaticStruct();
-            auto& Memory       = *Rem::AllocateStructMemory(*Struct);
+            auto& Memory       = *Rem::AllocateStructMemory(Struct);
 
             auto& Data  = *reinterpret_cast<FRemScopedStructContainerTestTrivial*>(&Memory);
             Data.Number = 3.5f;
@@ -106,7 +106,7 @@ void FRemMiscTest::Define()
             TestEqual(TEXT("number"), Data.Number, 3.5f, 1e-4f);
             TestEqual(TEXT("count"), Data.Count, 7);
 
-            Rem::FreeStructMemory(*Struct, Memory);
+            Rem::FreeStructMemory(Struct, Memory);
         });
     });
 

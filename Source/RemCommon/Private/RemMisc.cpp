@@ -20,20 +20,20 @@ bool IsClassDefaultObject(const UObject* Object)
     return Class->GetDefaultObject(false) == Object;
 }
 
-uint8* AllocateStructMemory(const UStruct& Struct)
+uint8* AllocateStructMemory(TNotNull<const UStruct*> Struct)
 {
     const auto StructMemory = static_cast<uint8*>(
-        FMemory::Malloc(Struct.GetStructureSize(), Struct.GetMinAlignment()));
+        FMemory::Malloc(Struct->GetStructureSize(), Struct->GetMinAlignment()));
     RemCheckVariable(StructMemory, return {});
 
-    Struct.InitializeStruct(StructMemory);
+    Struct->InitializeStruct(StructMemory);
 
     return StructMemory;
 }
 
-void FreeStructMemory(const UStruct& Struct, uint8& Memory)
+void FreeStructMemory(TNotNull<const UStruct*> Struct, uint8& Memory)
 {
-    Struct.DestroyStruct(&Memory);
+    Struct->DestroyStruct(&Memory);
     FMemory::Free(&Memory);
 }
 
