@@ -51,6 +51,10 @@ using FTagEventSourceHandle       = Rem::GameplayTag::FTagEventSourceFeature::FH
 using FRequest                    = Rem::GameplayTag::FTagEventSourceFeature::FRequest;
 using FTagEventSourceRegistration = Rem::GameplayTag::FTagEventSourceRegistration;
 
+/** the test module's own family: the registration a case constructs and the request its contributions answer */
+using FTestRegistration = Rem::TFeatureRegistration<FRemTestCustomHandleFamily>;
+using FTestRequest      = FRemTestCustomHandleFamily::FRequest;
+
 /** the contribution's provider shape, spelled once for the case that registers an unbound one */
 using FProvide = TFunction<FTagEventSourceHandle(const FRequest&)>;
 
@@ -82,11 +86,9 @@ void FRemFeatureRegistryTest::Define()
             auto* Actor  = World->SpawnActor<AActor>();
             auto* Worker = MakeWorker(Actor);
 
-            // The extension point's compilable half: a family supplies FHandle, TTypedHandle and the
-            // derivation, and the trait hands back the family's own shape. The walk itself stays out of
-            // reach here - TFeatureRegistry's Provide and destructor are dllimport in a consuming module
-            // and RemCommon exports only its own family's instantiation (the LNK2019 in the run's E1
-            // evidence) - so the walk is exercised for the mechanism's own family only.
+            // The extension point's isolated half: a family supplies FHandle, TTypedHandle and the
+            // derivation, and the trait hands back the family's own shape. The sibling case walks the same
+            // specialization through the registry of a family the test module owns.
             const FRemTestCustomHandle Erased{Worker, Worker};
 
             const auto WorkerTyped =
@@ -108,6 +110,83 @@ void FRemFeatureRegistryTest::Define()
                 WorkerTyped.TryGet() == static_cast<IRemTagEventSourceInterface*>(Worker));
             TestTrue(TEXT("naming a type the erased handle does not carry yields an invalid handle"),
                 !ActorTyped.IsValid());
+        });
+
+        It(TEXT("should walk a family the test module declares and owns itself"), [this]
+        {
+            const Rem::Test::FRemTestWorld World;
+            auto* Actor        = World->SpawnActor<AActor>();
+            auto* FirstWorker  = MakeWorker(Actor);
+            auto* SecondWorker = MakeWorker(Actor);
+
+            // the wildcard answers nothing: the walk has to continue past the invalid handle
+            const FTestRegistration EmptyWildcard{
+                {
+                    UObject::StaticClass(),
+                    [](const FTestRequest)
+                    {
+                        return FRemTestCustomHandle{};
+                    },
+                }
+            };
+
+            // the first valid answer, keyed to the worker's base type
+            FTestRegistration FirstAnswer{
+                {
+                    URemTestBareTagEventWorker::StaticClass(),
+                    [FirstWorker](const FTestRequest)
+                    {
+                        return FRemTestCustomHandle{FirstWorker, FirstWorker};
+                    },
+                }
+            };
+
+            // a later valid answer for the derived owner type
+            const FTestRegistration SecondAnswer{
+                {
+                    URemTestTagEventWorker::StaticClass(),
+                    [SecondWorker](const FTestRequest)
+                    {
+                        return FRemTestCustomHandle{SecondWorker, SecondWorker};
+                    },
+                }
+            };
+
+            static_assert(
+                std::same_as<std::remove_cvref_t<decltype(FRemTestCustomHandleFamily::Instance.Provide(Actor))>,
+                             FRemTestCustomHandle>,
+                "the walk has to hand back the family's own handle shape");
+            static_assert(std::same_as<std::remove_cvref_t<decltype(FRemTestCustomHandleFamily::Instance
+                                           .ProvideTyped<URemTestTagEventWorker>(Actor))>,
+                                       TRemTestCustomTypedHandle<URemTestTagEventWorker>>,
+                "the typed walk has to go through the family's own traits specialization");
+
+            const auto Unfiltered = FRemTestCustomHandleFamily::Instance.Provide(Actor);
+            const auto BaseTyped = FRemTestCustomHandleFamily::Instance.ProvideTyped<URemTestBareTagEventWorker>(Actor);
+            const auto DerivedTyped = FRemTestCustomHandleFamily::Instance.ProvideTyped<URemTestTagEventWorker>(Actor);
+
+            TestTrue(TEXT("the unfiltered walk skips the invalid answer and takes the first valid one"),
+                Unfiltered.TryGet() == static_cast<IRemTagEventSourceInterface*>(FirstWorker));
+            TestTrue(TEXT("the typed walk hands back the worker its own key registered"),
+                BaseTyped.GetObject() == FirstWorker);
+            TestTrue(TEXT("the typed walk keeps the worker"),
+                BaseTyped.TryGet() == static_cast<IRemTagEventSourceInterface*>(FirstWorker));
+            TestTrue(TEXT("the owner-type filter skips the base-keyed answer and takes the derived one"),
+                DerivedTyped.GetObject() == SecondWorker);
+            // the filter is what decides here: only the wildcard entry survives an AActor filter and it answers
+            // nothing, while the unfiltered walk above has the base-keyed entry's valid answer to hand back
+            TestTrue(TEXT("a filtered query for a type no contribution answers for gets nothing"),
+                !FRemTestCustomHandleFamily::Instance.Provide(Actor, AActor::StaticClass()).IsValid());
+            TestTrue(TEXT("the typed form of the same query is empty too"),
+                !FRemTestCustomHandleFamily::Instance.ProvideTyped<AActor>(Actor).IsValid());
+
+            FirstAnswer.Reset();
+
+            TestTrue(TEXT("the removal leaves the next registered answer"),
+                FRemTestCustomHandleFamily::Instance.Provide(Actor).TryGet() ==
+                static_cast<IRemTagEventSourceInterface*>(SecondWorker));
+            TestTrue(TEXT("the removed key no longer answers its own type"),
+                !FRemTestCustomHandleFamily::Instance.ProvideTyped<URemTestBareTagEventWorker>(Actor).IsValid());
         });
     });
 

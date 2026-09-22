@@ -169,13 +169,17 @@ public:
 };
 
 /**
- * a family whose traits specialization supplies its own handle shape: the registry's documented
- * extension point, compiled so the trait's contract is exercised
+ * a family whose traits specialization supplies its own handle shape: the registry's documented extension
+ * point, and the case of a module owning a family - the test module declares it, defines its registry and
+ * emits its instantiations in `RemFeatureRegistryTestFamily.cpp`
  */
 struct FRemTestCustomHandleFamily
 {
     using FRequest = TNotNull<AActor*>;
     using FPointee = IRemTagEventSourceInterface;
+
+    /** The family's registry: declared here, defined once in the family's `.cpp`. */
+    REMCOMMONTEST_API static TFeatureRegistry<FRemTestCustomHandleFamily> Instance;
 };
 
 /** the custom family's erased handle: the mechanism asks it only for `IsValid()` */
@@ -384,10 +388,8 @@ IRemTagEventSourceInterface* TRemTestCustomTypedHandle<TLiveness>::TryGet() cons
 }
 
 /**
- * the custom family's handle shape: the registry's documented extension point, compiled so the trait's
- * contract is exercised
- * @note The walk under this handle is not covered here: the mechanism carries the module export macro
- * and RemCommon exports only its own family, so every other instantiation is imported from it
+ * the custom family's handle shape: the registry's documented extension point, exercised by the spec both
+ * through the trait directly and through the walk of the family the test module owns
  */
 template <>
 struct Rem::TFeatureHandleTraits<Rem::Common::Private::FRemTestCustomHandleFamily>
@@ -407,3 +409,13 @@ struct Rem::TFeatureHandleTraits<Rem::Common::Private::FRemTestCustomHandleFamil
         };
     }
 };
+
+namespace Rem::Common::Private
+{
+// The test module owns this family, so it emits the family's instantiations; the undecorated declarations only say
+// "do not instantiate locally" and the symbols come from the exporting module - the same shape every family has.
+// They follow the traits specialization above on purpose: seeing an `extern template` instantiates the registry
+// (MSVC), and the registry's handle type has to come from the specialization, not from the primary template.
+extern template class Rem::TFeatureRegistry<FRemTestCustomHandleFamily>;
+extern template class Rem::TFeatureRegistration<FRemTestCustomHandleFamily>;
+}
