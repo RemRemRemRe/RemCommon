@@ -123,12 +123,20 @@ public:
          */
         TNotNull<UClass*> OwnerType;
 
-        /** The handle for the request, or an invalid one when this contribution has nothing. */
-        TFunction<FHandle(FRequest)> Provide;
+        /**
+         * The handle for the request, or an invalid one when this contribution has nothing.
+         * @note The request is valid for the call only; a contribution that has to keep it copies
+         * it into a member of its own.
+         */
+        TFunction<FHandle(const FRequest&)> Provide;
     };
 
-    /** The first contribution registered for the request that yields a valid handle. */
-    [[nodiscard]] FHandle Provide(const FRequest Request) const
+    /**
+     * @brief The first contribution registered for the request that yields a valid handle.
+     * @note The unfiltered walk: every contribution is consulted, whatever owner type it answers for.
+     * The owner-type filter is the overload below.
+     */
+    [[nodiscard]] FHandle Provide(const FRequest& Request) const
     {
         return Provide(Request, nullptr);
     }
@@ -138,7 +146,7 @@ public:
      * @note Public so a typed query can be a header-only wrapper over this one function instead of
      * reaching into the registry's storage from every caller.
      */
-    [[nodiscard]] FHandle Provide(const FRequest Request, const UClass* OwnerType) const
+    [[nodiscard]] FHandle Provide(const FRequest& Request, const UClass* OwnerType) const
     {
         const UClass* const Wildcard = UObject::StaticClass();
 
@@ -172,7 +180,7 @@ public:
      * `UObject` wildcard.
      */
     template <typename TLiveness>
-    [[nodiscard]] TTypedHandle<TLiveness> ProvideTyped(const FRequest Request) const
+    [[nodiscard]] TTypedHandle<TLiveness> ProvideTyped(const FRequest& Request) const
     {
         return TFeatureHandleTraits<TFamily>::template DeriveTypedHandle<TLiveness>(
             Provide(Request, TLiveness::StaticClass()));

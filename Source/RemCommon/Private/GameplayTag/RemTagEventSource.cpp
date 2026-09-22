@@ -21,7 +21,7 @@ template class Rem::TFeatureRegistration<FTagEventSourceFamily>;
 
 namespace Private
 {
-FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceFeature::FRequest Actor)
+FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceFeature::FRequest& Actor)
 {
     /// the not-null contract is checked at the boundary; the body works with the raw pointer
     AActor* ActorPtr = Actor;
@@ -52,7 +52,7 @@ FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceF
 }
 } // namespace Private
 
-FTagEventSourceFeature::FHandle TryGetLifetimeBoundInterfacePtr(TNotNull<AActor*> Actor)
+FTagEventSourceFeature::FHandle TryGetLifetimeBoundInterfacePtr(const TNotNull<AActor*> Actor)
 {
     if (const FTagEventSourceFeature::FHandle FromActor = Private::TryGetActorProvidedSource(Actor);
         FromActor.IsValid())

@@ -57,7 +57,7 @@ namespace Private
  * registration because the actor is right there.
  */
 [[nodiscard]] REMCOMMON_API FTagEventSourceFeature::FHandle TryGetActorProvidedSource(
-    FTagEventSourceFeature::FRequest Actor);
+    const FTagEventSourceFeature::FRequest& Actor);
 
 /** The family's typed derivation, as the handle traits define it. */
 template <typename TLiveness>
@@ -75,7 +75,7 @@ template <typename TLiveness>
  */
 template <typename TLiveness>
 [[nodiscard]] FTagEventSourceFeature::TTypedHandle<TLiveness> TryGetTagEventSource(
-    const FTagEventSourceFeature::FRequest Actor)
+    const FTagEventSourceFeature::FRequest& Actor)
 {
     if (const FTagEventSourceFeature::FHandle FromActor = Private::TryGetActorProvidedSource(Actor);
         FromActor.IsValid())
