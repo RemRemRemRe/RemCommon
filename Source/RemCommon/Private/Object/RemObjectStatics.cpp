@@ -87,38 +87,38 @@ void URemObjectStatics::ShouldNotHappen(const bool bTriggerBreakpointInCpp)
 
 APlayerController* URemObjectStatics::GetFirstLocalPlayerController(const UObject* WorldContextObject)
 {
-    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
+    RemCheckVariable(REM_ENSURE, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerController(WorldContextObject);
 }
 
 ULocalPlayer* URemObjectStatics::GetFirstLocalPlayer(const UObject* WorldContextObject)
 {
-    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
+    RemCheckVariable(REM_ENSURE, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayer(WorldContextObject);
 }
 
 APawn* URemObjectStatics::GetFirstLocalPlayerPawn(const UObject* WorldContextObject)
 {
-    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
+    RemCheckVariable(REM_ENSURE, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerPawn(WorldContextObject);
 }
 
 APlayerState* URemObjectStatics::GetFirstLocalPlayerState(const UObject* WorldContextObject)
 {
-    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
+    RemCheckVariable(REM_ENSURE, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerState(WorldContextObject);
 }
 
 APlayerCameraManager* URemObjectStatics::GetFirstLocalPlayerCameraManager(const UObject* WorldContextObject)
 {
-    RemCheckVariable(ensure, WorldContextObject, return nullptr;);
+    RemCheckVariable(REM_ENSURE, WorldContextObject, return nullptr;);
     return Rem::Object::GetFirstLocalPlayerCameraManager(WorldContextObject);
 }
 
 void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(ensure, PlayerController, return;);
+    RemCheckVariable(REM_ENSURE, PlayerController, return;);
 
     // Dedicated server does not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -129,7 +129,7 @@ void URemObjectStatics::ServerViewPreviousPlayer(const UObject* WorldContextObje
 void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 {
     auto* PlayerController = GetFirstLocalPlayerController(WorldContextObject);
-    RemCheckVariable(ensure, PlayerController, return;);
+    RemCheckVariable(REM_ENSURE, PlayerController, return;);
 
     // Dedicated server does not have "local" player controller
     RemCheckCondition(!PlayerController->IsNetMode(NM_DedicatedServer), return;);
@@ -139,7 +139,7 @@ void URemObjectStatics::ServerViewNextPlayer(const UObject* WorldContextObject)
 
 bool URemObjectStatics::SetActorRootComponent(AActor* Actor, USceneComponent* NewRootComponent)
 {
-    RemCheckVariable(ensure, Actor, return false;);
+    RemCheckVariable(REM_ENSURE, Actor, return false;);
 
     return Actor->SetRootComponent(NewRootComponent);
 }
@@ -269,7 +269,7 @@ FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
         return MovementComponent->GetActorFeetLocation();
     }
 
-    RemCheckCondition(ensure, Actor->GetRootComponent(), return FVector::ZeroVector);
+    RemCheckCondition(REM_ENSURE, Actor->GetRootComponent(), return FVector::ZeroVector);
 
     return Actor->GetRootComponent()->GetComponentTransform().TransformPosition(
         FVector{0.0f, 0.0f, Actor->GetRootComponent()->Bounds.BoxExtent.Z});
@@ -278,7 +278,7 @@ FVector GetActorFeetLocation(const TNotNull<const AActor*> Actor)
 FTransform GetRootBoneTransform(const TNotNull<const ACharacter*> Character)
 {
     auto* Mesh = Character->GetMesh();
-    RemEnsureVariable(ensure, Mesh, return FTransform::Identity);
+    RemEnsureVariable(REM_ENSURE, Mesh, return FTransform::Identity);
 
     return Mesh->GetSocketTransform(RootBone);
 }
