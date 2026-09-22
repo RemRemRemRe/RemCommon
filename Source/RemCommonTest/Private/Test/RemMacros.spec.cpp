@@ -17,11 +17,50 @@ struct FRemMacroTestTarget
 {
 private:
     int32 SecretValue{7};
+    const int32 FixedValue{42};
+
+    static int32 StaticSecretValue;
+    static int32 StaticMultiply(const int32 InValue) { return InValue * 3; }
+    static int32 StaticGetSecretTwice() { return StaticSecretValue * 2; }
+
+    int32 GetDoubledSecretValue() const { return SecretValue * 2; }
+    int32 MultiplySecretValue(const int32 Factor) const { return SecretValue * Factor; }
+    void SetSecretValue(const int32 InValue) { SecretValue = InValue; }
 };
+
+int32 FRemMacroTestTarget::StaticSecretValue = 10;
 
 REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FRemMacroTestAccessor,
     &FRemMacroTestTarget::SecretValue,
     int32 FRemMacroTestTarget::*);
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FFixedValueAccessor,
+    &FRemMacroTestTarget::FixedValue,
+    const int32 FRemMacroTestTarget::*);
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FGetDoubledSecretValueAccessor,
+    &FRemMacroTestTarget::GetDoubledSecretValue,
+    int32 (FRemMacroTestTarget::*)() const);
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FMultiplySecretValueAccessor,
+    &FRemMacroTestTarget::MultiplySecretValue,
+    int32 (FRemMacroTestTarget::*)(int32) const);
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FSetSecretValueAccessor,
+    &FRemMacroTestTarget::SetSecretValue,
+    void (FRemMacroTestTarget::*)(int32));
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FStaticSecretValueAccessor,
+    &FRemMacroTestTarget::StaticSecretValue,
+    int32*);
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FStaticMultiplyAccessor,
+    &FRemMacroTestTarget::StaticMultiply,
+    int32 (*)(int32));
+
+REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(FStaticGetSecretTwiceAccessor,
+    &FRemMacroTestTarget::StaticGetSecretTwice,
+    int32 (*)());
 
 // --- argument count dispatch -----------------------------------------------
 
@@ -84,9 +123,9 @@ void FRemMacrosTest::Define()
     {
         It(TEXT("should construct the double variants"), [this]
         {
-            const auto Vector = REM_VECTOR3_DOUBLE(1, 2, 3);
+            const auto Vector  = REM_VECTOR3_DOUBLE(1, 2, 3);
             const auto Rotator = REM_ROTATOR_DOUBLE(0, 90, 0);
-            const auto Quat = REM_QUAT_DOUBLE(0, 0, 0, 1);
+            const auto Quat    = REM_QUAT_DOUBLE(0, 0, 0, 1);
 
             TestEqual(TEXT("vector x"), Vector.X, 1.0);
             TestEqual(TEXT("vector y"), Vector.Y, 2.0);
@@ -104,13 +143,97 @@ void FRemMacrosTest::Define()
 
     Describe(TEXT("REM_DEFINE_PRIVATE_MEMBER_ACCESSOR"), [this]
     {
-        It(TEXT("should access a private member through the accessor"), [this]
+        It(TEXT("should read a private data member through the accessor"), [this]
         {
             FRemMacroTestTarget Target;
 
             const auto Value = FRemMacroTestAccessor::Access(Target);
 
             TestEqual(TEXT("private value"), Value, 7);
+        });
+
+        It(TEXT("should write a private data member through the accessor"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            FRemMacroTestAccessor::Access(Target) = 99;
+
+            TestEqual(TEXT("mutated value"), FRemMacroTestAccessor::Access(Target), 99);
+        });
+
+        It(TEXT("should read a private const data member through the accessor"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            const auto Value = FFixedValueAccessor::Access(Target);
+
+            TestEqual(TEXT("const value"), Value, 42);
+        });
+
+        It(TEXT("should invoke a private member function with arguments"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            const auto Result = FMultiplySecretValueAccessor::Access(Target, 3);
+
+            TestEqual(TEXT("result"), Result, 21);
+        });
+
+        It(TEXT("should invoke a private member function without arguments"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            const auto Result = FGetDoubledSecretValueAccessor::Access(Target);
+
+            TestEqual(TEXT("result"), Result, 14);
+        });
+
+        It(TEXT("should invoke a private member function that mutates state"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            FSetSecretValueAccessor::Access(Target, 5);
+
+            TestEqual(TEXT("mutated value"), FRemMacroTestAccessor::Access(Target), 5);
+        });
+
+        It(TEXT("should access a private member through a pointer receiver"), [this]
+        {
+            FRemMacroTestTarget Target;
+
+            const auto Value = FRemMacroTestAccessor::Access(&Target);
+
+            TestEqual(TEXT("pointer receiver value"), Value, 7);
+        });
+
+        It(TEXT("should read and write a private static data member"), [this]
+        {
+            FRemMacroTestTarget Target; // the receiver is ignored for static members
+            const auto OldValue = FStaticSecretValueAccessor::Access(Target);
+
+            FStaticSecretValueAccessor::Access(Target) = 21;
+
+            TestEqual(TEXT("static value"), FStaticSecretValueAccessor::Access(Target), 21);
+
+            FStaticSecretValueAccessor::Access(Target) = OldValue;
+        });
+
+        It(TEXT("should invoke a private static member function"), [this]
+        {
+            FRemMacroTestTarget Target; // the receiver is ignored for static members
+
+            const auto Result = FStaticMultiplyAccessor::Access(Target, 6);
+
+            TestEqual(TEXT("result"), Result, 18);
+        });
+
+        It(TEXT("should invoke a private static member function without arguments"), [this]
+        {
+            FRemMacroTestTarget Target; // the receiver is ignored for static members
+
+            const auto Result = FStaticGetSecretTwiceAccessor::Access(Target);
+
+            TestEqual(TEXT("result"), Result, 20);
         });
     });
 

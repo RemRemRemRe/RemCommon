@@ -28,37 +28,63 @@ struct TPointerInitializer
 template <typename AccessorName, typename AccessorName::MemberType MemberPointer>
 TPointerInitializer<AccessorName, MemberPointer> TPointerInitializer<AccessorName, MemberPointer>::Instance;
 
-// Returns the value of the data member or invokes the member function referenced by this accessor.
+// Returns the value of the data member, invokes the member function, or dereferences the
+// static member referenced by this accessor. The receiver is ignored for static members.
 template <typename AccessorName, typename ThisType, typename... ArgumentsType>
 decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
 {
-    if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
+    using MemberType = typename AccessorName::MemberType;
+
+    if constexpr (std::is_member_pointer_v<MemberType>)
     {
-        if constexpr (sizeof...(ArgumentsType) > 0)
+        // Instance member: requires an object (or object pointer) receiver.
+        if constexpr (std::is_member_function_pointer_v<MemberType>)
         {
-            return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
+            {
+                return (Forward<ThisType>(This)->*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            }
+            else
+            {
+                return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            }
         }
         else
         {
-            return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
+            static_assert(sizeof...(ArgumentsType) == 0,
+                "REM_DEFINE_PRIVATE_MEMBER_ACCESSOR: data members cannot be invoked with arguments");
+            if constexpr (std::is_pointer_v<std::remove_reference_t<ThisType>>)
+            {
+                return Forward<ThisType>(This)->*TMemberPointer<AccessorName>;
+            }
+            else
+            {
+                return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
+            }
         }
     }
     else
     {
-        if constexpr (sizeof...(ArgumentsType) > 0)
+        // Static member: MemberType is a plain pointer (data) or a function pointer.
+        using PointeeType = std::remove_pointer_t<MemberType>;
+        if constexpr (std::is_function_v<PointeeType>)
         {
-            return (Forward<ThisType>(This).*TMemberPointer<AccessorName>)(Forward<ArgumentsType>(Arguments)...);
+            // Invoke the static function, with or without arguments.
+            return TMemberPointer<AccessorName>(Forward<ArgumentsType>(Arguments)...);
         }
         else
         {
-            return Forward<ThisType>(This).*TMemberPointer<AccessorName>;
+            static_assert(sizeof...(ArgumentsType) == 0,
+                "REM_DEFINE_PRIVATE_MEMBER_ACCESSOR: static data members cannot be invoked with arguments");
+            return *TMemberPointer<AccessorName>;
         }
     }
 }
 }
 
 /**
- * Alternative to UE_DEFINE_PRIVATE_MEMBER_PTR() that works with overloaded functions.
+ * Alternative to UE_DEFINE_PRIVATE_MEMBER_PTR() that works with overloaded functions,
+ * zero-argument member functions, and static members.
  *
  * Examples:
  * 
@@ -71,6 +97,14 @@ decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
     void (UAbilitySystemComponent::*)(const FGameplayTag& Tag, bool bTagExists));
  *
  * GOnTagUpdatedAccessor::Access(AbilitySystem, Tag, bTagExists);
+ *
+ * REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GStaticValueAccessor, &FExample::StaticValue, int32*);
+ *
+ * GStaticValueAccessor::Access(Example); // the receiver is ignored for static members
+ *
+ * REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(GStaticFunctionAccessor, &FExample::StaticFunction, int32 (*)(int32));
+ *
+ * GStaticFunctionAccessor::Access(Example, 1); // the receiver is ignored for static members
  *
  */
 #define REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(AccessorName, MemberPointer, ...) \
