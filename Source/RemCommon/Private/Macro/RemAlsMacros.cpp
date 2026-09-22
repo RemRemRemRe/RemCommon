@@ -39,31 +39,47 @@ static bool CanExecute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& Ensu
     return bExecuted.exchange(EnsureState, std::memory_order_release) != EnsureState || EnsureInfo.bEnsureAlways;
 }
 
-static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Message)
+static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const UTF8CHAR* Message)
 {
-    if (UNLIKELY(GetEnsureHandler() && GetEnsureHandler()(FEnsureHandlerArgs{.Expression = EnsureInfo.Expression, .Message = Message})))
+    // The ensure handler and the OnEnsureFailed delegate are TCHAR APIs, so bridge to FString here; everything
+    // else in this path works on the UTF8 message directly.
+    const FString MessageString{Message
+                                    ? Message
+                                    : UTF8TEXT("")
+    };
+
+    if (UNLIKELY(
+        GetEnsureHandler() && GetEnsureHandler()(FEnsureHandlerArgs{.Expression = EnsureInfo.Expression, .Message = *
+            MessageString})))
     {
         return false;
     }
 
     if (FPlatformTime::GetSecondsPerCycle() != 0.0f)
     {
+        // The wording and the composition match the engine's ensure message (Misc/AssertionMacros.cpp:
+        // "Ensure condition failed: <expr> [File:<file>] [Line: <line>] \n<message>\n"), minus the call stack:
+        // generating one is exactly what this lightweight ensure exists to avoid. FUnrealEdMisc::OnEnsureFailed
+        // consumes this string, and the engine's log parsers match its prefix, so both keep working. The delegate
+        // takes the same text as a TCHAR copy of the UTF8 builder.
         TUtf8StringBuilder<512> EnsureBuilder{
             InPlace,
-            "Ensure failed: ",
+            "Ensure condition failed: ",
             EnsureInfo.Expression,
-            ", File: ",
+            " [File:",
             EnsureInfo.FilePath
                 ? EnsureInfo.FilePath
                 : "Unknown",
-            ", Line: ",
+            "] [Line: ",
             EnsureInfo.LineNumber,
-            "."
+            "] \n",
+            Message,
+            "\n"
         };
 
         const FString EnsureMessage(EnsureBuilder.ToView());
         FCoreDelegates::OnEnsureFailed.Broadcast(EnsureInfo.Expression, EnsureInfo.FilePath,
-            EnsureInfo.LineNumber, Message, *EnsureMessage);
+            EnsureInfo.LineNumber, *MessageString, *EnsureMessage);
 
         static const auto* EnsuresAreErrorsConsoleVariable{
             IConsoleManager::Get().FindConsoleVariable(TEXT("core.EnsuresAreErrors"))
@@ -71,18 +87,13 @@ static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Messa
         check(EnsuresAreErrorsConsoleVariable != nullptr)
 
 #if !NO_LOGGING
-        const auto NarrowMessage = StringCast<ANSICHAR>(Message
-                                                            ? Message
-                                                            : TEXT(""));
         if (EnsuresAreErrorsConsoleVariable->GetBool())
         {
             UE_LOGF(LogOutputDevice, Error, "%s", *EnsureBuilder)
-            UE_LOGF(LogOutputDevice, Error, "%s", NarrowMessage.Get())
         }
         else
         {
             UE_LOGF(LogOutputDevice, Warning, "%s", *EnsureBuilder)
-            UE_LOGF(LogOutputDevice, Warning, "%s", NarrowMessage.Get())
         }
 #endif
 
@@ -109,11 +120,11 @@ static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Messa
 
 bool UE_COLD UE_DEBUG_SECTION Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo)
 {
-    return CanExecute(bExecuted, EnsureInfo) && ExecuteInternal(EnsureInfo, TEXT(""));
+    return CanExecute(bExecuted, EnsureInfo) && ExecuteInternal(EnsureInfo, UTF8TEXT(""));
 }
 
 bool UE_COLD UE_DEBUG_SECTION ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo,
-    const TCHAR* Format, ...)
+    const UTF8CHAR* Format, ...)
 {
     if (!CanExecute(bExecuted, EnsureInfo))
     {
@@ -122,11 +133,11 @@ bool UE_COLD UE_DEBUG_SECTION ExecuteFormat(std::atomic<uint8>& bExecuted, const
 
     static UE::FWordMutex FormatMutex;
     static constexpr auto MessageSize{std::numeric_limits<uint16>::max()};
-    static TStaticArray<TCHAR, MessageSize> Message;
+    static TStaticArray<UTF8CHAR, MessageSize> Message;
 
     UE::TUniqueLock Lock{FormatMutex};
 
-    GET_TYPED_VARARGS(TCHAR, Message.GetData(), MessageSize, FormattedMessageSize - 1, Format, Format);
+    GET_TYPED_VARARGS(UTF8CHAR, Message.GetData(), MessageSize, FormattedMessageSize - 1, Format, Format);
 
     return ExecuteInternal(EnsureInfo, Message.GetData());
 }

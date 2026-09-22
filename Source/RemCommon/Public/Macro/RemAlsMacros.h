@@ -31,8 +31,11 @@ struct FAlsEnsureInfo
 REM_API UE_COLD UE_DEBUG_SECTION bool VARARGS
 Execute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo);
 
+/**
+ * @param Format printf-style UTF8 format of the message, the message is formatted and printed as UTF8
+ */
 REM_API UE_COLD UE_DEBUG_SECTION bool VARARGS
-ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo, const TCHAR* Format, ...);
+ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo, const UTF8CHAR* Format, ...);
 }
 
 #define REM_ALS_ENSURE_IMPLEMENTATION(bEnsureAlways, Expression) \
@@ -56,6 +59,15 @@ ExecuteFormat(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& EnsureInfo, c
 		return false; \
 	}())
 
+/**
+ * REM_ALS_ENSURE reports the first failure of a call site per session, REM_ALS_ENSURE_ALWAYS reports every
+ * failure. The _MESSAGE variants additionally take a printf-style message and its arguments.
+ *
+ * Pass the message format as a UTF8 literal, i.e. UTF8TEXT("..."), together with every argument it expects:
+ * the message is formatted, logged and broadcast as UTF8. A TCHAR format, or a TCHAR argument under a one-byte
+ * %s, is a compile error. UE_VALIDATE_FORMAT_STRING validates the format against the arguments at compile time
+ * and is character width aware.
+ */
 #define REM_ALS_ENSURE(Expression) REM_ALS_ENSURE_IMPLEMENTATION(false, Expression)
 #define REM_ALS_ENSURE_ALWAYS(Expression) REM_ALS_ENSURE_IMPLEMENTATION(true, Expression)
 #define REM_ALS_ENSURE_MESSAGE(Expression, Format, ...) REM_ALS_ENSURE_IMPLEMENTATION_FORMAT(false, Expression, Format, ##__VA_ARGS__)
