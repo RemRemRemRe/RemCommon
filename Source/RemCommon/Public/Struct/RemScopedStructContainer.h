@@ -193,7 +193,6 @@ public:
     template <Enum::EConstness Constness>
     class TIteratorImpl
     {
-    private:
         using FPoolType = std::conditional_t<Constness == Enum::EConstness::Const, const TScopedStructContainer,
                                              TScopedStructContainer>;
         using FViewType = std::conditional_t<Constness == Enum::EConstness::Const, FConstStructView, FStructView>;

@@ -16,28 +16,28 @@ void FRemMathCoreTest::Define()
         It(TEXT("GetKindSmallNumber should dispatch by floating point type"), [this]
         {
             TestTrue(TEXT("float"), FMath::IsNearlyEqual(
-                static_cast<float>(Rem::Math::GetKindSmallNumber<float>()),
-                static_cast<float>(UE_KINDA_SMALL_NUMBER)));
+                Rem::Math::GetKindSmallNumber<float>(),
+                UE_KINDA_SMALL_NUMBER));
             TestTrue(TEXT("double"), FMath::IsNearlyEqual(
-                static_cast<double>(Rem::Math::GetKindSmallNumber<double>()),
-                static_cast<double>(UE_DOUBLE_KINDA_SMALL_NUMBER)));
+                Rem::Math::GetKindSmallNumber<double>(),
+                UE_DOUBLE_KINDA_SMALL_NUMBER));
         });
 
         It(TEXT("GetSmallNumber should dispatch by floating point type"), [this]
         {
             TestTrue(TEXT("float"), FMath::IsNearlyEqual(
-                static_cast<float>(Rem::Math::GetSmallNumber<float>()),
-                static_cast<float>(UE_SMALL_NUMBER)));
+                Rem::Math::GetSmallNumber<float>(),
+                UE_SMALL_NUMBER));
             TestTrue(TEXT("double"), FMath::IsNearlyEqual(
-                static_cast<double>(Rem::Math::GetSmallNumber<double>()),
-                static_cast<double>(UE_DOUBLE_SMALL_NUMBER)));
+                Rem::Math::GetSmallNumber<double>(),
+                UE_DOUBLE_SMALL_NUMBER));
         });
 
         It(TEXT("GetPI should dispatch by floating point type"), [this]
         {
             TestTrue(TEXT("float"), FMath::IsNearlyEqual(
-                static_cast<float>(Rem::Math::GetPI<float>()), static_cast<float>(UE_PI)));
-            TestEqual(TEXT("double"), static_cast<double>(Rem::Math::GetPI<double>()),
+                Rem::Math::GetPI<float>(), UE_PI));
+            TestEqual(TEXT("double"), Rem::Math::GetPI<double>(),
                 3.1415926535897931, 1e-9);
         });
     });

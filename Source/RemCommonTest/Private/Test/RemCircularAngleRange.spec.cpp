@@ -24,7 +24,7 @@ void FRemCircularAngleRangeTest::Define()
     {
         It(TEXT("center and span should produce a non-wrapping range when it does not cross zero"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestEqual(TEXT("start"), Range.GetStartAngle(), 45.0f, 1e-4f);
             TestEqual(TEXT("end"), Range.GetEndAngle(), 135.0f, 1e-4f);
@@ -35,7 +35,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("center and span should produce a wrapping range when it crosses zero"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 90.0f};
+            const FRemCircularAngleRange Range{0.0f, 90.0f};
 
             TestEqual(TEXT("start"), Range.GetStartAngle(), 315.0f, 1e-4f);
             TestEqual(TEXT("end"), Range.GetEndAngle(), 45.0f, 1e-4f);
@@ -45,7 +45,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("full span should produce a full circle"), [this]
         {
-            FRemCircularAngleRange Range{10.0f, 360.0f};
+            const FRemCircularAngleRange Range{10.0f, 360.0f};
 
             TestTrue(TEXT("full circle"), Range.IsFullCircle());
             TestTrue(TEXT("wrapping"), Range.IsWrappingZero());
@@ -70,7 +70,7 @@ void FRemCircularAngleRangeTest::Define()
     {
         It(TEXT("should test membership in a non-wrapping range"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestTrue(TEXT("inside"), Range.Contains(90.0f));
             TestTrue(TEXT("start boundary"), Range.Contains(45.0f));
@@ -81,7 +81,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should test membership in a wrapping range"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 90.0f};
+            const FRemCircularAngleRange Range{0.0f, 90.0f};
 
             TestTrue(TEXT("inside high"), Range.Contains(350.0f));
             TestTrue(TEXT("inside low"), Range.Contains(10.0f));
@@ -92,7 +92,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should contain everything in a full circle"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 360.0f};
+            const FRemCircularAngleRange Range{0.0f, 360.0f};
 
             TestTrue(TEXT("any angle"), Range.Contains(123.0f));
             TestTrue(TEXT("zero"), Range.Contains(0.0f));
@@ -103,14 +103,14 @@ void FRemCircularAngleRangeTest::Define()
     {
         It(TEXT("should keep angles inside the range"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestEqual(TEXT("inside"), Range.ClampAngle(90.0f), 90.0f, 1e-4f);
         });
 
         It(TEXT("should clamp to the nearest boundary"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestEqual(TEXT("near start"), Range.ClampAngle(44.0f), 45.0f, 1e-4f);
             TestEqual(TEXT("near end"), Range.ClampAngle(136.0f), 135.0f, 1e-4f);
@@ -118,7 +118,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should clamp to the nearest boundary across zero"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 90.0f};
+            const FRemCircularAngleRange Range{0.0f, 90.0f};
 
             TestEqual(TEXT("near end across zero"), Range.ClampAngle(46.0f), 45.0f, 1e-4f);
             TestEqual(TEXT("near start across zero"), Range.ClampAngle(314.0f), 315.0f, 1e-4f);
@@ -126,7 +126,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should keep angles in a full circle"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 360.0f};
+            const FRemCircularAngleRange Range{0.0f, 360.0f};
 
             TestEqual(TEXT("any angle"), Range.ClampAngle(200.0f), 200.0f, 1e-4f);
         });
@@ -136,7 +136,7 @@ void FRemCircularAngleRangeTest::Define()
     {
         It(TEXT("should measure the distance to the start boundary"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestEqual(TEXT("inside to start"), Range.GetDistanceToBoundary(90.0f, true), 45.0f, 1e-4f);
             TestEqual(TEXT("outside to start"), Range.GetDistanceToBoundary(180.0f, true), 135.0f, 1e-4f);
@@ -144,7 +144,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should measure the distance to the end boundary"), [this]
         {
-            FRemCircularAngleRange Range{90.0f, 90.0f};
+            const FRemCircularAngleRange Range{90.0f, 90.0f};
 
             TestEqual(TEXT("inside to end"), Range.GetDistanceToBoundary(90.0f, false), 45.0f, 1e-4f);
             TestEqual(TEXT("outside to end"), Range.GetDistanceToBoundary(0.0f, false), 135.0f, 1e-4f);
@@ -152,7 +152,7 @@ void FRemCircularAngleRangeTest::Define()
 
         It(TEXT("should return 360 for a full circle"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 360.0f};
+            const FRemCircularAngleRange Range{0.0f, 360.0f};
 
             TestEqual(TEXT("start"), Range.GetDistanceToBoundary(10.0f, true), 360.0f, 1e-4f);
             TestEqual(TEXT("end"), Range.GetDistanceToBoundary(10.0f, false), 360.0f, 1e-4f);
@@ -191,16 +191,16 @@ void FRemCircularAngleRangeTest::Define()
     {
         It(TEXT("should compute the center of wrapping and non-wrapping ranges"), [this]
         {
-            FRemCircularAngleRange NonWrapping{90.0f, 90.0f};
+            const FRemCircularAngleRange NonWrapping{90.0f, 90.0f};
             TestEqual(TEXT("non-wrapping center"), NonWrapping.GetCenter(), 90.0f, 1e-4f);
 
-            FRemCircularAngleRange Wrapping{0.0f, 90.0f};
+            const FRemCircularAngleRange Wrapping{0.0f, 90.0f};
             TestEqual(TEXT("wrapping center"), Wrapping.GetCenter(), 0.0f, 1e-4f);
         });
 
         It(TEXT("GetBounds should return the normalized start and end"), [this]
         {
-            FRemCircularAngleRange Range{0.0f, 90.0f};
+            const FRemCircularAngleRange Range{0.0f, 90.0f};
 
             ExpectVector2Near(*this, Range.GetBounds(), FVector2f{315.0f, 45.0f}, 1e-4f);
         });

@@ -21,7 +21,7 @@ void FRemEnumCombinationsTest::Define()
     {
         It(TEXT("should combine through the bit operation traits"), [this]
         {
-            const auto PitchYaw = ERemAngleCombination::Pitch | ERemAngleCombination::Yaw;
+            constexpr auto PitchYaw = ERemAngleCombination::Pitch | ERemAngleCombination::Yaw;
 
             TestEqual(TEXT("pitch yaw"), PitchYaw, ERemAngleCombination::PitchYaw);
             TestTrue(TEXT("has pitch"),
@@ -31,7 +31,7 @@ void FRemEnumCombinationsTest::Define()
             TestFalse(TEXT("no roll"),
                 static_cast<bool>(PitchYaw & ERemAngleCombination::Roll));
             TestEqual(TEXT("all"), ERemAngleCombination::All, ERemAngleCombination::Pitch |
-                ERemAngleCombination::Yaw | ERemAngleCombination::Roll);
+                                                              ERemAngleCombination::Yaw | ERemAngleCombination::Roll);
         });
     });
 
@@ -39,7 +39,7 @@ void FRemEnumCombinationsTest::Define()
     {
         It(TEXT("should combine through the bit operation traits"), [this]
         {
-            const auto XZ = ERemAxisCombination::X | ERemAxisCombination::Z;
+            constexpr auto XZ = ERemAxisCombination::X | ERemAxisCombination::Z;
 
             TestEqual(TEXT("x z"), XZ, ERemAxisCombination::XZ);
             TestTrue(TEXT("has x"), static_cast<bool>(XZ & ERemAxisCombination::X));
@@ -52,8 +52,8 @@ void FRemEnumCombinationsTest::Define()
     {
         It(TEXT("should combine container flags through the bit operation traits"), [this]
         {
-            const auto ArrayAndSet = Rem::Enum::EContainerCombination::Array
-                | Rem::Enum::EContainerCombination::Set;
+            constexpr auto ArrayAndSet = Rem::Enum::EContainerCombination::Array
+                                     | Rem::Enum::EContainerCombination::Set;
 
             TestTrue(TEXT("has array"),
                 static_cast<bool>(ArrayAndSet & Rem::Enum::EContainerCombination::Array));
@@ -66,7 +66,7 @@ void FRemEnumCombinationsTest::Define()
     {
         It(TEXT("should insert data at the front or the back of the reference element"), [this]
         {
-            TArray<int32> Numbers{1, 3};
+            TArray Numbers{1, 3};
 
             // PushBack relative to the reference element 1: insert after it
             Rem::Object::ApplyArrayOperation<ERemArrayOperation::PushBack>(Numbers, 1, {2});

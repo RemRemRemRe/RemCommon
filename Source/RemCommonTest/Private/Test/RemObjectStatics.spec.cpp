@@ -49,7 +49,7 @@ void FRemObjectStaticsTest::Define()
 
         It(TEXT("GetPlayerState should return null for an actor without a player state"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Actor = World->SpawnActor<AActor>();
 
             // TNotNull<TActorOfNotNull*> is a non-deduced context: the wrapper must be explicit
@@ -77,7 +77,7 @@ void FRemObjectStaticsTest::Define()
             Rem::Test::FRemTestWorld World;
 
             auto* OwnerActor = World->SpawnActor<AActor>();
-            auto* Actor = SpawnActor<AActor>(World, AActor::StaticClass(), FTransform::Identity,
+            auto* Actor      = SpawnActor<AActor>(World, AActor::StaticClass(), FTransform::Identity,
                 ESpawnActorCollisionHandlingMethod::Undefined, OwnerActor);
 
             TestTrue(TEXT("spawned"), Actor != nullptr);
@@ -86,10 +86,10 @@ void FRemObjectStaticsTest::Define()
 
         It(TEXT("should spawn relative to an owner actor"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
 
             auto* OwnerActor = World->SpawnActor<AActor>();
-            auto* Actor = SpawnActor<AActor>(OwnerActor, AActor::StaticClass(), FTransform::Identity);
+            auto* Actor      = SpawnActor<AActor>(OwnerActor, AActor::StaticClass(), FTransform::Identity);
 
             TestTrue(TEXT("spawned"), Actor != nullptr);
             TestTrue(TEXT("owned"), Actor->GetOwner() == OwnerActor);
@@ -100,7 +100,7 @@ void FRemObjectStaticsTest::Define()
     {
         It(TEXT("should find a movement component on a character"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Character = World->SpawnActor<ACharacter>();
 
             const Rem::TNotNull<ACharacter*> NotNullCharacter{Character};
@@ -112,7 +112,7 @@ void FRemObjectStaticsTest::Define()
 
         It(TEXT("should return null when the component type is missing"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Character = World->SpawnActor<ACharacter>();
 
             const Rem::TNotNull<ACharacter*> NotNullCharacter{Character};

@@ -17,7 +17,8 @@ void FRemAssetLoadingTest::Define()
         It(TEXT("should report an unloaded soft object as not loaded"), [this]
         {
             const TSoftObjectPtr<UTexture2D> SoftTexture{
-                FSoftObjectPath{TEXT("/Engine/Rem/DoesNotExist.DoesNotExist")}};
+                FSoftObjectPath{TEXT("/Engine/Rem/DoesNotExist.DoesNotExist")}
+            };
 
             TestFalse(TEXT("not loaded"), Rem::IsLoaded(SoftTexture));
         });
@@ -35,7 +36,8 @@ void FRemAssetLoadingTest::Define()
         It(TEXT("should start an async load for a valid path and release cleanly"), [this]
         {
             const TSoftObjectPtr<UTexture2D> SoftTexture{
-                FSoftObjectPath{TEXT("/Engine/Rem/DoesNotExist.DoesNotExist")}};
+                FSoftObjectPath{TEXT("/Engine/Rem/DoesNotExist.DoesNotExist")}
+            };
 
             const auto Handle = Rem::LoadAsset(SoftTexture);
 

@@ -93,7 +93,7 @@ void FRemComponentContainerTest::Define()
             Container.Initialize(*Owner);
 
             TestEqual(TEXT("initialize order"), FRemComponentContainerTestCounters::InitializeOrder,
-                TArray<int32>({0, 1, 2}));
+                TArray({0, 1, 2}));
             TestTrue(TEXT("is initialized"), Container.IsInitialized());
         });
 
@@ -223,7 +223,8 @@ void FRemComponentContainerTest::Define()
             const auto A = Container.FindComponent<FRemComponentContainerTestA>(ERemComponentContainerTestSlot::ThirdA);
             TestTrue(TEXT("enum index 2 is A"), A.IsValid());
 
-            const auto B = Container.FindComponent<FRemComponentContainerTestB>(ERemComponentContainerTestSlot::SecondB);
+            const auto B = Container.FindComponent<
+                FRemComponentContainerTestB>(ERemComponentContainerTestSlot::SecondB);
             TestTrue(TEXT("enum index 1 is B"), B.IsValid());
         });
 
@@ -245,7 +246,7 @@ void FRemComponentContainerTest::Define()
             FRemComponentContainer Container;
             Setup(Container);
 
-            int32 Iterated = 0;
+            auto Iterated = 0;
             Container.ForEachComponent<FRemComponentBase>(
                 [&](const FRemComponentBase& Component, const int32 Index, const UScriptStruct& ScriptStruct)
                 {
@@ -264,7 +265,7 @@ void FRemComponentContainerTest::Define()
             FRemComponentContainer Container;
             Setup(Container);
 
-            int32 ACount = 0;
+            auto ACount = 0;
             Container.ForEachComponent<FRemComponentContainerTestA>(
                 [&](FRemComponentContainerTestA& Component, const int32, const UScriptStruct&)
                 {
@@ -327,7 +328,7 @@ void FRemComponentContainerTest::Define()
         {
             FRemComponentContainer Container;
 
-            TInstancedStruct<FRemComponentBase> Instance =
+            const TInstancedStruct<FRemComponentBase> Instance =
                 TInstancedStruct<FRemComponentBase>::Make<FRemComponentContainerTestA>();
             TArray<TConstStructView<FRemComponentBase>> Views;
             Views.Add(TConstStructView<FRemComponentBase>(Instance));
@@ -371,8 +372,9 @@ void FRemComponentContainerTest::Define()
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
             Container.Initialize(*Owner);
 
-            const FRemComponentBase::FContext Context{&Container, 0};
-            TestEqual(TEXT("owner from context"), FRemComponentBase::GetOwner<URemComponentContainerTestOwner>(Context), Owner);
+            const FRemComponentBase::FContext Context{.OwnerInstance = &Container, .ComponentIndex = 0};
+            TestEqual(TEXT("owner from context"), FRemComponentBase::GetOwner<URemComponentContainerTestOwner>(Context),
+                Owner);
         });
     });
 
@@ -383,7 +385,7 @@ void FRemComponentContainerTest::Define()
             FRemComponentContainer Container;
             Setup(Container);
 
-            auto A = Container.FindComponent<FRemComponentContainerTestA>();
+            const auto A = Container.FindComponent<FRemComponentContainerTestA>();
             A->Value = 7;
 
             FRemComponentContainer Destination;

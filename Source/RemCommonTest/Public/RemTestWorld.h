@@ -20,10 +20,9 @@ namespace Rem::Test
  */
 class REMCOMMONTEST_API FRemTestWorld
 {
-private:
     UWorld* World{};
     UWorld* PrevWorld{};
-    uint32 OldFrameCounter{};
+    uint64 OldFrameCounter{};
 
 public:
     FRemTestWorld();
@@ -42,9 +41,9 @@ public:
     }
 
     /** Advances the world by one frame (latent actions, ticks, FTSTicker). */
-    void Tick(float DeltaSeconds = 0.1f);
+    void Tick(float DeltaSeconds = 0.1f) const;
 
     /** Ends the current frame (increments GFrameCounter), same as engine loop. */
-    void EndTick();
+    static void EndTick();
 };
 }

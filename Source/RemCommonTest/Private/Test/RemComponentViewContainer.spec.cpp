@@ -64,7 +64,7 @@ void FRemComponentViewContainerTest::Define()
     {
         It(TEXT("should find the component by type and index"), [this]
         {
-            FRemComponentViewContainerTestContext Context;
+            const FRemComponentViewContainerTestContext Context;
 
             const auto View = Context.Instance.FindComponent<FRemComponentViewContainerTestComponent>();
             TestTrue(TEXT("component found"), View.IsValid());
@@ -75,7 +75,7 @@ void FRemComponentViewContainerTest::Define()
 
         It(TEXT("should report an absent component type"), [this]
         {
-            FRemComponentViewContainerTestContext Context;
+            const FRemComponentViewContainerTestContext Context;
 
             TestEqual(TEXT("no index"),
                 Context.Instance.GetComponentIndex<FRemComponentViewContainerTestOtherComponent>(),
@@ -98,13 +98,13 @@ void FRemComponentViewContainerTest::Define()
             Context.Instance.Initialize(*Owner);
 
             const auto Data = Context.Instance
-                .GetInstanceData<FRemComponentViewContainerTestComponent>(0);
+                                     .GetInstanceData<FRemComponentViewContainerTestComponent>(0);
             TestTrue(TEXT("data valid"), Data.IsValid());
             TestEqual(TEXT("default value"), Data->Value, 0);
 
-            Data->Value = 42;
+            Data->Value          = 42;
             const auto DataAgain = Context.Instance
-                .GetInstanceData<FRemComponentViewContainerTestComponent>(0);
+                                          .GetInstanceData<FRemComponentViewContainerTestComponent>(0);
             TestEqual(TEXT("value round-trip"), DataAgain->Value, 42);
         });
     });
@@ -123,7 +123,7 @@ void FRemComponentViewContainerTest::Define()
             Context.Instance.ForEachComponent<FRemComponentViewBase>(
                 [&Context](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
                 {
-                    const FRemComponentViewBase::FContext TickContext{Rem::MakeNotNull(&Context.Instance), Index};
+                    const FRemComponentViewBase::FContext TickContext{.OwnerInstance = Rem::MakeNotNull(&Context.Instance), .ComponentIndex = Index};
                     if (Component.ShouldTick(TickContext))
                     {
                         Component.Tick(TickContext, 0.5f);

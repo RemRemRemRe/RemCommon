@@ -37,7 +37,7 @@ struct FRemComponentViewContainerTestComponent : public FRemComponentViewBase
 {
     GENERATED_BODY()
 
-    using ThisClass = FRemComponentViewContainerTestComponent;
+    using ThisClass         = FRemComponentViewContainerTestComponent;
     using FInstanceDataType = FRemComponentViewContainerTestInstanceData;
 
     virtual FConstStructView GetInstanceDataType(const FContext& Context) const override;
@@ -54,7 +54,7 @@ struct FRemComponentViewContainerTestOtherComponent : public FRemComponentViewBa
 {
     GENERATED_BODY()
 
-    using ThisClass = FRemComponentViewContainerTestOtherComponent;
+    using ThisClass         = FRemComponentViewContainerTestOtherComponent;
     using FInstanceDataType = FRemComponentViewContainerTestInstanceData;
 };
 }

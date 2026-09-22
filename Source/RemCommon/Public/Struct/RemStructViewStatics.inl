@@ -57,7 +57,7 @@ auto FindStructViewInternal(const TRange& Range)
 
     using FResult = TTuple<FResultView, int32>;
 
-    int32 Index = 0;
+    auto Index = 0;
     for (const auto& BaseStruct : Range)
     {
         auto View = TryMakeView<TStructType>(StructView(

@@ -89,8 +89,8 @@ void FRemMathTest::Define()
         It(TEXT("should interpolate a quaternion toward the target"), [this]
         {
             const auto TargetRotation = FRotator3f{0.0f, 90.0f, 0.0f}.Quaternion();
-            auto Value = FQuat4f::Identity;
-            for (int32 Frame = 0; Frame < 200; ++Frame)
+            auto Value                = FQuat4f::Identity;
+            for (auto Frame = 0; Frame < 200; ++Frame)
             {
                 Value = DamperExact(Value, TargetRotation, 0.1f, 1.0f);
             }
@@ -125,8 +125,8 @@ void FRemMathTest::Define()
 
         It(TEXT("should lerp a TAngle along the shortest path"), [this]
         {
-            Rem::Math::TAngle<float> From{350.0f};
-            Rem::Math::TAngle<float> To{10.0f};
+            constexpr Rem::Math::TAngle From{350.0f};
+            constexpr Rem::Math::TAngle To{10.0f};
 
             const auto Result = Lerp(From, To, 0.5f);
 

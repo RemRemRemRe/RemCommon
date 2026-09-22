@@ -518,7 +518,7 @@ void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDat
     RemCheckCondition(DrawDebugType != EDrawDebugTrace::None, return;);
 
     const auto bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
-    const auto LifeTime    = (DrawDebugType == EDrawDebugTrace::ForDuration)
+    const auto LifeTime    = DrawDebugType == EDrawDebugTrace::ForDuration
                                  ? DrawTime
                                  : 0.f;
 
@@ -533,30 +533,30 @@ void DrawDebugOverlapData(const TNotNull<const UWorld*> World, const FOverlapDat
         const auto* Component = Overlap.GetComponent();
         RemCheckVariable(Component, continue;);
 
-        ::DrawDebugPoint(World, Component->GetComponentLocation(), DrawImpactPointSize,
+        DrawDebugPoint(World, Component->GetComponentLocation(), DrawImpactPointSize,
             HitFColor, bPersistent, LifeTime);
     }
 
     // draw query shape at the overlap position.
     if (CollisionShape.IsSphere())
     {
-        ::DrawDebugSphere(World, Datum.Pos, CollisionShape.GetSphereRadius(), DrawCircleSidesCount,
+        DrawDebugSphere(World, Datum.Pos, CollisionShape.GetSphereRadius(), DrawCircleSidesCount,
             TraceFColor, bPersistent, LifeTime);
     }
     else if (CollisionShape.IsBox())
     {
-        ::DrawDebugBox(World, Datum.Pos, CollisionShape.GetBox(), Datum.Rot,
+        DrawDebugBox(World, Datum.Pos, CollisionShape.GetBox(), Datum.Rot,
             TraceFColor, bPersistent, LifeTime);
     }
     else if (CollisionShape.IsCapsule())
     {
-        ::DrawDebugCapsule(World, Datum.Pos, CollisionShape.GetCapsuleHalfHeight(),
+        DrawDebugCapsule(World, Datum.Pos, CollisionShape.GetCapsuleHalfHeight(),
             CollisionShape.GetCapsuleRadius(), Datum.Rot,
             TraceFColor, bPersistent, LifeTime);
     }
     else if (CollisionShape.IsLine())
     {
-        ::DrawDebugPoint(World, Datum.Pos, DrawImpactPointSize, TraceFColor, bPersistent, LifeTime);
+        DrawDebugPoint(World, Datum.Pos, DrawImpactPointSize, TraceFColor, bPersistent, LifeTime);
     }
 
 #endif

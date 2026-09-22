@@ -23,7 +23,7 @@ FRemTestWorld::FRemTestWorld()
     GWorld          = World;
 
     World->InitializeActorsForPlay(FURL{});
-    auto* Settings = World->GetWorldSettings();
+    auto* Settings                  = World->GetWorldSettings();
     Settings->MinUndilatedFrameTime = 0.0001f;
     Settings->MaxUndilatedFrameTime = 10.0f;
     World->BeginPlay();
@@ -33,8 +33,8 @@ FRemTestWorld::~FRemTestWorld()
 {
     GEngine->DestroyWorldContext(World);
     World->DestroyWorld(true);
-    GWorld          = PrevWorld;
-    GFrameCounter   = OldFrameCounter;
+    GWorld        = PrevWorld;
+    GFrameCounter = OldFrameCounter;
 
     // process render-thread pending cleanups before garbage collection frees
     // objects the render thread may still hold in its deferred destroy queue
@@ -43,7 +43,7 @@ FRemTestWorld::~FRemTestWorld()
     CollectGarbage(RF_NoFlags, true);
 }
 
-void FRemTestWorld::Tick(const float DeltaSeconds)
+void FRemTestWorld::Tick(const float DeltaSeconds) const
 {
     check(IsInGameThread());
 
@@ -53,7 +53,7 @@ void FRemTestWorld::Tick(const float DeltaSeconds)
     FTaskGraphInterface::Get().ProcessThreadUntilIdle(ENamedThreads::GameThread);
 
     // FTSTicker is used by various engine modules; mirrors FEngineLoop::Tick()
-    FTSTicker::GetCoreTicker().Tick(FApp::GetDeltaTime());
+    FTSTicker::GetCoreTicker().Tick(static_cast<float>(FApp::GetDeltaTime()));
     FThreadManager::Get().Tick();
     GEngine->TickDeferredCommands();
 }

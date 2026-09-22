@@ -15,7 +15,7 @@
                 return Function(std::forward<TArgs>(Args)...); \
             } \
         }; \
-    }; \
+    } \
     namespace Fn \
     { \
         constexpr Private::Name##_Fn_Impl Name{}; \

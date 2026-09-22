@@ -41,7 +41,7 @@ static bool CanExecute(std::atomic<uint8>& bExecuted, const FAlsEnsureInfo& Ensu
 
 static bool ExecuteInternal(const FAlsEnsureInfo& EnsureInfo, const TCHAR* Message)
 {
-    if (UNLIKELY(GetEnsureHandler() && GetEnsureHandler()({EnsureInfo.Expression, Message})))
+    if (UNLIKELY(GetEnsureHandler() && GetEnsureHandler()(FEnsureHandlerArgs{.Expression = EnsureInfo.Expression, .Message = Message})))
     {
         return false;
     }

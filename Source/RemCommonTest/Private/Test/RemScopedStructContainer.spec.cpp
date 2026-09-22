@@ -54,7 +54,7 @@ void FRemScopedStructContainerTest::Define()
             TestEqual(TEXT("Text"), Heavy->Text, FString(TEXT("Hello")));
             TestEqual(TEXT("Values num"), Heavy->Values.Num(), 5);
 
-            for (int32 Index = 0; Index < 5; ++Index)
+            for (auto Index = 0; Index < 5; ++Index)
             {
                 Heavy->Values[Index] = Index * 2;
             }
@@ -102,7 +102,7 @@ void FRemScopedStructContainerTest::Define()
             const auto* FirstMemory = Pool[0].GetMemory();
 
             // Overflow the 64-byte inline block with heavy elements.
-            for (int32 Index = 0; Index < 50; ++Index)
+            for (auto Index = 0; Index < 50; ++Index)
             {
                 (void)Pool.Emplace<FRemScopedStructContainerTestHeavy>(FString::Printf(TEXT("Item%d"), Index), Index);
             }
@@ -115,7 +115,7 @@ void FRemScopedStructContainerTest::Define()
             TestEqual(TEXT("first content intact"), FirstReadBack->Number, 1.0f);
 
             // Order must be preserved: element i is the i-th added.
-            for (int32 Index = 0; Index < 50; ++Index)
+            for (auto Index = 0; Index < 50; ++Index)
             {
                 const auto* Heavy = Pool[Index + 1].GetPtr<FRemScopedStructContainerTestHeavy>();
                 TestNotNull(TEXT("heavy read back"), Heavy);
@@ -130,7 +130,7 @@ void FRemScopedStructContainerTest::Define()
                 "FQuat member should pin 16-byte alignment");
 
             TScopedStructContainer<64, 256> Pool;
-            for (int32 Index = 0; Index < 16; ++Index)
+            for (auto Index = 0; Index < 16; ++Index)
             {
                 (void)Pool.Emplace<FRemScopedStructContainerTestAligned>();
                 (void)Pool.Emplace<FRemScopedStructContainerTestTrivial>();
@@ -150,12 +150,12 @@ void FRemScopedStructContainerTest::Define()
         It(TEXT("should place oversized elements in dedicated chunks and keep views stable"), [this]
         {
             TScopedStructContainer<64, 128> Pool;
-            auto First = Pool.Emplace<FRemScopedStructContainerTestOversized>();
+            const auto First = Pool.Emplace<FRemScopedStructContainerTestOversized>();
             First->Id  = 1;
             FMemory::Memset(First->Payload, 0xAB, sizeof(First->Payload));
             const auto* FirstMemory = Pool[0].GetMemory();
 
-            for (int32 Index = 0; Index < 3; ++Index)
+            for (auto Index = 0; Index < 3; ++Index)
             {
                 (void)Pool.Emplace<FRemScopedStructContainerTestOversized>();
             }
@@ -183,7 +183,7 @@ void FRemScopedStructContainerTest::Define()
                 "alignas(32) member should pin 32-byte alignment");
 
             TScopedStructContainer<64, 128> Pool;
-            for (int32 Index = 0; Index < 4; ++Index)
+            for (auto Index = 0; Index < 4; ++Index)
             {
                 (void)Pool.Emplace<FRemScopedStructContainerTestWideAligned>();
             }
@@ -200,13 +200,13 @@ void FRemScopedStructContainerTest::Define()
         It(TEXT("should iterate in insertion order via range-for and GetNum"), [this]
         {
             TScopedStructContainer<64, 256> Pool;
-            for (int32 Index = 0; Index < 20; ++Index)
+            for (auto Index = 0; Index < 20; ++Index)
             {
                 const auto Element = Pool.Emplace<FRemScopedStructContainerTestTrivial>();
                 Element->Count     = Index;
             }
 
-            int32 Iterated = 0;
+            auto Iterated = 0;
             for (FStructView View : Pool)
             {
                 const auto* Item = View.GetPtr<FRemScopedStructContainerTestTrivial>();
@@ -218,7 +218,7 @@ void FRemScopedStructContainerTest::Define()
             TestEqual(TEXT("GetNum interop"), GetNum(Pool), Pool.Num());
 
             const auto& ConstPool = Pool;
-            int32 ConstIterated   = 0;
+            auto ConstIterated   = 0;
             for (FConstStructView View : ConstPool)
             {
                 const auto* Item = View.GetPtr<FRemScopedStructContainerTestTrivial>();
@@ -232,12 +232,12 @@ void FRemScopedStructContainerTest::Define()
         It(TEXT("should support post-increment on iterators"), [this]
         {
             TScopedStructContainer<64, 256> Pool;
-            for (int32 Index = 0; Index < 10; ++Index)
+            for (auto Index = 0; Index < 10; ++Index)
             {
                 (void)Pool.Emplace<FRemScopedStructContainerTestTrivial>();
             }
 
-            int32 Count = 0;
+            auto Count = 0;
             for (auto It = Pool.begin(); It != Pool.end();)
             {
                 const auto Before = It;
@@ -274,7 +274,7 @@ void FRemScopedStructContainerTest::Define()
                 const FRemScopedStructContainerTestTracked Source{123};
                 {
                     TScopedStructContainer<64, 256> Pool;
-                    for (int32 Index = 0; Index < 40; ++Index)
+                    for (auto Index = 0; Index < 40; ++Index)
                     {
                         (void)Pool.Emplace<FRemScopedStructContainerTestTracked>(Index);
                     }
@@ -302,12 +302,12 @@ void FRemScopedStructContainerTest::Define()
             // Producer: a mixed-struct call stack.
             TScopedStructContainer<128, 256> Stack;
             (void)Stack.Emplace<FRemScopedStructContainerTestTrivial>();
-            auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Config")), 2);
+            const auto Config    = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Config")), 2);
             Config->Values = {10, 20};
             (void)Stack.Emplace<FRemScopedStructContainerTestAligned>();
 
             // Consumer: locate the requested type, read, then write through the view.
-            int32 FoundCount = 0;
+            auto FoundCount = 0;
             for (FStructView View : Stack)
             {
                 if (auto* Found = View.GetPtr<FRemScopedStructContainerTestHeavy>())
@@ -329,7 +329,7 @@ void FRemScopedStructContainerTest::Define()
         {
             TScopedStructContainer<128, 256> Stack;
             (void)Stack.Emplace<FRemScopedStructContainerTestTrivial>();
-            auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Interop")), 3);
+            const auto Config    = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Interop")), 3);
             Config->Values = {1, 2, 3};
             (void)Stack.Emplace<FRemScopedStructContainerTestAligned>();
 
@@ -345,7 +345,7 @@ void FRemScopedStructContainerTest::Define()
 
             // The const overload yields a read-only view.
             const auto& ConstStack = Stack;
-            const auto FoundConst =
+            const auto FoundConst  =
                 Rem::Struct::FindConstStructView<FRemScopedStructContainerTestHeavy>(ConstStack);
             TestTrue(TEXT("const found"), FoundConst.Get<0>().IsValid());
             TestEqual(TEXT("const found index"), FoundConst.Get<1>(), 1);
@@ -358,7 +358,7 @@ void FRemScopedStructContainerTest::Define()
             // Layer 1 (entry): push the structs the call stack needs.
             TScopedStructContainer<256, 512> Stack;
             Stack.Emplace<FRemScopedStructContainerTestTrivial>()->Count = 7;
-            auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Layer")), 1);
+            const auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Layer")), 1);
             Config->Values = {5};
 
             // Layer 2 (middle): the container is passed down by reference, untouched.

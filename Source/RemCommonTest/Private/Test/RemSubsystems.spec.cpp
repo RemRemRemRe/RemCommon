@@ -30,7 +30,7 @@ void FRemSubsystemsTest::Define()
     {
         It(TEXT("should resolve the registered world subsystem"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 

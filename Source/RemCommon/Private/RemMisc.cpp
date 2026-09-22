@@ -1,4 +1,4 @@
-﻿// Copyright RemRemRemRe. 2025. All Rights Reserved.
+// Copyright RemRemRemRe. 2025. All Rights Reserved.
 
 #include "RemMisc.h"
 
@@ -8,8 +8,6 @@
 #include "Macro/RemAssertionMacros.h"
 #include "Math/RemMath.h"
 #include "UObject/Object.h"
-#include "UObject/PropertyPortFlags.h"
-#include "UObject/SoftObjectPath.h"
 
 namespace Rem
 {
@@ -24,7 +22,7 @@ bool IsClassDefaultObject(const UObject* Object)
 
 uint8* AllocateStructMemory(const UStruct& Struct)
 {
-    auto StructMemory = static_cast<uint8*>(
+    const auto StructMemory = static_cast<uint8*>(
         FMemory::Malloc(Struct.GetStructureSize(), Struct.GetMinAlignment()));
     RemCheckVariable(StructMemory, return {});
 

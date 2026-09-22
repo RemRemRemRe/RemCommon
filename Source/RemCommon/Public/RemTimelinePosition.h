@@ -95,7 +95,7 @@ struct REMCOMMON_API FRemTimelinePositionRange_Frame : public FRemTimelinePositi
 };
 
 inline bool FRemTimelinePositionBase::IsWithinInclusive(
-    const FRemTimelinePosition_TimeAndFrame& TimeAndFrame) const
+    const FRemTimelinePosition_TimeAndFrame&) const
 {
     return false;
 }

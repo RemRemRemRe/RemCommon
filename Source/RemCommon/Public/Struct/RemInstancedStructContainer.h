@@ -50,8 +50,7 @@ struct FRemInstancedStructContainer
     }
 
     template <Rem::CHasStaticStruct T>
-    T*
-    TryGetPtr(const FKeyType Key) const
+    T* TryGetPtr(const FKeyType Key) const
     {
         const auto View = TryGetView(Key);
         auto* Ptr       = View.GetPtr<const T>();
@@ -59,8 +58,7 @@ struct FRemInstancedStructContainer
     }
 
     template <Rem::CHasStaticStruct T>
-    T&
-    Get(const FKeyType Key) const
+    T& Get(const FKeyType Key) const
     {
         const auto View = TryGetView(Key);
         auto& Ref       = View.Get<const T>();

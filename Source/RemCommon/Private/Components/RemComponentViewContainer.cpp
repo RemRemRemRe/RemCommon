@@ -10,25 +10,25 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RemComponentViewContainer)
 
-FConstStructView FRemComponentViewBase::GetInstanceDataType(const FContext& Context) const
+FConstStructView FRemComponentViewBase::GetInstanceDataType(const FContext&) const
 {
     return {};
 }
 
-void FRemComponentViewBase::Initialize(const FContext& Context) const
+void FRemComponentViewBase::Initialize(const FContext&) const
 {
 }
 
-bool FRemComponentViewBase::ShouldTick(const FContext& Context) const
+bool FRemComponentViewBase::ShouldTick(const FContext&) const
 {
     return false;
 }
 
-void FRemComponentViewBase::Tick(const FContext& Context, float) const
+void FRemComponentViewBase::Tick(const FContext&, float) const
 {
 }
 
-void FRemComponentViewBase::Uninitialize(const FContext& Context) const
+void FRemComponentViewBase::Uninitialize(const FContext&) const
 {
 }
 
@@ -92,7 +92,7 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
         ForEachComponent<FRemComponentViewBase>(
             [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
             {
-                InstanceDataTypes.Add(Component.GetInstanceDataType({this, Index}));
+                InstanceDataTypes.Add(Component.GetInstanceDataType(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index}));
             });
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
@@ -107,7 +107,7 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
     ForEachComponent<FRemComponentViewBase>(
         [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
         {
-            Component.Initialize({this, Index});
+            Component.Initialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 }
 
@@ -135,7 +135,7 @@ void FRemComponentViewContainerInstance::Uninitialize()
     ForEachComponent<FRemComponentViewBase>(
         [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
         {
-            Component.Uninitialize({this, Index});
+            Component.Uninitialize(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index});
         });
 
     InstanceDataContainer.Reset();

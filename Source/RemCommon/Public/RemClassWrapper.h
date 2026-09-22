@@ -1,8 +1,7 @@
-﻿// Copyright RemRemRemRe. 2025. All Rights Reserved.
+// Copyright RemRemRemRe. 2025. All Rights Reserved.
 
 #pragma once
 
-#include "RemConcepts.h"
 #include "Macro/RemGenerateMembersMacro.h"
 #include "Templates/SubclassOf.h"
 

@@ -8,7 +8,7 @@
 
 namespace Rem::Common::Private
 {
-Rem::TNotNull<const UScriptStruct*> URemTestScriptStructObject::GetScriptStruct() const
+TNotNull<const UScriptStruct*> URemTestScriptStructObject::GetScriptStruct() const
 {
     return FRemEmptyStruct::StaticStruct();
 }

@@ -33,7 +33,7 @@ void FRemInterfacesTest::Define()
 
         It(TEXT("should reject an interface without an object"), [this]
         {
-            FScriptInterface EmptyInterface;
+            constexpr FScriptInterface EmptyInterface;
 
             TestFalse(TEXT("invalid"), URemInterfaceStatics::IsValidInterface(EmptyInterface));
         });
@@ -43,7 +43,7 @@ void FRemInterfacesTest::Define()
     {
         It(TEXT("implementer should report its script struct"), [this]
         {
-            URemTestScriptStructObject* Object = NewObject<URemTestScriptStructObject>();
+            const URemTestScriptStructObject* Object = NewObject<URemTestScriptStructObject>();
 
             const IRemScriptStructInterface* Interface = Object;
             TestTrue(TEXT("script struct"),
@@ -55,7 +55,7 @@ void FRemInterfacesTest::Define()
     {
         It(TEXT("implementer should return its string"), [this]
         {
-            URemTestStringObject* Object = NewObject<URemTestStringObject>();
+            const URemTestStringObject* Object = NewObject<URemTestStringObject>();
 
             const IRemStringInterface* Interface = Object;
             TestEqual(TEXT("string"), Interface->ToString(), FString{TEXT("RemTestStringObject")});

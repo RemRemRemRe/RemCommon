@@ -133,12 +133,12 @@ template <typename RangeType, typename ValueType, typename ProjectionType, typen
 template <typename RangeType, typename ValueType, typename ProjectionType>
 [[nodiscard]] UE_REWRITE auto BinarySearch(const RangeType& Range, const ValueType& Value, ProjectionType Projection)
 {
-    return BinarySearch(Range, Value, Projection, TLess<>());
+    return BinarySearch(Range, Value, Projection, TLess());
 }
 
 template <typename RangeType, typename ValueType>
 [[nodiscard]] UE_REWRITE auto BinarySearch(const RangeType& Range, const ValueType& Value)
 {
-    return BinarySearch(Range, Value, FIdentityFunctor(), TLess<>());
+    return BinarySearch(Range, Value, FIdentityFunctor(), TLess());
 }
 }

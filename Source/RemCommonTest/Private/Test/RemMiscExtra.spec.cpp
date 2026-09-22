@@ -39,7 +39,9 @@ void FRemMiscExtraTest::Define()
     {
         It(TEXT("should extract the innermost object name after the last dot"), [this]
         {
-            const FSoftObjectPath Path{TEXT("/Game/Rem/Character/Ability/GameplayEffect/GE_Damage.GE_Damage:Inner.Child")};
+            const FSoftObjectPath Path{
+                TEXT("/Game/Rem/Character/Ability/GameplayEffect/GE_Damage.GE_Damage:Inner.Child")
+            };
 
             TestEqual(TEXT("name"), Rem::GetObjectNameFromSoftObjectPath(Path),
                 FUtf8String{TEXTVIEW("Child")});
@@ -66,7 +68,7 @@ void FRemMiscExtraTest::Define()
             Value.Count = 42;
 
             const auto String = Rem::ToString(Rem::MakeNotNull(
-                static_cast<const UScriptStruct*>(FRemScopedStructContainerTestTrivial::StaticStruct())),
+                    static_cast<const UScriptStruct*>(FRemScopedStructContainerTestTrivial::StaticStruct())),
                 Rem::MakeNotNull(static_cast<const void*>(&Value)));
 
             TestTrue(TEXT("contains the value"), String.Contains(UTF8TEXTVIEW("42")));

@@ -68,9 +68,8 @@ enum class ELogicOperator : uint8
     All,
     Any,
     None,
-
     And = All,
-    Or = Any,
+    Or  = Any,
     Not = None,
 };
 

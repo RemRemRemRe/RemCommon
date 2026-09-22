@@ -56,7 +56,7 @@ void FRemGameplayTagStaticsTest::Define()
 
         It(TEXT("MakePrimaryAssetIdFromTag should use the root parent as the type"), [this]
         {
-            const auto Tag = AddTag(TEXT("Test.Common.Tag.Leaf"));
+            const auto Tag     = AddTag(TEXT("Test.Common.Tag.Leaf"));
             const auto AssetId = MakePrimaryAssetIdFromTag(Tag);
 
             TestEqual(TEXT("type"), AssetId.PrimaryAssetType, FName{TEXT("Test")});
@@ -102,7 +102,7 @@ void FRemGameplayTagStaticsTest::Define()
 
         It(TEXT("should replace a mismatched tag string"), [this]
         {
-            const auto Tag = AddTag(TEXT("Test.Common.Tag.Sync"));
+            const auto Tag      = AddTag(TEXT("Test.Common.Tag.Sync"));
             const auto OtherTag = AddTag(TEXT("Test.Common.Tag.Other"));
             FUtf8String Comment{OtherTag.GetTagName().ToUtf8String()};
 
@@ -165,10 +165,10 @@ void FRemGameplayTagStaticsTest::Define()
     {
         It(TEXT("IsTagQueryMatches should match a tag against the query"), [this]
         {
-            const auto TagA = AddTag(TEXT("Test.Common.Query.A"));
-            const auto TagB = AddTag(TEXT("Test.Common.Query.B"));
+            const auto TagA  = AddTag(TEXT("Test.Common.Query.A"));
+            const auto TagB  = AddTag(TEXT("Test.Common.Query.B"));
             const auto Query = FGameplayTagQuery::MakeQuery_MatchAllTags(FGameplayTagContainer::CreateFromArray(
-                TArray<FGameplayTag>{TagA, TagB}));
+                TArray{TagA, TagB}));
 
             FGameplayTagContainer MatchingTags;
             MatchingTags.AddTag(TagA);
@@ -196,8 +196,8 @@ void FRemGameplayTagStaticsTest::Define()
             const auto TagA = AddTag(TEXT("Test.Common.Hash.A"));
             const auto TagB = AddTag(TEXT("Test.Common.Hash.B"));
 
-            const TArray<FGameplayTag> TagsOne{TagA, TagB};
-            const TArray<FGameplayTag> TagsTwo{TagA, TagB};
+            const TArray TagsOne{TagA, TagB};
+            const TArray TagsTwo{TagA, TagB};
 
             TestEqual(TEXT("stable hash"), GetHashForTags(TagsOne), GetHashForTags(TagsTwo));
         });
@@ -206,7 +206,7 @@ void FRemGameplayTagStaticsTest::Define()
         {
             const auto TagA = AddTag(TEXT("Test.Common.Container.A"));
             const auto TagB = AddTag(TEXT("Test.Common.Container.B"));
-            const TArray<FGameplayTag> Tags{TagA, TagB};
+            const TArray Tags{TagA, TagB};
 
             const auto Container = ToTagContainer(Tags);
 

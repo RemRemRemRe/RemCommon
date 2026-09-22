@@ -385,7 +385,7 @@ TOptional<FVector> GetMousePositionWorldSpace(const TNotNull<const APlayerContro
 
 #endif
 
-        return MouseWorldPositionOnPlane.GetValue();;
+        return MouseWorldPositionOnPlane.GetValue();
     }
 
     return {};

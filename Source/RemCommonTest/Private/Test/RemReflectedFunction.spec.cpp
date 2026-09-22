@@ -22,14 +22,14 @@ void FRemReflectedFunctionTest::Define()
         {
             FRemReflectedFunctionData Data;
             Data.FunctionOwnerClass = URemReflectedFunctionTestTarget::StaticClass();
-            Data.FunctionName = FName{TEXTVIEW("SetLastValue")};
+            Data.FunctionName       = FName{TEXTVIEW("SetLastValue")};
 
             TestNotNull(TEXT("function"), Data.GetFunction());
         });
 
         It(TEXT("should return null without an owner or a name"), [this]
         {
-            FRemReflectedFunctionData Empty;
+            constexpr FRemReflectedFunctionData Empty;
             TestNull(TEXT("empty"), Empty.GetFunction());
 
             FRemReflectedFunctionData NoName;
@@ -51,7 +51,7 @@ void FRemReflectedFunctionTest::Define()
         {
             FRemReflectedFunctionCallData CallData;
             CallData.FunctionData.FunctionOwnerClass = URemReflectedFunctionTestTarget::StaticClass();
-            CallData.FunctionData.FunctionName = FName{TEXTVIEW("SetLastValue")};
+            CallData.FunctionData.FunctionName       = FName{TEXTVIEW("SetLastValue")};
 
             TestTrue(TEXT("filled"), CallData.TryFillParameters());
 
@@ -68,8 +68,8 @@ void FRemReflectedFunctionTest::Define()
 
             FRemReflectedFunctionCallData CallData;
             CallData.FunctionData.FunctionOwnerClass = URemReflectedFunctionTestTarget::StaticClass();
-            CallData.FunctionData.FunctionName = FName{TEXTVIEW("SetLastValue")};
-            CallData.ContextObject = Target;
+            CallData.FunctionData.FunctionName       = FName{TEXTVIEW("SetLastValue")};
+            CallData.ContextObject                   = Target;
 
             TestTrue(TEXT("parameters filled"), CallData.TryFillParameters());
             CallData.Execute();
@@ -81,7 +81,7 @@ void FRemReflectedFunctionTest::Define()
         {
             FRemReflectedFunctionCallData CallData;
             CallData.FunctionData.FunctionOwnerClass = URemReflectedFunctionTestTarget::StaticClass();
-            CallData.FunctionData.FunctionName = FName{TEXTVIEW("GetStaticAnswer")};
+            CallData.FunctionData.FunctionName       = FName{TEXTVIEW("GetStaticAnswer")};
 
             TestTrue(TEXT("parameters filled"), CallData.TryFillParameters());
             CallData.Execute();

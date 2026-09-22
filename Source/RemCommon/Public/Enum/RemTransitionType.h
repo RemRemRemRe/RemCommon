@@ -21,31 +21,31 @@ enum class ERemTransitionType : uint8
     Restart,
 };
 
-template <ERemTransitionType Transition, typename T>
+template <ERemTransitionType TransitionType, typename T>
     requires std::is_signed_v<T>
 [[nodiscard]] constexpr const TTuple<ETransitionType, T>& EnumToTransition()
 {
-    if constexpr (Transition == ERemTransitionType::Abort)
+    if constexpr (TransitionType == ERemTransitionType::Abort)
     {
         return Transition::Abort<T>;
     }
-    else if constexpr (Transition == ERemTransitionType::ToNext)
+    else if constexpr (TransitionType == ERemTransitionType::ToNext)
     {
         return Transition::ToNext<T>;
     }
-    else if constexpr (Transition == ERemTransitionType::ToPrevious)
+    else if constexpr (TransitionType == ERemTransitionType::ToPrevious)
     {
         return Transition::ToPrevious<T>;
     }
-    else if constexpr (Transition == ERemTransitionType::ToStart)
+    else if constexpr (TransitionType == ERemTransitionType::ToStart)
     {
         return Transition::ToStart<T>;
     }
-    else if constexpr (Transition == ERemTransitionType::ToEnd)
+    else if constexpr (TransitionType == ERemTransitionType::ToEnd)
     {
         return Transition::ToEnd<T>;
     }
-    else if constexpr (Transition == ERemTransitionType::Restart)
+    else if constexpr (TransitionType == ERemTransitionType::Restart)
     {
         return Transition::Restart<T>;
     }

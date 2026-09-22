@@ -96,11 +96,11 @@ void FRemMiscTest::Define()
         It(TEXT("AllocateStructMemory and FreeStructMemory should round trip a struct"), [this]
         {
             const auto* Struct = FRemScopedStructContainerTestTrivial::StaticStruct();
-            auto& Memory = *Rem::AllocateStructMemory(*Struct);
+            auto& Memory       = *Rem::AllocateStructMemory(*Struct);
 
-            auto& Data = *reinterpret_cast<FRemScopedStructContainerTestTrivial*>(&Memory);
+            auto& Data  = *reinterpret_cast<FRemScopedStructContainerTestTrivial*>(&Memory);
             Data.Number = 3.5f;
-            Data.Count = 7;
+            Data.Count  = 7;
             TestEqual(TEXT("number"), Data.Number, 3.5f, 1e-4f);
             TestEqual(TEXT("count"), Data.Count, 7);
 
@@ -113,7 +113,7 @@ void FRemMiscTest::Define()
         It(TEXT("IsClassDefaultObject should distinguish CDOs from instances"), [this]
         {
             const auto* DefaultObject = GetDefault<UDataTable>();
-            auto* Instance = NewObject<UDataTable>();
+            const auto* Instance      = NewObject<UDataTable>();
 
             TestTrue(TEXT("default object"), Rem::IsClassDefaultObject(DefaultObject));
             TestFalse(TEXT("instance"), Rem::IsClassDefaultObject(Instance));

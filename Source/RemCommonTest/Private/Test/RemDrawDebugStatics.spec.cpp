@@ -17,8 +17,8 @@ void FRemDrawDebugStaticsTest::Define()
     {
         It(TEXT("should return false for a default display name"), [this]
         {
-            Rem::Test::FRemTestWorld World;
-            auto* Actor = World->SpawnActor<AActor>();
+            const Rem::Test::FRemTestWorld World;
+            const auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 
             TestFalse(TEXT("not displayed"),
@@ -30,13 +30,13 @@ void FRemDrawDebugStaticsTest::Define()
     {
         It(TEXT("should execute without crashing in a bare world"), [this]
         {
-            Rem::Test::FRemTestWorld World;
-            auto* Actor = World->SpawnActor<AActor>();
+            const Rem::Test::FRemTestWorld World;
+            const auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 
             const auto Location = FVector::ZeroVector;
             const auto Rotation = FRotator::ZeroRotator;
-            const auto Color = FLinearColor::Green;
+            const auto Color    = FLinearColor::Green;
 
             URemDrawDebugStatics::DrawHalfCircle(Actor, Location, FVector::ForwardVector,
                 FVector::RightVector, 100.0f, Color);

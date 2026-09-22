@@ -71,7 +71,7 @@ inline void PopulateTestData(FRemIterateTestData& Data)
     Data.Number = 1;
 
     Data.Nested.NestedValue = 2;
-    Data.Nested.NestedText = TEXT("x");
+    Data.Nested.NestedText  = TEXT("x");
 
     Data.Numbers.Add(10);
     Data.Numbers.Add(20);
@@ -79,12 +79,12 @@ inline void PopulateTestData(FRemIterateTestData& Data)
 
     FRemIterateTestNested FirstNested{};
     FirstNested.NestedValue = 3;
-    FirstNested.NestedText = TEXT("a");
+    FirstNested.NestedText  = TEXT("a");
     Data.NestedArray.Add(FirstNested);
 
     FRemIterateTestNested SecondNested{};
     SecondNested.NestedValue = 4;
-    SecondNested.NestedText = TEXT("b");
+    SecondNested.NestedText  = TEXT("b");
     Data.NestedArray.Add(SecondNested);
 
     Data.Map.Add(5, TEXT("five"));
@@ -95,7 +95,7 @@ inline void PopulateTestData(FRemIterateTestData& Data)
 
     FRemIterateTestNested InstancedValue{};
     InstancedValue.NestedValue = 9;
-    InstancedValue.NestedText = TEXT("z");
+    InstancedValue.NestedText  = TEXT("z");
     Data.Instanced.InitializeAs<FRemIterateTestNested>(InstancedValue);
 
     Data.StaticArray[0] = 11;

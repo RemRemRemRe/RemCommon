@@ -78,14 +78,14 @@ void FRemEnumUtilitiesTest::Define()
         {
             TestEqual(TEXT("to next type"),
                 static_cast<int32>(Rem::Enum::EnumToTransition<Rem::Enum::ERemTransitionType::ToNext, int32>()
-                    .template Get<Rem::Enum::ETransitionType>()),
+                    .Get<Rem::Enum::ETransitionType>()),
                 static_cast<int32>(Rem::Enum::ETransitionType::ToNext));
             TestEqual(TEXT("abort type"),
                 static_cast<int32>(Rem::Enum::EnumToTransition<Rem::Enum::ERemTransitionType::Abort, int32>()
-                    .template Get<Rem::Enum::ETransitionType>()),
+                    .Get<Rem::Enum::ETransitionType>()),
                 static_cast<int32>(Rem::Enum::ETransitionType::ToSpecified));
             TestEqual(TEXT("abort step"),
-                Rem::Enum::EnumToTransition<Rem::Enum::ERemTransitionType::Abort, int32>().template Get<int32>(),
+                Rem::Enum::EnumToTransition<Rem::Enum::ERemTransitionType::Abort, int32>().Get<int32>(),
                 -1);
         });
     });
@@ -107,12 +107,12 @@ void FRemEnumUtilitiesTest::Define()
     {
         It(TEXT("should combine flags through the traits"), [this]
         {
-            constexpr auto StartEnd = ERemRangeFormat::StartAndEnd;
+            constexpr auto StartEnd  = ERemRangeFormat::StartAndEnd;
             constexpr auto LengthEnd = ERemRangeFormat::LengthAndEnd;
 
             // the underlying values combine as a bitmask
-            const auto Combined = Rem::Enum::BitOperation::operator|(StartEnd, LengthEnd);
-            const auto Intersection = Rem::Enum::BitOperation::operator&(Combined, StartEnd);
+            constexpr auto Combined     = Rem::Enum::BitOperation::operator|(StartEnd, LengthEnd);
+            constexpr auto Intersection = Rem::Enum::BitOperation::operator&(Combined, StartEnd);
 
             TestEqual(TEXT("intersection"), static_cast<int32>(Intersection),
                 static_cast<int32>(StartEnd));
@@ -123,7 +123,7 @@ void FRemEnumUtilitiesTest::Define()
     {
         It(TEXT("should cast pointers to the target type"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Actor = World->SpawnActor<AActor>();
             TestNotNull(TEXT("actor"), Actor);
 
@@ -134,7 +134,7 @@ void FRemEnumUtilitiesTest::Define()
 
         It(TEXT("should yield null for unrelated types"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 

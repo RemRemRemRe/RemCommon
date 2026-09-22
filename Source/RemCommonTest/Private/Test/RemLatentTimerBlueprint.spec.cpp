@@ -28,7 +28,7 @@ void FRemLatentTimerBlueprintTest::Define()
         {
             FRemTimerParameterBlueprintHelper_Time Parameter;
             Parameter.TimeToDelay = 0.25f;
-            Parameter.LoopCount = 3;
+            Parameter.LoopCount   = 3;
 
             const auto Converted = *Parameter;
 

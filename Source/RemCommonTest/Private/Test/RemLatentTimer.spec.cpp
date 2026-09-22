@@ -37,12 +37,12 @@ void FRemLatentTimerTest::Define()
     {
         It(TEXT("should fire the delegate on the next tick"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
-            int32 CallCount = 0;
-            Rem::Latent::FTimerHandle Handle = Rem::Latent::SetTimerForThisTick(
+            auto CallCount                  = 0;
+            const Rem::Latent::FTimerHandle Handle = Rem::Latent::SetTimerForThisTick(
                 Rem::MakeNotNull(Object), Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }));
 
             TestTrue(TEXT("handle valid"), Handle.IsValid());
@@ -58,11 +58,11 @@ void FRemLatentTimerTest::Define()
     {
         It(TEXT("should fire the delegate on the following tick"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
-            int32 CallCount = 0;
+            auto CallCount = 0;
             Rem::Latent::SetTimerForNextTick(
                 Rem::MakeNotNull(Object), Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }));
 
@@ -78,7 +78,7 @@ void FRemLatentTimerTest::Define()
     {
         It(TEXT("should fire after the initial delay"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
@@ -86,7 +86,7 @@ void FRemLatentTimerTest::Define()
             Parameter.TimeToDelay  = 0.5f;
             Parameter.InitialDelay = 0.1f;
 
-            int32 CallCount = 0;
+            auto CallCount = 0;
             Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
@@ -99,15 +99,15 @@ void FRemLatentTimerTest::Define()
 
         It(TEXT("should loop the configured number of times"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 0.0f;
-            Parameter.LoopCount = 3;
+            Parameter.LoopCount   = 3;
 
-            int32 CallCount = 0;
+            auto CallCount = 0;
             Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
@@ -123,15 +123,15 @@ void FRemLatentTimerTest::Define()
     {
         It(TEXT("should stop and report inactive timers"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 1.0f;
 
-            int32 CallCount = 0;
-            auto Handle = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
+            auto CallCount = 0;
+            auto Handle     = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
             TestTrue(TEXT("active"), Rem::Latent::IsTimerActive(Rem::MakeNotNull(Object), Handle));
@@ -148,14 +148,14 @@ void FRemLatentTimerTest::Define()
 
         It(TEXT("should pause and unpause a timer"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 0.3f;
 
-            int32 CallCount = 0;
+            auto CallCount   = 0;
             const auto Handle = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
@@ -172,14 +172,14 @@ void FRemLatentTimerTest::Define()
 
         It(TEXT("should reset the delay of an active timer"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 0.2f;
 
-            int32 CallCount = 0;
+            auto CallCount   = 0;
             const auto Handle = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 

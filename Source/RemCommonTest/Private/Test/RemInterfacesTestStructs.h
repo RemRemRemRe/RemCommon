@@ -20,7 +20,7 @@ class URemTestScriptStructObject : public UObject, public IRemScriptStructInterf
     GENERATED_BODY()
 
 public:
-    virtual Rem::TNotNull<const UScriptStruct*> GetScriptStruct() const override;
+    virtual TNotNull<const UScriptStruct*> GetScriptStruct() const override;
 };
 
 /**

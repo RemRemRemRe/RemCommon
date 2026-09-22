@@ -59,7 +59,7 @@ void FRemWrapperTypesTest::Define()
     {
         It(TEXT("should expose the stored object through the getter"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 

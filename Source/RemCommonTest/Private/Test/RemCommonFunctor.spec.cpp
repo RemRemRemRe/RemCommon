@@ -15,10 +15,10 @@ void FRemCommonFunctorTest::Define()
     {
         It(TEXT("should convert a reference wrapper to a pointer"), [this]
         {
-            auto Value = 42;
-            auto Reference = std::ref(Value);
+            auto Value     = 42;
+            const auto Reference = std::ref(Value);
 
-            auto* Pointer = Rem::RefToPtr(Reference);
+            const auto* Pointer = Rem::RefToPtr(Reference);
 
             TestEqual(TEXT("pointer"), *Pointer, 42);
             TestTrue(TEXT("same object"), Pointer == &Value);
@@ -26,7 +26,7 @@ void FRemCommonFunctorTest::Define()
 
         It(TEXT("functor version should be usable as a callable"), [this]
         {
-            auto Value = 7;
+            auto Value     = 7;
             auto Reference = std::ref(Value);
 
             // Rem::Fn::RefToPtr is a constexpr functor object wrapping RefToPtr

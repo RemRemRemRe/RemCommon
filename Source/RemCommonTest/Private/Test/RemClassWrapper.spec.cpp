@@ -60,7 +60,7 @@ void FRemClassWrapperTest::Define()
             FRemClassArrayWrapper Wrapper;
 
             FRemClassWrapper& Entry = Wrapper.Classes.Emplace_GetRef();
-            Entry.Class = AActor::StaticClass();
+            Entry.Class             = AActor::StaticClass();
 
             TestEqual(TEXT("element count"), Wrapper.GetElements().Num(), 1);
             TestEqual(TEXT("count getter"), Wrapper.Get().Num(), 1);

@@ -1,7 +1,6 @@
 // Copyright RemRemRemRe. 2026. All Rights Reserved.
 
 #include "Animation/RemAnimationStatics.h"
-#include "Interface/RemAnimInstanceInterface.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
@@ -26,7 +25,7 @@ void FRemAnimInstanceInterfaceTest::Define()
     {
         It(TEXT("should return null for a character without an anim instance"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
             auto* Character = World->SpawnActor<ACharacter>();
             check(Character);
 

@@ -42,7 +42,7 @@ void FRemInstancedStructContainerTest::Define()
             FRemScopedStructContainerTestTrivial FirstSource;
             FirstSource.Number = 1.0f;
 
-            FRemScopedStructContainerTestHeavy SecondSource(TEXT("Second"), 2);
+            const FRemScopedStructContainerTestHeavy SecondSource(TEXT("Second"), 2);
 
             TestTrue(TEXT("first add"), Container.TryAdd(Key, FConstStructView::Make(FirstSource)));
             TestFalse(TEXT("duplicate add rejected"), Container.TryAdd(Key, FConstStructView::Make(SecondSource)));
@@ -62,7 +62,7 @@ void FRemInstancedStructContainerTest::Define()
 
             TestFalse(TEXT("absent"), Container.Contains(Key));
 
-            FRemScopedStructContainerTestTrivial Source{};
+            constexpr FRemScopedStructContainerTestTrivial Source{};
             Container.TryAdd(Key, FConstStructView::Make(Source));
 
             TestTrue(TEXT("present"), Container.Contains(Key));
@@ -76,7 +76,7 @@ void FRemInstancedStructContainerTest::Define()
             FRemInstancedStructContainer Container;
             constexpr auto Key = static_cast<FRemInstancedStructContainer::FKeyType>(1);
 
-            FRemScopedStructContainerTestTrivial Source{};
+            constexpr FRemScopedStructContainerTestTrivial Source{};
             Container.TryAdd(Key, FConstStructView::Make(Source));
             TestTrue(TEXT("added"), Container.Contains(Key));
 
@@ -91,7 +91,7 @@ void FRemInstancedStructContainerTest::Define()
             FRemInstancedStructContainer Container;
             constexpr auto Key = static_cast<FRemInstancedStructContainer::FKeyType>(2);
 
-            FRemScopedStructContainerTestTrivial Source{};
+            constexpr FRemScopedStructContainerTestTrivial Source{};
             Container.TryAdd(Key, FConstStructView::Make(Source));
             TestTrue(TEXT("added"), Container.Contains(Key));
 
@@ -115,7 +115,7 @@ void FRemInstancedStructContainerTest::Define()
 
             FRemScopedStructContainerTestTrivial TrivialSource;
             TrivialSource.Count = 5;
-            FRemScopedStructContainerTestHeavy HeavySource(TEXT("Heavy"), 3);
+            const FRemScopedStructContainerTestHeavy HeavySource(TEXT("Heavy"), 3);
 
             Container.TryAdd(TrivialKey, FConstStructView::Make(TrivialSource));
             Container.TryAdd(HeavyKey, FConstStructView::Make(HeavySource));

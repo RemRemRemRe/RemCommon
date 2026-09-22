@@ -23,12 +23,12 @@ void FRemComponentOwnerTest::Define()
     {
         It(TEXT("should construct on an actor"), [this]
         {
-            Rem::Test::FRemTestWorld World;
+            const Rem::Test::FRemTestWorld World;
 
             auto* Actor = World->SpawnActor<AActor>();
             check(Actor);
 
-            auto* Component = NewObject<URemActorComponent>(Actor);
+            const auto* Component = NewObject<URemActorComponent>(Actor);
             TestNotNull(TEXT("component"), Component);
         });
     });

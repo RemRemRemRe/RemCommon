@@ -22,11 +22,11 @@ namespace Rem
 template <typename To>
 struct TCast
 {
-	template <typename From>
-	[[nodiscard]] constexpr decltype(auto) operator()(From&& Ptr) const
-	{
-		return Cast<To>(std::forward<From>(Ptr));
-	}
+    template <typename From>
+    [[nodiscard]] constexpr decltype(auto) operator()(From&& Ptr) const
+    {
+        return Cast<To>(std::forward<From>(Ptr));
+    }
 };
 
 /**

@@ -17,6 +17,7 @@ namespace
 {
 using Rem::Struct::Private::FRemScopedStructContainerTestAligned;
 using Rem::Struct::Private::FRemScopedStructContainerTestTrivial;
+
 FGameplayTag AddTag(const FStringView TagName)
 {
     auto& TagsManager = UGameplayTagsManager::Get();
@@ -100,7 +101,8 @@ void FRemTemplatesTest::Define()
         It(TEXT("negative step should move to the end or the start"), [this]
         {
             TestEqual(TEXT("to end"), Rem::Enum::ApplyTransition(3, Rem::Enum::ETransitionType::ToNext, -1, 10), 9);
-            TestEqual(TEXT("to start"), Rem::Enum::ApplyTransition(3, Rem::Enum::ETransitionType::ToPrevious, -1, 10), 0);
+            TestEqual(TEXT("to start"), Rem::Enum::ApplyTransition(3, Rem::Enum::ETransitionType::ToPrevious, -1, 10),
+                0);
         });
 
         It(TEXT("the tuple overload should unpack the transition data"), [this]
@@ -117,7 +119,8 @@ void FRemTemplatesTest::Define()
             TestEqual(TEXT("previous"), Rem::Enum::ApplyTransition(5, Rem::Enum::Transition::ToPrevious<int32>, 10), 4);
             TestEqual(TEXT("to start"), Rem::Enum::ApplyTransition(5, Rem::Enum::Transition::ToStart<int32>, 10), 0);
             TestEqual(TEXT("to end"), Rem::Enum::ApplyTransition(0, Rem::Enum::Transition::ToEnd<int32>, 10), 9);
-            TestEqual(TEXT("restart stays with zero step"), Rem::Enum::ApplyTransition(5, Rem::Enum::Transition::Restart<int32>, 10), 5);
+            TestEqual(TEXT("restart stays with zero step"),
+                Rem::Enum::ApplyTransition(5, Rem::Enum::Transition::Restart<int32>, 10), 5);
         });
     });
 
@@ -128,7 +131,8 @@ void FRemTemplatesTest::Define()
             FRemScopedStructContainerTestTrivial Data;
             Data.Number = 1.5f;
             const FConstStructView BaseView{FRemScopedStructContainerTestTrivial::StaticStruct(),
-                reinterpret_cast<const uint8*>(&Data)};
+                reinterpret_cast<const uint8*>(&Data)
+            };
 
             const auto TypedView = Rem::Struct::MakeView<FRemScopedStructContainerTestTrivial>(BaseView);
 
@@ -144,9 +148,10 @@ void FRemTemplatesTest::Define()
             const auto TypedView = Rem::Struct::TryMakeView<FRemScopedStructContainerTestTrivial>(BaseView);
             TestTrue(TEXT("invalid on null memory"), !TypedView.IsValid());
 
-            FRemScopedStructContainerTestAligned Unrelated;
+            const FRemScopedStructContainerTestAligned Unrelated;
             const FConstStructView WrongView{FRemScopedStructContainerTestAligned::StaticStruct(),
-                reinterpret_cast<const uint8*>(&Unrelated)};
+                reinterpret_cast<const uint8*>(&Unrelated)
+            };
             const auto WrongTyped = Rem::Struct::TryMakeView<FRemScopedStructContainerTestTrivial>(WrongView);
             TestTrue(TEXT("invalid on wrong type"), !WrongTyped.IsValid());
         });

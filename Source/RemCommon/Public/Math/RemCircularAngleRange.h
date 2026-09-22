@@ -125,11 +125,11 @@ public:
 
         if (!IsWrappingZero())
         {
-            return (Angle >= StartAngle) && (Angle <= EndAngle);
+            return Angle >= StartAngle && Angle <= EndAngle;
         }
 
         // check if the angle lands in [StartAngle, 360) or [0, EndAngle]
-        return (Angle >= StartAngle) || (Angle <= EndAngle);
+        return Angle >= StartAngle || Angle <= EndAngle;
     }
 
     /**
@@ -148,7 +148,7 @@ public:
 
         const float DistToStart = GetShortestAngleDistance(Angle, StartAngle);
         const float DistToEnd   = GetShortestAngleDistance(Angle, EndAngle);
-        return (DistToStart < DistToEnd)
+        return DistToStart < DistToEnd
                    ? StartAngle
                    : EndAngle;
     }
@@ -250,7 +250,7 @@ public:
     {
         const float DistToStart = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::Start>(Angle);
         const float DistToEnd   = GetDistanceToBoundary<Rem::Enum::EStartOrEnd::End>(Angle);
-        return (DistToStart < DistToEnd)
+        return DistToStart < DistToEnd
                    ? StartAngle
                    : EndAngle;
     }
@@ -301,7 +301,7 @@ public:
             return EndAngle - StartAngle;
         }
 
-        return (360.0f - StartAngle) + EndAngle;
+        return 360.0f - StartAngle + EndAngle;
     }
 
     float GetRange() const

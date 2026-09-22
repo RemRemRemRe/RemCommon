@@ -23,12 +23,12 @@ public:
     UPROPERTY()
     FRemComponentContainer Container;
 
-    virtual Rem::TNotNull<FRemComponentContainer*> GetComponentContainer() override
+    virtual TNotNull<FRemComponentContainer*> GetComponentContainer() override
     {
         return MakeNotNull(&Container);
     }
 
-    virtual Rem::TNotNull<const FRemComponentContainer*> GetComponentContainer() const override
+    virtual TNotNull<const FRemComponentContainer*> GetComponentContainer() const override
     {
         return MakeNotNull(&Container);
     }

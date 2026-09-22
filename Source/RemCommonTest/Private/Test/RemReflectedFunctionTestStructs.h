@@ -22,7 +22,7 @@ public:
     int32 LastValue{};
 
     UFUNCTION()
-    void SetLastValue(int32 Value)
+    void SetLastValue(const int32 Value)
     {
         LastValue = Value;
     }

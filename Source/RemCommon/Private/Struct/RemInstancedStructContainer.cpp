@@ -72,7 +72,7 @@ bool FRemInstancedStructContainer::TryAdd(const FKeyType Key, const FConstStruct
         // new container is fully built.
         TArray<FConstStructView> Reordered;
         Reordered.Reserve(StructContainer.Num() + 1);
-        for (int32 Index = 0; Index <= StructContainer.Num(); ++Index)
+        for (auto Index = 0; Index <= StructContainer.Num(); ++Index)
         {
             if (Index == IndexToInsert)
             {

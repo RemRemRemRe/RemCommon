@@ -12,7 +12,7 @@ TArray<int32> MakeSortedArray(const int32 Count)
 {
     TArray<int32> Result;
     Result.Reserve(Count);
-    for (int32 Index = 0; Index < Count; ++Index)
+    for (auto Index = 0; Index < Count; ++Index)
     {
         Result.Add(Index * 2);
     }
@@ -44,7 +44,7 @@ void FRemBinarySearchTest::Define()
             {
                 int32 Key;
             };
-            TArray<FPair> Pairs{{FPair{0}}, {FPair{2}}, {FPair{4}}};
+            TArray<FPair> Pairs{{FPair{}}, {FPair{2}}, {FPair{4}}};
 
             TestEqual(TEXT("projected"), Rem::Algo::LowerBound(Pairs, 3,
                 [](const FPair& Pair) { return Pair.Key; }), 2);
@@ -68,14 +68,14 @@ void FRemBinarySearchTest::Define()
     {
         It(TEXT("should return the index of the value when present"), [this]
         {
-            auto Numbers = MakeSortedArray(5);
+            const auto Numbers = MakeSortedArray(5);
 
             TestEqual(TEXT("found"), Rem::Algo::BinarySearch(Numbers, 6), 3);
         });
 
         It(TEXT("should return INDEX_NONE when absent"), [this]
         {
-            auto Numbers = MakeSortedArray(5);
+            const auto Numbers = MakeSortedArray(5);
 
             TestEqual(TEXT("not found"), Rem::Algo::BinarySearch(Numbers, 3), INDEX_NONE);
         });

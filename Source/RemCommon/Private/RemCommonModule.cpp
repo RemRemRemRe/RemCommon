@@ -14,8 +14,11 @@ bool IRemCommonModule::IsAvailable()
 }
 
 
+namespace
+{
 class FRemCommonModule : public IRemCommonModule
 {
+public:
     /** IModuleInterface implementation */
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
@@ -35,4 +38,5 @@ void FRemCommonModule::ShutdownModule()
     // This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
     // we call this function before unloading the module.
     IRemCommonModule::ShutdownModule();
+}
 }

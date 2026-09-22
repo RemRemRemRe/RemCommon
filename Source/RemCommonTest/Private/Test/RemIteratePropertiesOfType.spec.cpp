@@ -66,7 +66,7 @@ void FRemIteratePropertiesOfTypeTest::Define()
 
         It(TEXT("should visit a default instance without crashing"), [this]
         {
-            FRemIterateTestData Data{};
+            const FRemIterateTestData Data{};
 
             TestEqual(TEXT("visits"), CountVisits(Data, false), 12);
         });

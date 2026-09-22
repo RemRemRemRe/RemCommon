@@ -17,10 +17,10 @@ void FRemComponentViewContainerTestCounters::Reset()
     TickDeltas.Reset();
 }
 
-FConstStructView FRemComponentViewContainerTestComponent::GetInstanceDataType(const FContext& Context) const
+FConstStructView FRemComponentViewContainerTestComponent::GetInstanceDataType(const FContext&) const
 {
     // type-only view (null memory): InsertAt default-constructs the instance data
-    return FConstStructView{ FInstanceDataType::StaticStruct() };
+    return FConstStructView{FInstanceDataType::StaticStruct()};
 }
 
 void FRemComponentViewContainerTestComponent::Initialize(const FContext& Context) const
@@ -28,12 +28,12 @@ void FRemComponentViewContainerTestComponent::Initialize(const FContext& Context
     FRemComponentViewContainerTestCounters::InitializeOrder.Add(Context.ComponentIndex);
 }
 
-bool FRemComponentViewContainerTestComponent::ShouldTick(const FContext& Context) const
+bool FRemComponentViewContainerTestComponent::ShouldTick(const FContext&) const
 {
     return true;
 }
 
-void FRemComponentViewContainerTestComponent::Tick(const FContext& Context, const float DeltaSeconds) const
+void FRemComponentViewContainerTestComponent::Tick(const FContext&, const float DeltaSeconds) const
 {
     FRemComponentViewContainerTestCounters::TickDeltas.Add(DeltaSeconds);
 }
