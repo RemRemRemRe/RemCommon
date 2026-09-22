@@ -18,18 +18,6 @@
 
 #include "Macro/RemAlsMacros.h"
 
-#define REM_ASSERTION_INTERNAL_ENSURE(Condition) \
-    { \
-        constexpr bool RightConditionIsFalse{false}; \
-        REM_ALS_ENSURE(RightConditionIsFalse && ( Condition )); \
-    }
-
-#define REM_ASSERTION_INTERNAL_ENSURE_ALWAYS(Condition) \
-    { \
-        constexpr bool RightConditionIsFalse{false}; \
-        REM_ALS_ENSURE_ALWAYS(RightConditionIsFalse && ( Condition )); \
-    }
-
 #define REM_ENSURE(Expression) REM_ALS_ENSURE(Expression)
 #define REM_ENSURE_MESSAGE(Expression, Format, ...) REM_ALS_ENSURE_MESSAGE(Expression, Format, ##__VA_ARGS__)
 #define REM_ENSURE_ALWAYS(Expression) REM_ALS_ENSURE_ALWAYS(Expression)
@@ -38,18 +26,6 @@
 #else
 
 #include "Misc/AssertionMacros.h"
-
-#define REM_ASSERTION_INTERNAL_ENSURE(Condition) \
-    { \
-        constexpr bool RightConditionIsFalse{false}; \
-        ensure(RightConditionIsFalse && ( Condition )); \
-    }
-
-#define REM_ASSERTION_INTERNAL_ENSURE_ALWAYS(Condition) \
-    { \
-        constexpr bool RightConditionIsFalse{false}; \
-        ensureAlways(RightConditionIsFalse && ( Condition )); \
-    }
 
 #define REM_ENSURE(Expression) ensure(Expression)
 #define REM_ENSURE_MESSAGE(Expression, Format, ...) ensureMsgf(Expression, Format, ##__VA_ARGS__)
