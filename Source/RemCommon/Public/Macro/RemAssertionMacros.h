@@ -6,6 +6,33 @@
 #include "RemMisc.h" // for Rem::IsValid
 #include "RemEnsureMacro.h"
 
+/**
+ * Engine assertion macros, and how they differ from the REM_* family:
+ * - check is fatal: a failed check aborts the process, and its whole expression is dropped when DO_CHECK == 0,
+ *   which is the Test and Shipping configuration.
+ * - ensure reports the failure and continues. When DO_ENSURE == 0 the expression is still evaluated but
+ *   nothing is reported; otherwise a call site reports once per session.
+ * - ensureAlways reports every failure, without the once-per-session limit.
+ *
+ * Prefer the REM_* macros. An engine assertion macro is only justified where the REM_* family deliberately
+ * owns no such capability, for instance at a site that must abort.
+ *
+ * In a development build the REM_* macros report through Rem::AlsEnsure, the lightweight reporter declared in
+ * RemAlsMacros.h: it logs the engine's message shape, generates no C++ call stack and submits no crash report.
+ * The guard family's 1-argument and 2-argument forms default to REM_ENSURE_ALWAYS, so RemEnsureCondition /
+ * RemEnsureVariable / RemCheckCondition / RemCheckVariable report through that path as well. In Shipping they map
+ * to the engine's ensure/ensureAlways and the RemCheck* guards are stripped entirely; where ensures are compiled
+ * out (DO_ENSURE == 0, the Test and Shipping defaults) nothing is reported.
+ *
+ * The lightweight reporter honours the engine's ensure switches:
+ * - core.EnsureState is the once-per-call-site counter: a site reports while the counter differs from the value
+ *   it last reported with, so changing the value re-arms every site that already reported (core.ResetEnsureState
+ *   increments it).
+ * - core.EnsureAlwaysEnabled set to false turns ensureAlways into ensure, i.e. at most one report per call site.
+ * - core.EnsureBreakEnabled set to false stops a failing ensure from breaking into the debugger.
+ * - core.EnsuresAreErrors decides whether the report is logged as an Error or as a Warning.
+ */
+
 #pragma region Config Macro
 
 // #define REM_LET_IT_CRASH

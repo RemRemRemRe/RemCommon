@@ -42,6 +42,12 @@ Owned storage and non-owning views without manual lifetime juggling:
 ## Assertions & guards
 
 `RemCheck*` (developer-error guards) / `RemEnsure*` (runtime-possible states),
+whose optional first argument selects the assertion macro and defaults to
+`REM_ENSURE_ALWAYS`. Prefer the reporting macros (`REM_ENSURE`,
+`REM_ENSURE_ALWAYS`, `REM_ENSURE_MESSAGE`, `REM_ENSURE_ALWAYS_MESSAGE`) over the
+engine's `ensure*`; in development they report through a lightweight ensure with
+no call stack and no crash report. Keep an engine assertion macro only where the
+`REM_*` family owns no such capability, e.g. a site that must abort.
 `RemOnScopeExitWeak`, `RemNotNull` (non-null `UObject` semantics), `RemCastFn`,
 `RemBinarySearch`, `RemInstanceOf` (compile-time instance-of trait).
 

@@ -36,9 +36,12 @@
 
 ## 断言与守卫
 
-`RemCheck*`（开发者错误守卫）/ `RemEnsure*`（运行时可达状态）、`RemOnScopeExitWeak`、
-`RemNotNull`（非空 `UObject` 语义）、`RemCastFn`、`RemBinarySearch`、`RemInstanceOf`
-（编译期 instance-of trait）。
+`RemCheck*`（开发者错误守卫）/ `RemEnsure*`（运行时可达状态）：第一个可选参数用于选择断言宏，
+省略时默认 `REM_ENSURE_ALWAYS`。优先使用上报宏（`REM_ENSURE`、`REM_ENSURE_ALWAYS`、
+`REM_ENSURE_MESSAGE`、`REM_ENSURE_ALWAYS_MESSAGE`）而非引擎的 `ensure*`；开发构建中它们经轻量
+ensure 上报，不生成调用栈、不提交崩溃报告。只有当 `REM_*` 家族刻意不具备所需能力时（例如必须中止
+进程的站点）才使用引擎断言宏。`RemOnScopeExitWeak`、`RemNotNull`（非空 `UObject` 语义）、
+`RemCastFn`、`RemBinarySearch`、`RemInstanceOf`（编译期 instance-of trait）。
 
 ## 日常辅助
 
