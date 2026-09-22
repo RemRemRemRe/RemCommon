@@ -94,6 +94,8 @@ struct TFeatureHandleTraits
  * exists once per module, so a contribution registered in one DLL would be invisible in another.
  * @note A handle that is invalid means "this contribution has nothing", so the walk simply continues -
  * "I do not apply" and "I have nothing" are the same answer.
+ * @note The chain keeps registration order across removals: the first registered contribution that
+ * answers wins, and a removal must not change which survivor that is.
  * @note **The mechanism's one structural bet is the key**: a contribution is keyed by the owner type it
  * answers for (`UObject` = the wildcard). A family that needs another key extends the traits (a `TKey`
  * plus a way to derive it from the request) rather than bending this one - that axis has a single user
@@ -192,7 +194,7 @@ public:
         if (bAlreadyClaimed)
         {
             REM_LOG_FUNCTION(LogRemCommon, Warning,
-                "a second contribution registers for {0}: the one registered first wins the walk",
+                "a second contribution registers for {0}: the first registered one is asked first",
                 NewOwner->GetName());
         }
 
@@ -203,10 +205,14 @@ public:
         return Id;
     }
 
-    /** Removes the contribution with @p Id, if it is still registered. */
+    /**
+     * @brief Removes the contribution with @p Id, if it is still registered.
+     * @note The removal is order-preserving on purpose: the walk's outcome is registration order,
+     * and a swap-removal would promote a later contribution over an earlier survivor.
+     */
     void Remove(const int32 Id)
     {
-        Entries.RemoveAllSwap([Id](const FEntry& Entry)
+        Entries.RemoveAll([Id](const FEntry& Entry)
         {
             return Entry.Id == Id;
         });
@@ -219,6 +225,7 @@ private:
         FContribution Contribution;
     };
 
+    /** The registered contributions, kept in registration order. */
     TArray<FEntry> Entries;
 
     int32 NextId{1};

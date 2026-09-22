@@ -177,6 +177,69 @@ void FRemTagEventSourceTest::Define()
             TestTrue(TEXT("the first registered contribution wins"), Source.GetObject() == First);
         });
 
+        It(TEXT("should keep the registration order of the remaining contributions after a removal"), [this]
+        {
+            const Rem::Test::FRemTestWorld World;
+            auto* Actor  = World->SpawnActor<AActor>();
+            auto* First  = MakeWorker(Actor);
+            auto* Second = MakeWorker(Actor);
+            auto* Third  = MakeWorker(Actor);
+
+            // removing the first must leave the survivors in registration order, not swap the
+            // last-registered one into the freed slot
+            Rem::GameplayTag::FTagEventSourceRegistration FirstRegistered{MakeWorkerContribution(First)};
+            const Rem::GameplayTag::FTagEventSourceRegistration SecondRegistered{MakeWorkerContribution(Second)};
+            const Rem::GameplayTag::FTagEventSourceRegistration ThirdRegistered{MakeWorkerContribution(Third)};
+
+            FirstRegistered.Reset();
+
+            const auto Source = Rem::GameplayTag::TryGetLifetimeBoundInterfacePtr(Actor);
+
+            TestTrue(TEXT("valid source"), Source.IsValid());
+            TestTrue(TEXT("the next registered contribution answers, not the last one"),
+                Source.GetObject() == Second);
+        });
+
+        It(TEXT("should not let a later wildcard contribution overtake an earlier typed one when a contribution is removed"), [this]
+        {
+            const Rem::Test::FRemTestWorld World;
+            auto* Actor          = World->SpawnActor<AActor>();
+            auto* TypedWorker    = MakeWorker(Actor);
+            auto* WildcardWorker = MakeWorker(Actor);
+
+            // the typed query is what makes the owner keys decide: entry 1 is typed but yields
+            // nothing, and removing it must not move the trailing wildcard ahead of the earlier
+            // typed contribution
+            Rem::GameplayTag::FTagEventSourceRegistration Empty{
+                {
+                    URemTestTagEventWorker::StaticClass(),
+                    [](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                    -> Rem::GameplayTag::FLifetimeBoundInterfacePtr
+                    {
+                        return {};
+                    },
+                }
+            };
+            const Rem::GameplayTag::FTagEventSourceRegistration Typed{
+                {
+                    URemTestTagEventWorker::StaticClass(),
+                    [TypedWorker](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                    {
+                        return TypedWorker->GetLifetimeBoundObjectPtr<IRemTagEventSourceInterface>();
+                    },
+                }
+            };
+            const Rem::GameplayTag::FTagEventSourceRegistration Wildcard{MakeWorkerContribution(WildcardWorker)};
+
+            Empty.Reset();
+
+            const auto TypedSource = Rem::GameplayTag::TryGetTagEventSource<URemTestTagEventWorker>(Actor);
+
+            TestTrue(TEXT("valid typed source"), TypedSource.IsValid());
+            TestTrue(TEXT("the earlier typed contribution answers, not the wildcard"),
+                TypedSource.GetObject() == TypedWorker);
+        });
+
         It(TEXT("should forget a contribution once it is reset"), [this]
         {
             const Rem::Test::FRemTestWorld World;
