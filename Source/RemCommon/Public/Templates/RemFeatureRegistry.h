@@ -256,7 +256,7 @@ class REMCOMMON_API TFeatureRegistration
 public:
     TFeatureRegistration() = default;
 
-    TFeatureRegistration(typename TFeatureRegistry<TFamily>::FContribution Contribution)
+    explicit TFeatureRegistration(TFeatureRegistry<TFamily>::FContribution Contribution)
         : Id(TFamily::Instance.Add(MoveTemp(Contribution)))
     {
     }
