@@ -26,14 +26,14 @@ using FLifetimeBoundInterfacePtr = TLifetimeBoundPtr<TWeakObjectPtr<UObject>, IR
 /**
  * create a tag event source for an actor:
  * 1. if the actor implements IRemGetTagEventSourceInterface, use its returned source
- * 2. otherwise, ask the registered provider (if any)
+ * 2. otherwise, ask the contributions a module registered for the family (in registration order)
  *
  * the handle's liveness is the actor this was requested for, or the owner the worker declares
  * through IRemGetLifetimeBoundOwnerInterface (a worker that belongs to another object, e.g. a component
  * whose owner is the view target)
  *
- * @see GameplayTag/RemTagEventSourceFeature.h - the family's storage, the contributions a module can
- * register, and TryGetTagEventSource<TLiveness> for the strongly typed form
+ * @see GameplayTag/RemTagEventSourceFeature.h - the typed query and the family's public surface;
+ * Templates/RemFeatureRegistry.h - the mechanism a module registers a contribution through
  * @return an invalid reference when neither path yields a source
  */
 REMCOMMON_API [[nodiscard]] FLifetimeBoundInterfacePtr TryGetLifetimeBoundInterfacePtr(TNotNull<AActor*> Actor);

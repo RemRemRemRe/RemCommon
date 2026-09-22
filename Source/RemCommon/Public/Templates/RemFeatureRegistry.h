@@ -2,10 +2,6 @@
 
 #pragma once
 
-#include <type_traits>
-#include <utility>
-
-#include "CoreMinimal.h"
 #include "Templates/Casts.h"
 #include "Templates/Function.h"
 #include "Templates/RemLifetimeBoundPtr.h"
@@ -23,7 +19,7 @@ namespace Rem
  * @brief The default handle shape for a family whose workers are handed out as a lifetime-bound
  * interface pointer: an erased liveness plus the family's pointee, and a typed form per owner type.
  *
- * A family that hands out something else specialises this template and declares its own `FHandle`,
+ * A family that hands out something else specializes this template and declares its own `FHandle`,
  * `TTypedHandle<TLiveness>` and `DeriveTypedHandle<TLiveness>(const FHandle&)`.
  *
  * @tparam TFamily declares `FPointee`, the interface its workers implement.
@@ -69,11 +65,12 @@ struct TFeatureHandleTraits
         }
         else
         {
-            return FTyped{Liveness, MakeNotNull(static_cast<typename TFamily::FPointee*>(Erased.TryGet()))};
+            return FTyped{Liveness, MakeNotNull(static_cast<TFamily::FPointee*>(Erased.TryGet()))};
         }
     }
 };
 
+// ReSharper disable once CommentTypo
 /**
  * @brief A family's registered contributions: the chain a family walks when its own path has nothing.
  *
@@ -90,6 +87,20 @@ struct TFeatureHandleTraits
  * };
  * ```
  *
+ * A family and its module then:
+ * - instantiate the registry and the registration once in the family's `.cpp`;
+ * - publish a consumer surface for the family (its factory / typed query) and hand
+ *   `Rem::TFeatureRegistration<TFamily>` to the modules that provide a worker.
+ *
+ * A consumer asks that published surface, never the module behind it: a providing module can be unloaded
+ * at any moment, the family's registry cannot.
+ *
+ * The request is an **input**: the mechanism passes it by `const FRequest&` end to end, so a
+ * contribution sees the caller's object instead of a copy - and must not retain the reference. The
+ * mechanism treats the request as opaque: it never stores, compares or inspects it, so the family
+ * decides its shape. A request should name what is being asked for, with a payload behind it
+ * rather than in it.
+ *
  * @note The registry lives in the family's own *non-template* type: a template's static data member
  * exists once per module, so a contribution registered in one DLL would be invisible in another.
  * @note A handle that is invalid means "this contribution has nothing", so the walk simply continues -
@@ -99,7 +110,7 @@ struct TFeatureHandleTraits
  * @note **The mechanism's one structural bet is the key**: a contribution is keyed by the owner type it
  * answers for (`UObject` = the wildcard). A family that needs another key extends the traits (a `TKey`
  * plus a way to derive it from the request) rather than bending this one - that axis has a single user
- * today, so generalising it is cheap now and expensive later.
+ * today, so generalizing it is cheap now and expensive later.
  * @note The class is exported and every family instantiates it explicitly in its own `.cpp`
  * (`template class TFeatureRegistry<FMyFamily>;`): the walk's code then lives in the owning module and
  * the callers import it, so only the class layout stays a cross-DLL contract.
@@ -108,11 +119,11 @@ template <typename TFamily>
 class REMCOMMON_API TFeatureRegistry
 {
 public:
-    using FRequest = typename TFamily::FRequest;
-    using FHandle  = typename TFeatureHandleTraits<TFamily>::FHandle;
+    using FRequest = TFamily::FRequest;
+    using FHandle  = TFeatureHandleTraits<TFamily>::FHandle;
 
     template <typename TLiveness>
-    using TTypedHandle = typename TFeatureHandleTraits<TFamily>::template TTypedHandle<TLiveness>;
+    using TTypedHandle = TFeatureHandleTraits<TFamily>::template TTypedHandle<TLiveness>;
 
     /** One module's contribution to the family. */
     struct FContribution
@@ -186,7 +197,11 @@ public:
             Provide(Request, TLiveness::StaticClass()));
     }
 
-    /** Registers a contribution and returns its id. */
+    /**
+     * @brief Registers a contribution and returns its id.
+     * @note A second contribution for an owner type that already has one is reported in development
+     * only: the walk's winner is decided by registration order, so it would otherwise stay invisible.
+     */
     int32 Add(FContribution Contribution)
     {
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
@@ -213,6 +228,7 @@ public:
         return Id;
     }
 
+    // ReSharper disable once GrammarMistakeInComment
     /**
      * @brief Removes the contribution with @p Id, if it is still registered.
      * @note The removal is order-preserving on purpose: the walk's outcome is registration order,
@@ -243,8 +259,22 @@ private:
  * @brief Registers a contribution in @p TFamily's registry for as long as the object lives.
  *
  * The providing module owns one - its constructor registers and its destructor clears, so the module
- * cannot forget the clearing half, and the family never has to guess whether a registered feature is
- * still backed by a loaded module.
+ * cannot forget the clearing half, and the family never has to guess whether a registered contribution
+ * is still backed by a loaded module. A contribution declares the owner type its workers belong to and
+ * the function that hands one out (`UObject` is the wildcard; an invalid handle means "I have nothing",
+ * and the walk continues):
+ *
+ * ```cpp
+ * class FMyModule final : public IModuleInterface
+ * {
+ *     Rem::TFeatureRegistration<FMyFamily> Registration{
+ *         {
+ *             AActor::StaticClass(), // the owner type its workers belong to; UObject = the wildcard
+ *             [](const FMyFamily::FRequest& Request) { return MakeHandleFor(Request); },
+ *         },
+ *     };
+ * };
+ * ```
  *
  * @note Registering from a module's file scope is safe: nothing runs the contribution until a request
  * arrives, and the family's own registry is initialized before any of its dependents (the loader
@@ -284,4 +314,4 @@ public:
 private:
     int32 Id{INDEX_NONE};
 };
-} // namespace Rem
+}

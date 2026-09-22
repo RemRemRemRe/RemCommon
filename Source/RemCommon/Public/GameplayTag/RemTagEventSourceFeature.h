@@ -17,8 +17,17 @@ namespace Rem::GameplayTag
  * belong to (`UObject` is the wildcard), and the handle shape is the default one - an erased liveness
  * plus the tag event source interface, with `TryGetTagEventSource<TLiveness>` for the typed form.
  *
+ * The request is a pointer by choice: the query names an existing object, so nothing is copied and a
+ * contribution uses it directly. The mechanism takes the request as opaque and does not require a
+ * pointer - a family whose query needs more context carries it in its request type.
+ *
  * @note Keeping the registry in this non-template type is what makes one registration visible to every
- * module; see Rem::TFeatureRegistry for the rest of the contract.
+ * module.
+ * @see `Rem::TFeatureRegistry` (Templates/RemFeatureRegistry.h) for the mechanism - what a contribution
+ * declares and how a providing module registers one - and `IRemGetLifetimeBoundOwnerInterface`
+ * (Interface/RemGetLifetimeBoundOwnerInterface.h) plus its typed accessor
+ * `Rem::TGetLifetimeBoundObjectPtr` (Interface/RemGetLifetimeBoundObjectPtrInterface.h) for the identity
+ * protocol a worker declares its owner with.
  */
 struct FTagEventSourceFamily
 {
@@ -26,13 +35,13 @@ struct FTagEventSourceFamily
     using FPointee = IRemTagEventSourceInterface;
 
     /** The family's registry: declared here, defined once in the family's `.cpp`. */
-    REMCOMMON_API static Rem::TFeatureRegistry<FTagEventSourceFamily> Instance;
+    REMCOMMON_API static TFeatureRegistry<FTagEventSourceFamily> Instance;
 };
 
 /** The family's public surface, spelled once so a call site reads after the family. */
 struct FTagEventSourceFeature
 {
-    using FStorage = Rem::TFeatureRegistry<FTagEventSourceFamily>;
+    using FStorage = TFeatureRegistry<FTagEventSourceFamily>;
 
     using FContribution = FStorage::FContribution;
     using FRequest      = FStorage::FRequest;
@@ -42,8 +51,13 @@ struct FTagEventSourceFeature
     using TTypedHandle = FStorage::TTypedHandle<TLiveness>;
 };
 
-/** Registers a contribution for as long as the object lives; `Reset()` clears it early. */
-using FTagEventSourceRegistration = Rem::TFeatureRegistration<FTagEventSourceFamily>;
+/**
+ * @brief Registers a contribution to this family for as long as the object lives; `Reset()` clears it
+ * early.
+ * @note A contribution is the owner type its workers belong to plus the function that hands one out,
+ * and the providing module owns the registration - see `Rem::TFeatureRegistry` for both.
+ */
+using FTagEventSourceRegistration = TFeatureRegistration<FTagEventSourceFamily>;
 
 // the registry's code lives in RemCommon: the class is exported and instantiated explicitly in
 // the family's .cpp, so a caller imports the walk instead of carrying a copy of it
@@ -64,12 +78,18 @@ template <typename TLiveness>
 [[nodiscard]] FTagEventSourceFeature::TTypedHandle<TLiveness> DeriveTypedHandle(
     const FTagEventSourceFeature::FHandle& Erased)
 {
-    return Rem::TFeatureHandleTraits<FTagEventSourceFamily>::template DeriveTypedHandle<TLiveness>(Erased);
+    return TFeatureHandleTraits<FTagEventSourceFamily>::DeriveTypedHandle<TLiveness>(Erased);
 }
-} // namespace Private
+}
 
 /**
  * @brief The tag event source for @p Actor, bound to a concrete owner (liveness) type.
+ *
+ * @p TLiveness names the owner, not the worker: a worker that is its own owner is queried by its own
+ * type and gets the compact handle, while a worker owned by another object (a component whose owner is
+ * the actor) is normally asked for through the erased form - `TryGetLifetimeBoundInterfacePtr`
+ * (GameplayTag/RemTagEventLifetimeBoundInterfacePtr.h) - which carries that owner automatically.
+ *
  * @note Asks the actor's getter first, then the contributions registered for @p TLiveness or for the
  * `UObject` wildcard.
  */
@@ -85,4 +105,4 @@ template <typename TLiveness>
 
     return FTagEventSourceFamily::Instance.ProvideTyped<TLiveness>(Actor);
 }
-} // namespace Rem::GameplayTag
+}

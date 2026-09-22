@@ -12,10 +12,11 @@
 namespace Rem::GameplayTag
 {
 /** the family's single registry: this definition is its one home */
-Rem::TFeatureRegistry<FTagEventSourceFamily> FTagEventSourceFamily::Instance;
+TFeatureRegistry<FTagEventSourceFamily> FTagEventSourceFamily::Instance;
 
 // the explicit instantiation keeps the walk's code in this module; the exported class makes the
-// callers import it (Rem::TFeatureRegistry documents the reasoning)
+// callers import it (TFeatureRegistry documents the reasoning). The template keeps its namespace
+// qualifier here: an unqualified name is only valid in the namespace that declares it.
 template class Rem::TFeatureRegistry<FTagEventSourceFamily>;
 template class Rem::TFeatureRegistration<FTagEventSourceFamily>;
 
@@ -23,7 +24,7 @@ namespace Private
 {
 FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceFeature::FRequest& Actor)
 {
-    /// the not-null contract is checked at the boundary; the body works with the raw pointer
+    // the not-null contract is checked at the boundary; the body works with the raw pointer
     AActor* ActorPtr = Actor;
 
     // the worker declares its own identity when it implements IRemGetLifetimeBoundOwnerInterface (a component
@@ -39,7 +40,6 @@ FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceF
         return FTagEventSourceFeature::FHandle{ActorPtr, Worker};
     };
 
-    // 1. actor-provided worker
     if (auto* Getter = Cast<IRemGetTagEventSourceInterface>(ActorPtr))
     {
         if (auto* Worker = Getter->GetTagEventSource())
@@ -50,7 +50,7 @@ FTagEventSourceFeature::FHandle TryGetActorProvidedSource(const FTagEventSourceF
 
     return {};
 }
-} // namespace Private
+}
 
 FTagEventSourceFeature::FHandle TryGetLifetimeBoundInterfacePtr(const TNotNull<AActor*> Actor)
 {
@@ -63,4 +63,4 @@ FTagEventSourceFeature::FHandle TryGetLifetimeBoundInterfacePtr(const TNotNull<A
     // the contribution chain: the first module that has a source wins
     return FTagEventSourceFamily::Instance.Provide(Actor);
 }
-} // namespace Rem::GameplayTag
+}

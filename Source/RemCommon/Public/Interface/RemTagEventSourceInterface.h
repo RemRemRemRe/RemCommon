@@ -13,11 +13,15 @@ struct FGameplayTag;
  * generic gameplay tag event source
  *
  * the view target provides one either by implementing IRemGetTagEventSourceInterface
- * (returning its own worker), or through a module-registered fallback provider
+ * (returning its own worker), or through a contribution a module registers for the family
  * (e.g. an AbilitySystemComponent-backed component registered by a GAS-dependent module)
  *
- * implemented by UObjects only; holders keep the family's handle
- * (Interface/RemTagEventSourceHandle.h) so the source auto-invalidates when its owner dies
+ * a worker is a UObject and declares the object that bounds its lifetime through
+ * IRemGetLifetimeBoundOwnerInterface; holders keep the family's handle
+ * (GameplayTag/RemTagEventLifetimeBoundInterfacePtr.h) so the source auto-invalidates when its owner dies
+ *
+ * the family and its typed query: GameplayTag/RemTagEventSourceFeature.h; how a module contributes one:
+ * Templates/RemFeatureRegistry.h; the identity protocol: Interface/RemGetLifetimeBoundOwnerInterface.h
  */
 UINTERFACE(MinimalAPI)
 class URemTagEventSourceInterface : public UInterface

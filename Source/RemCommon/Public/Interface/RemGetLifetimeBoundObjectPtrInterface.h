@@ -78,7 +78,7 @@ template <typename TInterface, typename TLiveness = UObject, typename TDerived>
     const TDerived& Object);
 
 /**
- * @brief CRTP facade for IRemGetLifetimeBoundOwner implementers: the typed accessor on top of
+ * @brief CRTP facade for IRemGetLifetimeBoundOwnerInterface implementers: the typed accessor on top of
  * the protocol's virtual.
  *
  * @tparam TDerived The implementing class, e.g. `TGetLifetimeBoundObjectPtr<URemMyWorker>`.

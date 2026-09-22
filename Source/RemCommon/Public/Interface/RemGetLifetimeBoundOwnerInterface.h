@@ -9,7 +9,7 @@
 /**
  * liveness/identity protocol of a worker object
  *
- * a worker (a tag event source, a team provider, a tag mutex provider) is held through a
+ * a worker (a tag event source, a team source, a tag mutex source) is held through a
  * Rem::TLifetimeBoundPtr whose liveness is the UObject that bounds its lifetime - typically the
  * actor the worker belongs to. This interface is how the worker declares that object, so a consumer
  * that only has an interface pointer can still build the handle.
