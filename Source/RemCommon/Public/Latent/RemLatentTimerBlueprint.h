@@ -20,13 +20,13 @@ struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Time
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "s", ClampMin = 0))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
     float TimeToDelay{0.0f};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
     int32 LoopCount{1};
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "s", ClampMin = 0))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "s", ClampMin = 0))
     float InitialDelay{-1.0f};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem")
@@ -53,7 +53,7 @@ struct REMCOMMON_API FRemTimerParameterBlueprintHelper_Frame
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
     int32 FrameToDelay{0};
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (Units = "x", ClampMin = 0))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ForceUnits = "x", ClampMin = 0))
     int32 LoopCount{1};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rem", meta = (ClampMin = 0))
