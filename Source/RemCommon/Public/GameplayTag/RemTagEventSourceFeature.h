@@ -22,7 +22,8 @@ namespace Rem::GameplayTag
  * pointer - a family whose query needs more context carries it in its request type.
  *
  * @note Keeping the registry in this non-template type is what makes one registration visible to every
- * module.
+ * module: `Instance` is the one object, and this module defines it together with the family's
+ * instantiations (`RemTagEventSource.cpp`).
  * @see `Rem::TFeatureRegistry` (Templates/RemFeatureRegistry.h) for the mechanism - what a contribution
  * declares and how a providing module registers one - and `IRemGetLifetimeBoundOwnerInterface`
  * (Interface/RemGetLifetimeBoundOwnerInterface.h) plus its typed accessor
@@ -37,6 +38,12 @@ struct FTagEventSourceFamily
     /** The family's registry: declared here, defined once in the family's `.cpp`. */
     REMCOMMON_API static TFeatureRegistry<FTagEventSourceFamily> Instance;
 };
+
+// The family's instantiations are emitted by the module that owns the family, so a consumer only declares
+// "do not instantiate locally". What it imports is `Instance`: the walk's members are defined in the class,
+// so a compiler may still instantiate them in the consumer's module.
+extern template class Rem::TFeatureRegistry<FTagEventSourceFamily>;
+extern template class Rem::TFeatureRegistration<FTagEventSourceFamily>;
 
 /** The family's public surface, spelled once so a call site reads after the family. */
 struct FTagEventSourceFeature

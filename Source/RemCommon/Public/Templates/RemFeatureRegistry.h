@@ -85,12 +85,16 @@ struct TFeatureHandleTraits
  *     using FRequest = TNotNull<AActor*>;
  *     using FPointee = IMyWorkerInterface;
  *
- *     REMCOMMON_API static Rem::TFeatureRegistry<FMyFamily> Instance;
+ *     MYMODULE_API static Rem::TFeatureRegistry<FMyFamily> Instance; // the owning module's export macro
  * };
  * ```
  *
  * A family and its module then:
- * - instantiate the registry and the registration once in the family's `.cpp`;
+ * - declare the family's registry on the family type and the two `extern template class` declarations
+ *   (undecorated) in the family's header - after the family's `TFeatureHandleTraits` specialization, if it
+ *   has one (the note below says why);
+ * - define `Instance` and emit the family's instantiations in the family's `.cpp`
+ *   (`template class MYMODULE_API Rem::TFeatureRegistry<FMyFamily>;` and the same for `TFeatureRegistration`);
  * - publish a consumer surface for the family (its factory / typed query) and hand
  *   `Rem::TFeatureRegistration<TFamily>` to the modules that provide a worker.
  *
@@ -115,15 +119,24 @@ struct TFeatureHandleTraits
  * answers for (`UObject` = the wildcard). A family that needs another key extends the traits (a `TKey`
  * plus a way to derive it from the request) rather than bending this one - that axis has a single user
  * today, so generalizing it is cheap now and expensive later.
- * @note The class is exported, so an instantiation is emitted in the module that owns the mechanism:
- * a family in this module gets its walk compiled and exported with it, and a family in another module
- * only imports what this module exported - which, today, is this module's own family. A family whose
- * registry lives elsewhere therefore needs the export model extended, which is an open decision and is
- * not attempted here. The export exists for the reason it always did: the walk's code lives in one DLL
- * and the callers import it, so only the class layout stays a cross-DLL contract.
+ * @note **Any module can own a family: the class carries no export macro.** The export sits on the
+ * family's instantiations instead. The module that owns the family declares `Instance` on the family type
+ * with its own `_API` macro - the one object every consumer shares - defines it and emits the family's two
+ * instantiations in the family's `.cpp`, and the family's header declares those instantiations
+ * `extern template class`. The declaration is undecorated on purpose: it only says "do not instantiate
+ * locally", and the symbols come from the exporting module. A `_API` on the class would have made every
+ * consumer's instantiation `dllimport` and forced the mechanism's module to export every family - the
+ * missing `Provide` / destructor symbols of the LNK2019 this form removes. Because the walk's members are
+ * defined in the class body, a compiler may still instantiate them in a consumer's module: only `Instance`
+ * and the class layout stay a cross-DLL contract. The exported instantiations are insurance for a future
+ * member that is not defined in the class: today every member is, so the symbols a consumer imports can be
+ * as small as the family's `Instance`.
+ * @note A family that specializes `TFeatureHandleTraits` declares that specialization before its
+ * `extern template` declarations: seeing an `extern template` instantiates the registry on MSVC, so the
+ * registry's handle type has to come from the specialization rather than from the primary template.
  */
 template <typename TFamily>
-class REMCOMMON_API TFeatureRegistry
+class TFeatureRegistry
 {
 public:
     using FRequest = TFamily::FRequest;
@@ -292,7 +305,7 @@ private:
  * still loaded.
  */
 template <typename TFamily>
-class REMCOMMON_API TFeatureRegistration
+class TFeatureRegistration
 {
 public:
     TFeatureRegistration() = default;

@@ -15,10 +15,11 @@ namespace Rem::GameplayTag
 /** the family's single registry: this definition is its one home */
 TFeatureRegistry<FTagEventSourceFamily> FTagEventSourceFamily::Instance;
 
-// The two instantiations keep the `Rem::` qualifier: at a cross-namespace instantiation site, naming
-// the owning namespace is the clearer spelling.
-template class Rem::TFeatureRegistry<FTagEventSourceFamily>;
-template class Rem::TFeatureRegistration<FTagEventSourceFamily>;
+// The family's instantiations are emitted and exported here, so a consumer can declare them `extern template`
+// and link against this module. The two lines keep the `Rem::` qualifier: at a cross-namespace instantiation
+// site, naming the owning namespace is the clearer spelling.
+template class REMCOMMON_API Rem::TFeatureRegistry<FTagEventSourceFamily>;
+template class REMCOMMON_API Rem::TFeatureRegistration<FTagEventSourceFamily>;
 
 namespace Private
 {
