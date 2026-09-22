@@ -5,6 +5,8 @@
 #include "Macro/RemMacroUtilities.h"
 #include "Macro/RemPrivateMemberAccessor.h"
 
+#include <type_traits>
+
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -121,23 +123,60 @@ void FRemMacrosTest::Define()
 
     Describe(TEXT("Float/double conversion macros"), [this]
     {
-        It(TEXT("should construct the double variants"), [this]
+        It(TEXT("should construct every double variant at double width"), [this]
         {
+            const auto Vector2 = REM_VECTOR2_DOUBLE(1, 2);
             const auto Vector  = REM_VECTOR3_DOUBLE(1, 2, 3);
+            const auto Vector4 = REM_VECTOR4_DOUBLE(1, 2, 3, 4);
             const auto Rotator = REM_ROTATOR_DOUBLE(0, 90, 0);
             const auto Quat    = REM_QUAT_DOUBLE(0, 0, 0, 1);
 
-            TestEqual(TEXT("vector x"), Vector.X, 1.0);
-            TestEqual(TEXT("vector y"), Vector.Y, 2.0);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector2)>, FVector2d>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector)>, FVector3d>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector4)>, FVector4d>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Rotator)>, FRotator3d>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Quat)>, FQuat4d>);
+
+            TestEqual(TEXT("vector2 y"), Vector2.Y, 2.0);
+            TestEqual(TEXT("vector3 z"), Vector.Z, 3.0);
+            TestEqual(TEXT("vector4 w"), Vector4.W, 4.0);
             TestEqual(TEXT("rotator yaw"), Rotator.Yaw, 90.0);
             TestEqual(TEXT("quat w"), Quat.W, 1.0);
         });
 
-        It(TEXT("should construct the float variants"), [this]
+        It(TEXT("should construct every float variant at float width"), [this]
         {
-            const auto Vector = REM_VECTOR3_FLOAT(1, 2, 3);
+            const auto Vector2 = REM_VECTOR2_FLOAT(1, 2);
+            const auto Vector  = REM_VECTOR3_FLOAT(1, 2, 3);
+            const auto Vector4 = REM_VECTOR4_FLOAT(1, 2, 3, 4);
+            const auto Rotator = REM_ROTATOR_FLOAT(0, 90, 0);
+            const auto Quat    = REM_QUAT_FLOAT(0, 0, 0, 1);
 
-            TestEqual(TEXT("vector z"), Vector.Z, 3.0f);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector2)>, FVector2f>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector)>, FVector3f>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Vector4)>, FVector4f>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Rotator)>, FRotator3f>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Quat)>, FQuat4f>);
+
+            TestEqual(TEXT("vector2 y"), Vector2.Y, 2.0f);
+            TestEqual(TEXT("vector3 z"), Vector.Z, 3.0f);
+            TestEqual(TEXT("vector4 w"), Vector4.W, 4.0f);
+            TestEqual(TEXT("rotator yaw"), Rotator.Yaw, 90.0f);
+            TestEqual(TEXT("quat w"), Quat.W, 1.0f);
+        });
+
+        It(TEXT("should convert an existing value through the explicit constructor"), [this]
+        {
+            const FVector3d Wide{1.0, 2.0, 3.0};
+
+            const auto Narrow = REM_VECTOR3_FLOAT(Wide);
+            const auto Back   = REM_VECTOR3_DOUBLE(Narrow);
+
+            static_assert(std::is_same_v<std::decay_t<decltype(Narrow)>, FVector3f>);
+            static_assert(std::is_same_v<std::decay_t<decltype(Back)>, FVector3d>);
+
+            TestEqual(TEXT("narrowed x"), Narrow.X, 1.0f);
+            TestEqual(TEXT("widened back z"), Back.Z, 3.0);
         });
     });
 
