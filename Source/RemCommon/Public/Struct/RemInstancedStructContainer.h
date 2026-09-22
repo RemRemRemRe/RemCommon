@@ -57,12 +57,18 @@ struct FRemInstancedStructContainer
         return const_cast<T*>(Ptr);
     }
 
+    /**
+     * @brief The stored struct, asserted to be there and of type @p T.
+     * @pre `Contains(Key)` and the stored struct is a `T`; the check fires otherwise.
+     * @note The nullable forms are TryGetView / TryGetPtr.
+     */
     template <Rem::CHasStaticStruct T>
     T& Get(const FKeyType Key) const
     {
-        const auto View = TryGetView(Key);
-        auto& Ref       = View.Get<const T>();
-        return const_cast<T&>(Ref);
+        const auto View = TryGetView<T>(Key);
+        check(View.IsValid());
+
+        return const_cast<T&>(View.Get());
     }
 
     REM_API bool Contains(FKeyType Key) const;

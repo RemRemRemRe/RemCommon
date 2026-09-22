@@ -53,6 +53,22 @@ void FRemInstancedStructContainerTest::Define()
         });
     });
 
+    Describe(TEXT("Get"), [this]
+    {
+        It(TEXT("should return the stored struct through the checked getter"), [this]
+        {
+            FRemInstancedStructContainer Container;
+            constexpr auto Key = static_cast<FRemInstancedStructContainer::FKeyType>(1);
+
+            FRemScopedStructContainerTestTrivial Source{};
+            Source.Number = 7.5f;
+            TestTrue(TEXT("add"), Container.TryAdd(Key, FConstStructView::Make(Source)));
+
+            const auto& Stored = Container.Get<FRemScopedStructContainerTestTrivial>(Key);
+            TestEqual(TEXT("number"), Stored.Number, 7.5f);
+        });
+    });
+
     Describe(TEXT("Contains"), [this]
     {
         It(TEXT("should report the presence of a key"), [this]
