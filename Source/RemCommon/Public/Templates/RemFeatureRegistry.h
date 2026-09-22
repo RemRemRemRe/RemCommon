@@ -116,9 +116,10 @@ struct TFeatureHandleTraits
  * @note The registry is not synchronized: a registration is made at module load, a query on the game
  * thread, and the walk is not safe against a concurrent registration.
  * @note **The mechanism's one structural bet is the key**: a contribution is keyed by the owner type it
- * answers for (`UObject` = the wildcard). A family that needs another key extends the traits (a `TKey`
- * plus a way to derive it from the request) rather than bending this one - that axis has a single user
- * today, so generalizing it is cheap now and expensive later.
+ * answers for (`UObject` = the wildcard). A family that needs a different key changes this mechanism -
+ * `TFeatureHandleTraits` carries the handle shape, not the key - rather than extending it from outside.
+ * That change is deferred until a family actually needs it: every family today keys by a `UClass`, so a
+ * second key shape would have no user to validate it.
  * @note **Any module can own a family: the class carries no export macro.** The export sits on the
  * family's instantiations instead. The module that owns the family declares `Instance` on the family type
  * with its own `_API` macro - the one object every consumer shares - defines it and emits the family's two
@@ -223,8 +224,9 @@ public:
      * @brief Registers a contribution and returns its id.
      * @note A second contribution for an owner type that already has one is reported in development
      * only: the walk's winner is decided by registration order, so it would otherwise stay invisible.
+     * @note An id is never zero: zero means "not registered".
      */
-    [[nodiscard]] int32 Add(FContribution Contribution)
+    [[nodiscard]] uint32 Add(FContribution Contribution)
     {
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
 
@@ -243,7 +245,7 @@ public:
 
 #endif
 
-        const int32 Id = NextId++;
+        const uint32 Id = NextId++;
         Entries.Add(FEntry{Id, MoveTemp(Contribution)});
         return Id;
     }
@@ -254,7 +256,7 @@ public:
      * @note The removal is order-preserving on purpose: the walk's outcome is registration order,
      * and a swap-removal would promote a later contribution over an earlier survivor.
      */
-    void Remove(const int32 Id)
+    void Remove(const uint32 Id)
     {
         Entries.RemoveAll([Id](const FEntry& Entry)
         {
@@ -265,14 +267,14 @@ public:
 private:
     struct FEntry
     {
-        int32 Id{INDEX_NONE};
+        uint32 Id{0};
         FContribution Contribution;
     };
 
     /** The registered contributions, kept in registration order. */
     TArray<FEntry> Entries;
 
-    int32 NextId{1};
+    uint32 NextId{1};
 };
 
 /**
@@ -323,13 +325,13 @@ public:
     /** Clears the registration now; a second call, or the destructor after it, does nothing. */
     void Reset()
     {
-        if (Id == INDEX_NONE)
+        if (Id == 0)
         {
             return;
         }
 
         TFamily::Instance.Remove(Id);
-        Id = INDEX_NONE;
+        Id = 0;
     }
 
     TFeatureRegistration(const TFeatureRegistration&)            = delete;
@@ -338,6 +340,6 @@ public:
     TFeatureRegistration& operator=(TFeatureRegistration&&)      = delete;
 
 private:
-    int32 Id{INDEX_NONE};
+    uint32 Id{0};
 };
 }
