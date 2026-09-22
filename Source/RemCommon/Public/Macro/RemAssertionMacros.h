@@ -10,7 +10,11 @@
 
 // #define REM_LET_IT_CRASH
 // #define REM_DISABLE_ASSERTION
-#define DISABLE_CHECK_MACRO false
+
+// RemCheck* is the development-only guard family: its guard is stripped where it cannot help, i.e. in
+// Shipping. Use RemEnsure* for a guard that has to survive every configuration, and wrap a purely
+// diagnostic one in REM_WITH_DEVELOPMENT_ONLY_CODE when it is unnecessary in development as well.
+#define DISABLE_CHECK_MACRO UE_BUILD_SHIPPING
 
 #ifdef REM_LET_IT_CRASH
 
