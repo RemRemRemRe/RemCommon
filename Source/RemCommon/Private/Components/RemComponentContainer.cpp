@@ -41,7 +41,7 @@ int32 FRemComponentContainer::GetComponentIndex(const FRemComponentBase& InCompo
     return INDEX_NONE;
 }
 
-void FRemComponentContainer::Initialize(UObject& OwnerRef)
+void FRemComponentContainer::Initialize(Rem::TNotNull<UObject*> OwnerRef)
 {
     // make sure not calling this during UnInitializing
     RemCheckCondition(!bUnInitializing, return;);
@@ -52,12 +52,12 @@ void FRemComponentContainer::Initialize(UObject& OwnerRef)
         bInitializing = false;
     };
 
-    Owner = &OwnerRef;
+    Owner = &*OwnerRef;
 
     // make sure Initialize can't be called by TryInitialize
     bInitialized = true;
 
-    REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", OwnerRef);
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", *OwnerRef);
 
     ForEachComponent<FRemComponentBase>(
         [&](FRemComponentBase& Component, const int32 Index, const UScriptStruct&)
@@ -98,11 +98,11 @@ bool FRemComponentContainer::IsInitialized() const
     return bInitialized;
 }
 
-void FRemComponentContainer::TryInitialize(UObject& OwnerRef)
+void FRemComponentContainer::TryInitialize(Rem::TNotNull<UObject*> OwnerRef)
 {
     if (bInitialized)
     {
-        REM_LOG_FUNCTION(LogRemCommon, Verbose, "already initialized, Owner:{0}", OwnerRef);
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, "already initialized, Owner:{0}", *OwnerRef);
         return;
     }
 

@@ -136,12 +136,12 @@ public:
      */
     int32 GetComponentIndex(const FRemComponentViewBase& InComponent) const;
 
-    void Initialize(UObject& OwnerRef);
+    void Initialize(Rem::TNotNull<UObject*> OwnerRef);
     void Uninitialize();
 
     bool IsInitialized() const;
 
-    void TryInitialize(UObject& OwnerRef);
+    void TryInitialize(Rem::TNotNull<UObject*> OwnerRef);
     void TryUninitialize();
 
     void SetComponentsView(TConstArrayView<TConstStructView<FRemComponentViewBase>> InComponentsView);

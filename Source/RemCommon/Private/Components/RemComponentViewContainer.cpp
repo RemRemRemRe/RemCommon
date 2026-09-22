@@ -68,7 +68,7 @@ int32 FRemComponentViewContainerInstance::GetComponentIndex(const FRemComponentV
     return INDEX_NONE;
 }
 
-void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
+void FRemComponentViewContainerInstance::Initialize(Rem::TNotNull<UObject*> OwnerRef)
 {
     // make sure not calling this during UnInitializing
     RemCheckCondition(!bUnInitializing, return;);
@@ -79,12 +79,12 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
         bInitializing = false;
     };
 
-    Owner = &OwnerRef;
+    Owner = &*OwnerRef;
 
     // make sure Initialize can't be called by TryInitialize
     bInitialized = true;
 
-    REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", OwnerRef);
+    REM_LOG_FUNCTION(LogRemCommon, Verbose, "initializing components, Owner:{0}", *OwnerRef);
 
     {
         TArray<FConstStructView> InstanceDataTypes;
@@ -92,7 +92,8 @@ void FRemComponentViewContainerInstance::Initialize(UObject& OwnerRef)
         ForEachComponent<FRemComponentViewBase>(
             [&](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
             {
-                InstanceDataTypes.Add(Component.GetInstanceDataType(FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index}));
+                InstanceDataTypes.Add(Component.GetInstanceDataType(
+                    FRemComponentViewBase::FContext{.OwnerInstance = this, .ComponentIndex = Index}));
             });
 
 #if REM_WITH_DEVELOPMENT_ONLY_CODE
@@ -146,11 +147,11 @@ bool FRemComponentViewContainerInstance::IsInitialized() const
     return bInitialized;
 }
 
-void FRemComponentViewContainerInstance::TryInitialize(UObject& OwnerRef)
+void FRemComponentViewContainerInstance::TryInitialize(Rem::TNotNull<UObject*> OwnerRef)
 {
     if (bInitialized)
     {
-        REM_LOG_FUNCTION(LogRemCommon, Verbose, "already initialized, Owner:{0}", OwnerRef);
+        REM_LOG_FUNCTION(LogRemCommon, Verbose, "already initialized, Owner:{0}", *OwnerRef);
         return;
     }
 

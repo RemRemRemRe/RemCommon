@@ -46,7 +46,7 @@ void FRemComponentViewContainerTest::Define()
             auto* Owner = NewObject<URemComponentOwnerTestObject>();
             check(Owner);
 
-            Context.Instance.Initialize(*Owner);
+            Context.Instance.Initialize(Owner);
             TestTrue(TEXT("initialized"), Context.Instance.IsInitialized());
             TestEqual(TEXT("initialize count"),
                 FRemComponentViewContainerTestCounters::InitializeOrder.Num(), 1);
@@ -95,7 +95,7 @@ void FRemComponentViewContainerTest::Define()
             auto* Owner = NewObject<URemComponentOwnerTestObject>();
             check(Owner);
 
-            Context.Instance.Initialize(*Owner);
+            Context.Instance.Initialize(Owner);
 
             const auto Data = Context.Instance
                                      .GetInstanceData<FRemComponentViewContainerTestComponent>(0);
@@ -118,12 +118,15 @@ void FRemComponentViewContainerTest::Define()
             URemComponentOwnerTestObject* Owner = NewObject<URemComponentOwnerTestObject>();
             check(Owner);
 
-            Context.Instance.Initialize(*Owner);
+            Context.Instance.Initialize(Owner);
 
             Context.Instance.ForEachComponent<FRemComponentViewBase>(
                 [&Context](const FRemComponentViewBase& Component, const int32 Index, const UScriptStruct&)
                 {
-                    const FRemComponentViewBase::FContext TickContext{.OwnerInstance = Rem::MakeNotNull(&Context.Instance), .ComponentIndex = Index};
+                    const FRemComponentViewBase::FContext TickContext{
+                        .OwnerInstance  = Rem::MakeNotNull(&Context.Instance),
+                        .ComponentIndex = Index
+                    };
                     if (Component.ShouldTick(TickContext))
                     {
                         Component.Tick(TickContext, 0.5f);

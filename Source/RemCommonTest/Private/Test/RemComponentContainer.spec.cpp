@@ -90,7 +90,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
 
             TestEqual(TEXT("initialize order"), FRemComponentContainerTestCounters::InitializeOrder,
                 TArray({0, 1, 2}));
@@ -103,7 +103,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
 
             TestEqual(TEXT("owner"), Container.GetOwner<URemComponentContainerTestOwner>(), Owner);
         });
@@ -116,8 +116,8 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.TryInitialize(*Owner);
-            Container.TryInitialize(*Owner);
+            Container.TryInitialize(Owner);
+            Container.TryInitialize(Owner);
 
             TestEqual(TEXT("initialize dispatched once"), FRemComponentContainerTestCounters::InitializeOrder.Num(), 3);
             TestTrue(TEXT("is initialized"), Container.IsInitialized());
@@ -134,7 +134,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
             Container.Uninitialize();
 
             const auto& Order = FRemComponentContainerTestCounters::UninitializeOrder;
@@ -154,7 +154,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
             Container.Uninitialize();
 
             TestEqual(TEXT("owner cleared"), Container.GetOwner<URemComponentContainerTestOwner>(),
@@ -345,7 +345,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
 
             TArray<TInstancedStruct<FRemComponentBase>> Empty;
             Container.SetComponentsView(std::move(Empty));
@@ -370,7 +370,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             auto* Owner = NewObject<URemComponentContainerTestOwner>();
-            Container.Initialize(*Owner);
+            Container.Initialize(Owner);
 
             const FRemComponentBase::FContext Context{.OwnerInstance = &Container, .ComponentIndex = 0};
             TestEqual(TEXT("owner from context"), FRemComponentBase::GetOwner<URemComponentContainerTestOwner>(Context),
@@ -386,7 +386,7 @@ void FRemComponentContainerTest::Define()
             Setup(Container);
 
             const auto A = Container.FindComponent<FRemComponentContainerTestA>();
-            A->Value = 7;
+            A->Value     = 7;
 
             FRemComponentContainer Destination;
             FRemComponentContainer::StaticStruct()->CopyScriptStruct(&Destination, &Container);
