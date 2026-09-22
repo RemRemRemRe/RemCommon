@@ -1,6 +1,7 @@
 // Copyright RemRemRemRe. 2026. All Rights Reserved.
 
 #include "Test/RemTagEventSourceTestTypes.h"
+#include "Test/RemTestSupport.h"
 
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -14,28 +15,16 @@
 
 namespace
 {
+using Rem::Common::Private::ARemTestBareWorkerGetterActor;
 using Rem::Common::Private::ARemTestNullGetterActor;
 using Rem::Common::Private::ARemTestTagEventGetterActor;
 using Rem::Common::Private::FRemTestLifetimeBoundStruct;
+using Rem::Common::Private::URemTestBareTagEventWorker;
+using Rem::Common::Private::URemTestTagEventSourceComponent;
 using Rem::Common::Private::URemTestTagEventWorker;
 
-/** a contribution that applies to every actor and hands out @p Worker */
-Rem::GameplayTag::FTagEventSourceFeature::FContribution MakeWorkerContribution(URemTestTagEventWorker* Worker)
-{
-    return {
-        UObject::StaticClass(),
-        [Worker](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
-        {
-            return Worker->GetLifetimeBoundObjectPtr<IRemTagEventSourceInterface>();
-        }
-    };
-}
-
-/** worker owned by the given actor, so it stays alive for the test scope */
-URemTestTagEventWorker* MakeWorker(AActor* Owner)
-{
-    return NewObject<URemTestTagEventWorker>(Owner);
-}
+using Rem::Common::Private::MakeWorker;
+using Rem::Common::Private::MakeWorkerContribution;
 } // namespace
 
 DEFINE_SPEC(FRemTagEventSourceTest, "Rem.Common.GameplayTagEventSource",
@@ -70,6 +59,21 @@ void FRemTagEventSourceTest::Define()
 
             TestTrue(TEXT("valid source"), Source.IsValid());
             TestTrue(TEXT("source is the contribution's worker"), Source.GetObject() == ProvidedWorker);
+        });
+
+        It(TEXT("should take the requested actor as the identity of a worker with no identity protocol"), [this]
+        {
+            const Rem::Test::FRemTestWorld World;
+            auto* Actor   = World->SpawnActor<ARemTestBareWorkerGetterActor>();
+            Actor->Worker = NewObject<URemTestBareTagEventWorker>(Actor);
+
+            // the worker declares no owner, so the handle falls back to the actor the query named
+            const auto Source = Rem::GameplayTag::TryGetLifetimeBoundInterfacePtr(Actor);
+
+            TestTrue(TEXT("valid source"), Source.IsValid());
+            TestTrue(TEXT("the identity is the requested actor"), Source.GetObject() == Actor);
+            TestTrue(TEXT("the pointee is the bare worker"),
+                Source.TryGet() == static_cast<IRemTagEventSourceInterface*>(Actor->Worker));
         });
 
         It(TEXT("should prefer the actor getter over a contribution"), [this]
@@ -200,45 +204,47 @@ void FRemTagEventSourceTest::Define()
                 Source.GetObject() == Second);
         });
 
-        It(TEXT("should not let a later wildcard contribution overtake an earlier typed one when a contribution is removed"), [this]
-        {
-            const Rem::Test::FRemTestWorld World;
-            auto* Actor          = World->SpawnActor<AActor>();
-            auto* TypedWorker    = MakeWorker(Actor);
-            auto* WildcardWorker = MakeWorker(Actor);
+        It(TEXT(
+                "should not let a later wildcard contribution overtake an earlier typed one when a contribution is removed"),
+            [this]
+            {
+                const Rem::Test::FRemTestWorld World;
+                auto* Actor          = World->SpawnActor<AActor>();
+                auto* TypedWorker    = MakeWorker(Actor);
+                auto* WildcardWorker = MakeWorker(Actor);
 
-            // the typed query is what makes the owner keys decide: entry 1 is typed but yields
-            // nothing, and removing it must not move the trailing wildcard ahead of the earlier
-            // typed contribution
-            Rem::GameplayTag::FTagEventSourceRegistration Empty{
-                {
-                    URemTestTagEventWorker::StaticClass(),
-                    [](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
-                    -> Rem::GameplayTag::FLifetimeBoundInterfacePtr
+                // the typed query is what makes the owner keys decide: entry 1 is typed but yields
+                // nothing, and removing it must not move the trailing wildcard ahead of the earlier
+                // typed contribution
+                Rem::GameplayTag::FTagEventSourceRegistration Empty{
                     {
-                        return {};
-                    },
-                }
-            };
-            const Rem::GameplayTag::FTagEventSourceRegistration Typed{
-                {
-                    URemTestTagEventWorker::StaticClass(),
-                    [TypedWorker](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                        URemTestTagEventWorker::StaticClass(),
+                        [](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                        -> Rem::GameplayTag::FLifetimeBoundInterfacePtr
+                        {
+                            return {};
+                        },
+                    }
+                };
+                const Rem::GameplayTag::FTagEventSourceRegistration Typed{
                     {
-                        return TypedWorker->GetLifetimeBoundObjectPtr<IRemTagEventSourceInterface>();
-                    },
-                }
-            };
-            const Rem::GameplayTag::FTagEventSourceRegistration Wildcard{MakeWorkerContribution(WildcardWorker)};
+                        URemTestTagEventWorker::StaticClass(),
+                        [TypedWorker](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                        {
+                            return TypedWorker->GetLifetimeBoundObjectPtr<IRemTagEventSourceInterface>();
+                        },
+                    }
+                };
+                const Rem::GameplayTag::FTagEventSourceRegistration Wildcard{MakeWorkerContribution(WildcardWorker)};
 
-            Empty.Reset();
+                Empty.Reset();
 
-            const auto TypedSource = Rem::GameplayTag::TryGetTagEventSource<URemTestTagEventWorker>(Actor);
+                const auto TypedSource = Rem::GameplayTag::TryGetTagEventSource<URemTestTagEventWorker>(Actor);
 
-            TestTrue(TEXT("valid typed source"), TypedSource.IsValid());
-            TestTrue(TEXT("the earlier typed contribution answers, not the wildcard"),
-                TypedSource.GetObject() == TypedWorker);
-        });
+                TestTrue(TEXT("valid typed source"), TypedSource.IsValid());
+                TestTrue(TEXT("the earlier typed contribution answers, not the wildcard"),
+                    TypedSource.GetObject() == TypedWorker);
+            });
 
         It(TEXT("should forget a contribution once it is reset"), [this]
         {
@@ -293,6 +299,35 @@ void FRemTagEventSourceTest::Define()
             TestTrue(TEXT("typed identity is the worker"), TypedSource.GetObject() == Worker);
             TestTrue(TEXT("typed source is the worker"),
                 TypedSource.TryGet() == static_cast<IRemTagEventSourceInterface*>(Worker));
+        });
+
+        It(TEXT("should derive a typed handle from a component-provided source"), [this]
+        {
+            const Rem::Test::FRemTestWorld World;
+            auto* Actor     = World->SpawnActor<AActor>();
+            auto* Component = NewObject<URemTestTagEventSourceComponent>(Actor);
+            Actor->AddInstanceComponent(Component);
+
+            // the component's identity is its actor: the pointee is not derivable from the liveness
+            // payload, so the typed handle takes the general storage
+            const Rem::GameplayTag::FTagEventSourceRegistration ForActorType{
+                {
+                    AActor::StaticClass(),
+                    [Component](const Rem::GameplayTag::FTagEventSourceFeature::FRequest)
+                    {
+                        return Component->GetLifetimeBoundObjectPtr<IRemTagEventSourceInterface>();
+                    },
+                }
+            };
+
+            const auto TypedSource = Rem::GameplayTag::TryGetTagEventSource<AActor>(Actor);
+
+            static_assert(!decltype(TypedSource)::bCompactStorage,
+                "a component is not the payload of the actor the handle's liveness tracks");
+            TestTrue(TEXT("valid typed source"), TypedSource.IsValid());
+            TestTrue(TEXT("the identity is the actor"), TypedSource.GetObject() == Actor);
+            TestTrue(TEXT("the pointee is the component"),
+                TypedSource.TryGet() == static_cast<IRemTagEventSourceInterface*>(Component));
         });
 
         It(TEXT("should let a wildcard contribution answer any typed query"), [this]

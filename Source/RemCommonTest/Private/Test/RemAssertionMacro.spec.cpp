@@ -10,37 +10,16 @@
 #include "Misc/CoreDelegates.h"
 #include "Misc/Paths.h"
 #include "String/FormatStringSan.h"
-#include "Templates/Function.h"
+
+#include "Test/RemTestSupport.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
 namespace
 {
-/**
- * Installs an ensure handler for the scope and restores the previous one on exit; the same shape as the engine's
- * FEnsureScope (Core/Private/Tests/EnsureScope.h), which a game module cannot reach. Returning true from the handler
- * skips the regular ensure handling, so a case that only counts reports stays out of the log; returning false lets
- * the lightweight path continue to the log and to FCoreDelegates::OnEnsureFailed.
- */
-class FRemEnsureHandlerScope
-{
-public:
-    explicit FRemEnsureHandlerScope(TFunction<bool(const FEnsureHandlerArgs& Args)> InHandler)
-    {
-        PreviousHandler = SetEnsureHandler(MoveTemp(InHandler));
-    }
-
-    FRemEnsureHandlerScope(const FRemEnsureHandlerScope&)            = delete;
-    FRemEnsureHandlerScope& operator=(const FRemEnsureHandlerScope&) = delete;
-
-    ~FRemEnsureHandlerScope()
-    {
-        SetEnsureHandler(MoveTemp(PreviousHandler));
-    }
-
-private:
-    TFunction<bool(const FEnsureHandlerArgs& Args)> PreviousHandler;
-};
+#if DO_ENSURE && REM_USE_LIGHT_WEIGHT_ENSURE
+using Rem::Common::Private::FRemEnsureHandlerScope;
+#endif
 
 /** Collects what FCoreDelegates::OnEnsureFailed broadcasts while the scope is alive, and unbinds on exit. */
 class FRemEnsureFailedBroadcastScope
