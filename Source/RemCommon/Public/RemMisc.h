@@ -493,16 +493,28 @@ FUtf8String GetNetDebugString(const T& Object)
     return FUtf8String(Builder);
 }
 
+/**
+ * Gets the class default object of T; the engine creates the CDO on demand, so the first call may construct it.
+ *
+ * @note The only null path is a class whose parent chain has no default object (@see UClass::GetDefaultObject);
+ * there the TNotNull check is fatal in debug and development builds and Shipping silently yields null.
+ */
 template <CUObject T>
-decltype(auto) GetDefaultRef()
+[[nodiscard]] Rem::TNotNull<const T*> GetDefault()
 {
-    return *::GetDefault<T>();
+    return ::GetDefault<T>();
 }
 
+/**
+ * Gets the mutable class default object of T, created on demand by the engine.
+ *
+ * @note Same null path and reporting as Rem::GetDefault(): a class whose parent chain has no default object
+ * (@see UClass::GetDefaultObject).
+ */
 template <CUObject T>
-decltype(auto) GetMutableDefaultRef()
+[[nodiscard]] Rem::TNotNull<T*> GetMutableDefault()
 {
-    return *::GetMutableDefault<T>();
+    return ::GetMutableDefault<T>();
 }
 
 constexpr uint8 RoleCount    = ROLE_MAX - 1u;

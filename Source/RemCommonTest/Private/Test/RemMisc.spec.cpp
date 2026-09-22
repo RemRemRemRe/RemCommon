@@ -9,6 +9,8 @@
 #include "RemMisc.h"
 #include "RemNotNull.h"
 
+#include <type_traits>
+
 #if WITH_DEV_AUTOMATION_TESTS
 
 namespace
@@ -110,6 +112,38 @@ void FRemMiscTest::Define()
 
     Describe(TEXT("Object checks"), [this]
     {
+        It(TEXT("should return the same non-null CDO as the engine accessor"), [this]
+        {
+            static_assert(!std::is_convertible_v<decltype(Rem::GetDefault<UDataTable>()), UDataTable*>,
+                "GetDefault must not hand out a mutable pointer");
+#if UE_ENABLE_NOTNULL_WRAPPER
+            static_assert(std::is_same_v<decltype(Rem::GetDefault<UDataTable>()), Rem::TNotNull<const UDataTable*>>,
+                "GetDefault must return the not-null wrapper");
+#endif
+
+            const auto* P = NotNullGet(Rem::GetDefault<UDataTable>());
+
+            TestNotNull(TEXT("non-null"), P);
+            TestEqual(TEXT("same address"), P,
+                static_cast<const UDataTable*>(UDataTable::StaticClass()->GetDefaultObject()));
+        });
+
+        It(TEXT("should return the same non-null mutable CDO"), [this]
+        {
+            static_assert(std::is_convertible_v<decltype(Rem::GetMutableDefault<UDataTable>()), UDataTable*>,
+                "GetMutableDefault must hand out a mutable pointer");
+#if UE_ENABLE_NOTNULL_WRAPPER
+            static_assert(std::is_same_v<decltype(Rem::GetMutableDefault<UDataTable>()), Rem::TNotNull<UDataTable*>>,
+                "GetMutableDefault must return the not-null wrapper");
+#endif
+
+            UDataTable* const M = Rem::GetMutableDefault<UDataTable>();
+
+            TestNotNull(TEXT("non-null"), M);
+            TestEqual(TEXT("same address"), static_cast<const UDataTable*>(M),
+                static_cast<const UDataTable*>(UDataTable::StaticClass()->GetDefaultObject()));
+        });
+
         It(TEXT("IsClassDefaultObject should distinguish CDOs from instances"), [this]
         {
             const auto* DefaultObject = GetDefault<UDataTable>();
