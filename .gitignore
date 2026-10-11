@@ -2,3 +2,7 @@ Binaries
 Intermediate
 # Local AI context note (per-machine; mirrors the project's .agents convention)
 GLOSSARY.md
+
+/CONTEXT.md
+/.agents/
+/docs/adr
