@@ -47,13 +47,24 @@ public:
 
     /**
      * register a tag event, fired with (Tag, Count) when the tag count changes;
-     * multiple listeners per tag are supported; returns the registration handle
+     * multiple listeners per tag are supported
+     *
+     * the returned handle identifies the bound delegate instance, not one registration:
+     * pass a distinct instance per registration, because registering the same instance
+     * for several tags yields the same handle
      */
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) = 0;
 
-    /** unregister a single registration by its handle */
+    /**
+     * unregister one registration by its handle; when several registrations share a
+     * delegate instance, one call removes only one of them
+     */
     virtual void UnregisterTagEvent(FDelegateHandle Handle) = 0;
 
-    /** unregister all tag events */
+    /**
+     * unregister every tag event this source remembers; when a delegate instance was registered
+     * for several tags, its handle maps to only one of them, so the other bindings are not
+     * reachable through this interface
+     */
     virtual void UnregisterAllTagEvents() = 0;
 };
