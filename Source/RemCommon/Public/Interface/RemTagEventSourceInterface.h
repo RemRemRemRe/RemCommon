@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Containers/ArrayView.h"
 #include "UObject/Interface.h"
 
 #include "RemTagEventSourceInterface.generated.h"
@@ -42,29 +43,41 @@ public:
     /** add owned tags (e.g. loose gameplay tags on an AbilitySystemComponent) */
     virtual void AddOwnedTags(const FGameplayTagContainer& Tags) = 0;
 
+    /**
+     * add owned tags given as a view; the default implementation builds a container and forwards
+     * to the container overload, so a subclass only needs the container override; an implementer
+     * that declares the container overload must also pull this overload into scope (a using
+     * declaration), or it stays hidden when the type is used concretely
+     */
+    virtual void AddOwnedTags(TConstArrayView<FGameplayTag> Tags);
+
     /** remove owned tags (e.g. loose gameplay tags on an AbilitySystemComponent) */
     virtual void RemoveOwnedTags(const FGameplayTagContainer& Tags) = 0;
+
+    /**
+     * remove owned tags given as a view; the default implementation builds a container and forwards
+     * to the container overload, so a subclass only needs the container override; an implementer
+     * that declares the container overload must also pull this overload into scope (a using
+     * declaration), or it stays hidden when the type is used concretely
+     */
+    virtual void RemoveOwnedTags(TConstArrayView<FGameplayTag> Tags);
 
     /**
      * register a tag event, fired with (Tag, Count) when the tag count changes;
      * multiple listeners per tag are supported
      *
      * the returned handle identifies the bound delegate instance, not one registration:
-     * pass a distinct instance per registration, because registering the same instance
-     * for several tags yields the same handle
+     * registering the same instance for several tags yields the same handle, so pass the tag
+     * back on unregister to pick which binding to remove
      */
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) = 0;
 
     /**
-     * unregister one registration by its handle; when several registrations share a
-     * delegate instance, one call removes only one of them
+     * unregister one registration: the tag selects the binding when a single delegate
+     * instance was registered for several tags
      */
-    virtual void UnregisterTagEvent(FDelegateHandle Handle) = 0;
+    virtual void UnregisterTagEvent(const FGameplayTag& Tag, FDelegateHandle Handle) = 0;
 
-    /**
-     * unregister every tag event this source remembers; when a delegate instance was registered
-     * for several tags, its handle maps to only one of them, so the other bindings are not
-     * reachable through this interface
-     */
+    /** unregister every tag event this source remembers */
     virtual void UnregisterAllTagEvents() = 0;
 };

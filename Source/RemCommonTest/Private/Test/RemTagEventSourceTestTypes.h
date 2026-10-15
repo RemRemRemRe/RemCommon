@@ -34,14 +34,17 @@ class URemTestBareTagEventWorker : public UObject, public IRemTagEventSourceInte
 public:
     FGameplayTagContainer OwnedTags;
     TMap<FGameplayTag, TMulticastDelegate<void(FGameplayTag, int32)>> Events;
-    TMap<FDelegateHandle, FGameplayTag> HandleToTag;
+    TMultiMap<FGameplayTag, FDelegateHandle> TagToHandles;
 
     // IRemTagEventSourceInterface
+    using IRemTagEventSourceInterface::AddOwnedTags;
+    using IRemTagEventSourceInterface::RemoveOwnedTags;
+
     virtual const FGameplayTagContainer& GetOwnedTags() const override;
     virtual void AddOwnedTags(const FGameplayTagContainer& TagsToAdd) override;
     virtual void RemoveOwnedTags(const FGameplayTagContainer& TagsToRemove) override;
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) override;
-    virtual void UnregisterTagEvent(FDelegateHandle Handle) override;
+    virtual void UnregisterTagEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
     virtual void UnregisterAllTagEvents() override;
 };
 
@@ -160,11 +163,14 @@ public:
     [[nodiscard]] virtual UObject* GetLifetimeBoundOwner() const override;
 
     // IRemTagEventSourceInterface
+    using IRemTagEventSourceInterface::AddOwnedTags;
+    using IRemTagEventSourceInterface::RemoveOwnedTags;
+
     virtual const FGameplayTagContainer& GetOwnedTags() const override;
     virtual void AddOwnedTags(const FGameplayTagContainer& TagsToAdd) override;
     virtual void RemoveOwnedTags(const FGameplayTagContainer& TagsToRemove) override;
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) override;
-    virtual void UnregisterTagEvent(FDelegateHandle Handle) override;
+    virtual void UnregisterTagEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
     virtual void UnregisterAllTagEvents() override;
 };
 
@@ -229,26 +235,31 @@ inline FDelegateHandle URemTestBareTagEventWorker::RegisterTagEvent(const FGamep
 {
     auto& Multicast   = Events.FindOrAdd(Tag);
     const auto Handle = Multicast.Add(Delegate);
-    HandleToTag.Add(Handle, Tag);
+    TagToHandles.Add(Tag, Handle);
     return Handle;
 }
 
-inline void URemTestBareTagEventWorker::UnregisterTagEvent(const FDelegateHandle Handle)
+inline void URemTestBareTagEventWorker::UnregisterTagEvent(const FGameplayTag& Tag, const FDelegateHandle Handle)
 {
-    if (const auto* Tag = HandleToTag.Find(Handle))
+    if (auto* Multicast = Events.Find(Tag))
     {
-        if (auto* Multicast = Events.Find(*Tag))
-        {
-            Multicast->Remove(Handle);
-        }
-        HandleToTag.Remove(Handle);
+        Multicast->Remove(Handle);
     }
+    TagToHandles.RemoveSingle(Tag, Handle);
 }
 
 inline void URemTestBareTagEventWorker::UnregisterAllTagEvents()
 {
+    // unbind every remembered (Tag, Handle) pair; a shared delegate instance appears once per tag
+    for (const auto& Pair : TagToHandles)
+    {
+        if (auto* Multicast = Events.Find(Pair.Key))
+        {
+            Multicast->Remove(Pair.Value);
+        }
+    }
     Events.Reset();
-    HandleToTag.Reset();
+    TagToHandles.Reset();
 }
 
 inline UObject* URemTestTagEventWorker::GetLifetimeBoundOwner() const
@@ -344,9 +355,9 @@ inline FDelegateHandle URemTestTagEventSourceComponent::RegisterTagEvent(const F
     return Worker->RegisterTagEvent(Tag, Delegate);
 }
 
-inline void URemTestTagEventSourceComponent::UnregisterTagEvent(const FDelegateHandle Handle)
+inline void URemTestTagEventSourceComponent::UnregisterTagEvent(const FGameplayTag& Tag, const FDelegateHandle Handle)
 {
-    Worker->UnregisterTagEvent(Handle);
+    Worker->UnregisterTagEvent(Tag, Handle);
 }
 
 inline void URemTestTagEventSourceComponent::UnregisterAllTagEvents()
