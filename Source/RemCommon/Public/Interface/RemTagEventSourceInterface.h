@@ -70,7 +70,7 @@ public:
      * registering the same instance for several tags yields the same handle, so pass the tag
      * back on unregister to pick which binding to remove
      */
-    virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) = 0;
+    [[nodiscard]] virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) = 0;
 
     /**
      * unregister one registration: the tag selects the binding when a single delegate

@@ -250,14 +250,6 @@ inline void URemTestBareTagEventWorker::UnregisterTagEvent(const FGameplayTag& T
 
 inline void URemTestBareTagEventWorker::UnregisterAllTagEvents()
 {
-    // unbind every remembered (Tag, Handle) pair; a shared delegate instance appears once per tag
-    for (const auto& Pair : TagToHandles)
-    {
-        if (auto* Multicast = Events.Find(Pair.Key))
-        {
-            Multicast->Remove(Pair.Value);
-        }
-    }
     Events.Reset();
     TagToHandles.Reset();
 }
