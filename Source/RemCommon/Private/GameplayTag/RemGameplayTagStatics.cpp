@@ -143,12 +143,7 @@ FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag&
     RemCheckVariable(TagOne, return {});
     RemCheckVariable(TagTwo, return {});
 
-    if (TagOne == TagTwo)
-    {
-        return TagOne;
-    }
-
-    // could we get string view of tag?
+    // the string overload is the single implementation, so the two overloads cannot disagree about equal tags
     const auto StringOne = TagOne.GetTagName().ToUtf8String();
     const auto StringTwo = TagTwo.GetTagName().ToUtf8String();
 
@@ -157,6 +152,35 @@ FGameplayTag FindCommonParentTag(const FGameplayTag& TagOne, const FGameplayTag&
 
 FGameplayTag FindCommonParentTag(const FUtf8StringView TagStringOne, const FUtf8StringView TagStringTwo)
 {
+    // the deepest tag common to both: themselves when equal, the ancestor when one contains the other, the shared
+    // dotted prefix otherwise
+    // @note an equal pair used to come back as its parent here (the scan below only looks at the characters before
+    // the first difference) while the tag overload returned the pair itself
+    if (TagStringOne.IsEmpty() || TagStringTwo.IsEmpty())
+    {
+        return {};
+    }
+
+    if (TagStringOne == TagStringTwo)
+    {
+        return FGameplayTag::RequestGameplayTag(FName(TagStringOne.Len(), TagStringOne.GetData(), FNAME_Find));
+    }
+
+    // ancestor case: the shorter view is a strict prefix and the longer one continues with a dot, which the
+    // dotted-prefix scan below cannot see because the two views are equal up to the shorter one's end
+    const auto bFirstIsShorter    = TagStringOne.Len() < TagStringTwo.Len();
+    const FUtf8StringView Shorter = bFirstIsShorter
+                                        ? TagStringOne
+                                        : TagStringTwo;
+    const FUtf8StringView Longer = bFirstIsShorter
+                                       ? TagStringTwo
+                                       : TagStringOne;
+
+    if (Longer.Len() > Shorter.Len() && Longer.StartsWith(Shorter) && Longer[Shorter.Len()] == '.')
+    {
+        return FGameplayTag::RequestGameplayTag(FName(Shorter.Len(), Shorter.GetData(), FNAME_Find));
+    }
+
     const auto MinLength = FMath::Min(TagStringOne.Len(), TagStringTwo.Len());
     int32 DotIndex{INDEX_NONE};
 
@@ -178,7 +202,10 @@ FGameplayTag FindCommonParentTag(const FUtf8StringView TagStringOne, const FUtf8
         return {};
     }
 
-    return FGameplayTag::RequestGameplayTag(*FString{TagStringOne.SubStr(0, DotIndex)});
+    // the length-taking FName form: a substring view is not NUL-terminated at its length
+    const auto CommonPrefix = TagStringOne.SubStr(0, DotIndex);
+
+    return FGameplayTag::RequestGameplayTag(FName(CommonPrefix.Len(), CommonPrefix.GetData(), FNAME_Find));
 }
 
 TArray<FGameplayTag> FindCommonParentTags(const TConstArrayView<FGameplayTag> TagsOne,

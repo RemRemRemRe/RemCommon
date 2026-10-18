@@ -159,6 +159,55 @@ void FRemGameplayTagStaticsTest::Define()
 
             TestEqual(TEXT("common prefix"), FindCommonParentTag(TagOne, TagTwo), AddTag(TEXT("Test.Common")));
         });
+
+        It(TEXT("FindCommonParentTag should return the tag itself for equal string views"), [this]
+        {
+            const auto Tag = AddTag(TEXT("Test.Common.Parent.Equal"));
+
+            const auto TagString = Tag.GetTagName().ToUtf8String();
+
+            TestEqual(TEXT("self"), FindCommonParentTag(TagString, TagString), Tag);
+        });
+
+        It(TEXT("FindCommonParentTag should return the ancestor when one tag contains the other"), [this]
+        {
+            const auto Parent = AddTag(TEXT("Test.Common.Ancestor"));
+            const auto Child  = AddTag(TEXT("Test.Common.Ancestor.A"));
+
+            const auto ParentString = Parent.GetTagName().ToUtf8String();
+            const auto ChildString  = Child.GetTagName().ToUtf8String();
+
+            TestEqual(TEXT("parent first"), FindCommonParentTag(ParentString, ChildString), Parent);
+            TestEqual(TEXT("child first"), FindCommonParentTag(ChildString, ParentString), Parent);
+        });
+
+        It(TEXT("both FindCommonParentTag overloads should agree"), [this]
+        {
+            const auto Same     = AddTag(TEXT("Test.Common.Agree.Same"));
+            const auto SiblingA = AddTag(TEXT("Test.Common.Agree.Sibling.A"));
+            const auto SiblingB = AddTag(TEXT("Test.Common.Agree.Sibling.B"));
+            const auto Parent   = AddTag(TEXT("Test.Common.Agree.Parent"));
+            const auto Child    = AddTag(TEXT("Test.Common.Agree.Parent.Child"));
+            const auto Disjoint = AddTag(TEXT("Test.Common.Other"));
+
+            const TArray<TPair<FGameplayTag, FGameplayTag>> Pairs{
+                {Same, Same},
+                {SiblingA, SiblingB},
+                {Parent, Child},
+                {SiblingA, Disjoint},
+            };
+
+            for (const auto& Pair : Pairs)
+            {
+                const auto Expected = FindCommonParentTag(Pair.Key, Pair.Value);
+
+                const auto StringOne = Pair.Key.GetTagName().ToUtf8String();
+                const auto StringTwo = Pair.Value.GetTagName().ToUtf8String();
+
+                TestEqual(TEXT("tag and string overloads agree"), FindCommonParentTag(StringOne, StringTwo),
+                    Expected);
+            }
+        });
     });
 
     Describe(TEXT("Query matching"), [this]
