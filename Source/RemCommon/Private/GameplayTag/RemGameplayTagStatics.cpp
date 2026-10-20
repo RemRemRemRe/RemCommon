@@ -58,7 +58,8 @@ FGameplayTag TryGetTagFromString(const FUtf8String& TagString)
     if (auto& Manager = UGameplayTagsManager::Get();
         Manager.IsValidGameplayTagString(StringCast<FStringView::ElementType>(*TagString)))
     {
-        const auto Tag = FGameplayTag::RequestGameplayTag(*TagString, false);
+        const auto Tag =
+            FGameplayTag::RequestGameplayTag(FName{TagString.Len(), GetData(TagString), FNAME_Find}, false);
         return Tag;
     }
     return FGameplayTag::EmptyTag;
