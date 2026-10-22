@@ -42,14 +42,22 @@ void FRemFloatDoubleConversionMacrosDisabledTest::Define()
 
         It(TEXT("should forward every macro without changing the argument's own width"), [this]
         {
-            static_assert(std::is_same_v<decltype(REM_VECTOR2_DOUBLE(std::declval<const FVector2f&>())), const FVector2f&>);
-            static_assert(std::is_same_v<decltype(REM_VECTOR2_FLOAT(std::declval<const FVector2d&>())), const FVector2d&>);
-            static_assert(std::is_same_v<decltype(REM_VECTOR3_DOUBLE(std::declval<const FVector3f&>())), const FVector3f&>);
-            static_assert(std::is_same_v<decltype(REM_VECTOR3_FLOAT(std::declval<const FVector3d&>())), const FVector3d&>);
-            static_assert(std::is_same_v<decltype(REM_VECTOR4_DOUBLE(std::declval<const FVector4f&>())), const FVector4f&>);
-            static_assert(std::is_same_v<decltype(REM_VECTOR4_FLOAT(std::declval<const FVector4d&>())), const FVector4d&>);
-            static_assert(std::is_same_v<decltype(REM_ROTATOR_DOUBLE(std::declval<const FRotator3f&>())), const FRotator3f&>);
-            static_assert(std::is_same_v<decltype(REM_ROTATOR_FLOAT(std::declval<const FRotator3d&>())), const FRotator3d&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR2_DOUBLE(std::declval<const FVector2f&>())), const FVector2f&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR2_FLOAT(std::declval<const FVector2d&>())), const FVector2d&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR3_DOUBLE(std::declval<const FVector3f&>())), const FVector3f&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR3_FLOAT(std::declval<const FVector3d&>())), const FVector3d&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR4_DOUBLE(std::declval<const FVector4f&>())), const FVector4f&>);
+            static_assert(
+                std::is_same_v<decltype(REM_VECTOR4_FLOAT(std::declval<const FVector4d&>())), const FVector4d&>);
+            static_assert(
+                std::is_same_v<decltype(REM_ROTATOR_DOUBLE(std::declval<const FRotator3f&>())), const FRotator3f&>);
+            static_assert(
+                std::is_same_v<decltype(REM_ROTATOR_FLOAT(std::declval<const FRotator3d&>())), const FRotator3d&>);
             static_assert(std::is_same_v<decltype(REM_QUAT_DOUBLE(std::declval<const FQuat4f&>())), const FQuat4f&>);
             static_assert(std::is_same_v<decltype(REM_QUAT_FLOAT(std::declval<const FQuat4d&>())), const FQuat4d&>);
 

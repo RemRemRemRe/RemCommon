@@ -151,7 +151,7 @@ void FRemScopedStructContainerTest::Define()
         {
             TScopedStructContainer<64, 128> Pool;
             const auto First = Pool.Emplace<FRemScopedStructContainerTestOversized>();
-            First->Id  = 1;
+            First->Id        = 1;
             FMemory::Memset(First->Payload, 0xAB, sizeof(First->Payload));
             const auto* FirstMemory = Pool[0].GetMemory();
 
@@ -218,7 +218,7 @@ void FRemScopedStructContainerTest::Define()
             TestEqual(TEXT("GetNum interop"), GetNum(Pool), Pool.Num());
 
             const auto& ConstPool = Pool;
-            auto ConstIterated   = 0;
+            auto ConstIterated    = 0;
             for (FConstStructView View : ConstPool)
             {
                 const auto* Item = View.GetPtr<FRemScopedStructContainerTestTrivial>();
@@ -302,8 +302,8 @@ void FRemScopedStructContainerTest::Define()
             // Producer: a mixed-struct call stack.
             TScopedStructContainer<128, 256> Stack;
             (void)Stack.Emplace<FRemScopedStructContainerTestTrivial>();
-            const auto Config    = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Config")), 2);
-            Config->Values = {10, 20};
+            const auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Config")), 2);
+            Config->Values    = {10, 20};
             (void)Stack.Emplace<FRemScopedStructContainerTestAligned>();
 
             // Consumer: locate the requested type, read, then write through the view.
@@ -329,8 +329,8 @@ void FRemScopedStructContainerTest::Define()
         {
             TScopedStructContainer<128, 256> Stack;
             (void)Stack.Emplace<FRemScopedStructContainerTestTrivial>();
-            const auto Config    = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Interop")), 3);
-            Config->Values = {1, 2, 3};
+            const auto Config = Stack.Emplace<FRemScopedStructContainerTestHeavy>(FString(TEXT("Interop")), 3);
+            Config->Values    = {1, 2, 3};
             (void)Stack.Emplace<FRemScopedStructContainerTestAligned>();
 
             // The container overload: no intermediate view array needed.

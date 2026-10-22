@@ -220,7 +220,7 @@ void FRemFeatureRegistryTest::Define()
             FRemTestLifetimeBoundStruct Struct{};
             Struct.Owner = Owner;
 
-            int32 ReportCount{0};
+            auto ReportCount{0};
             const FRemEnsureHandlerScope HandlerScope{[&ReportCount](const FEnsureHandlerArgs&)
                 {
                     ++ReportCount;
@@ -263,7 +263,7 @@ void FRemFeatureRegistryTest::Define()
                 }
             };
 
-            int32 ReportCount{0};
+            auto ReportCount{0};
             const FRemEnsureHandlerScope HandlerScope{[&ReportCount](const FEnsureHandlerArgs&)
                 {
                     ++ReportCount;
@@ -355,7 +355,7 @@ void FRemFeatureRegistryTest::Define()
             auto* Survivor = MakeWorker(Actor);
 
 #if DO_ENSURE && REM_USE_LIGHT_WEIGHT_ENSURE
-            int32 EnsureReportCount{0};
+            auto EnsureReportCount{0};
             const FRemEnsureHandlerScope HandlerScope{[&EnsureReportCount](const FEnsureHandlerArgs&)
                 {
                     ++EnsureReportCount;

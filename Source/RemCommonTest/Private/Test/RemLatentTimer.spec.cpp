@@ -41,7 +41,7 @@ void FRemLatentTimerTest::Define()
             auto* Object = World->SpawnActor<AActor>();
             check(Object);
 
-            auto CallCount                  = 0;
+            auto CallCount                         = 0;
             const Rem::Latent::FTimerHandle Handle = Rem::Latent::SetTimerForThisTick(
                 Rem::MakeNotNull(Object), Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }));
 
@@ -131,7 +131,7 @@ void FRemLatentTimerTest::Define()
             Parameter.TimeToDelay = 1.0f;
 
             auto CallCount = 0;
-            auto Handle     = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
+            auto Handle    = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
             TestTrue(TEXT("active"), Rem::Latent::IsTimerActive(Rem::MakeNotNull(Object), Handle));
@@ -155,7 +155,7 @@ void FRemLatentTimerTest::Define()
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 0.3f;
 
-            auto CallCount   = 0;
+            auto CallCount    = 0;
             const auto Handle = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 
@@ -179,7 +179,7 @@ void FRemLatentTimerTest::Define()
             Rem::Latent::FTimerParameterHelper_Time Parameter;
             Parameter.TimeToDelay = 0.2f;
 
-            auto CallCount   = 0;
+            auto CallCount    = 0;
             const auto Handle = Rem::Latent::SetTimer(Rem::MakeNotNull(Object),
                 Rem::FTimerDelegate::CreateLambda([&CallCount] { ++CallCount; }), Parameter);
 

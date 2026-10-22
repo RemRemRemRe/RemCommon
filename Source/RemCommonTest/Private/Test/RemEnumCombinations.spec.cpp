@@ -53,7 +53,7 @@ void FRemEnumCombinationsTest::Define()
         It(TEXT("should combine container flags through the bit operation traits"), [this]
         {
             constexpr auto ArrayAndSet = Rem::Enum::EContainerCombination::Array
-                                     | Rem::Enum::EContainerCombination::Set;
+                                         | Rem::Enum::EContainerCombination::Set;
 
             TestTrue(TEXT("has array"),
                 static_cast<bool>(ArrayAndSet & Rem::Enum::EContainerCombination::Array));

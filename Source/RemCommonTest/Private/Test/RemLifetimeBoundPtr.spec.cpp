@@ -57,10 +57,13 @@ struct FRemTestValidityOnly
 };
 
 using FRemTestCompactObjectPtr = Rem::TLifetimeBoundPtr<TWeakObjectPtr<URemTestStringObject>, IRemStringInterface>;
-using FRemTestErasedObjectPtr = Rem::TLifetimeBoundPtr<TWeakObjectPtr<UObject>, IRemStringInterface>;
-using FRemTestCompactSharedPtr = Rem::TLifetimeBoundPtr<TSharedPtr<FRemTestLifetimePayload>, FRemTestLifetimePayloadInterface>;
-using FRemTestGeneralSharedPtr = Rem::TLifetimeBoundPtr<TSharedPtr<FRemTestLifetimePayload>, const FRemTestForeignPointee>;
-using FRemTestWeakSharedPtr = Rem::TLifetimeBoundPtr<TWeakPtr<FRemTestLifetimePayload>, const FRemTestLifetimePayloadInterface>;
+using FRemTestErasedObjectPtr  = Rem::TLifetimeBoundPtr<TWeakObjectPtr<UObject>, IRemStringInterface>;
+using FRemTestCompactSharedPtr = Rem::TLifetimeBoundPtr<
+    TSharedPtr<FRemTestLifetimePayload>, FRemTestLifetimePayloadInterface>;
+using FRemTestGeneralSharedPtr = Rem::TLifetimeBoundPtr<
+    TSharedPtr<FRemTestLifetimePayload>, const FRemTestForeignPointee>;
+using FRemTestWeakSharedPtr = Rem::TLifetimeBoundPtr<
+    TWeakPtr<FRemTestLifetimePayload>, const FRemTestLifetimePayloadInterface>;
 using FRemTestSelfPointeePtr = Rem::TLifetimeBoundPtr<TWeakObjectPtr<URemTestStringObject>, URemTestStringObject>;
 
 using FRemTestValidityOnlyPtr = Rem::TLifetimeBoundPtr<FRemTestValidityOnly, const FRemTestForeignPointee>;
@@ -95,17 +98,23 @@ void FRemLifetimeBoundPtrTest::Define()
             static_assert(sizeof(FRemTestCompactSharedPtr) == sizeof(TSharedPtr<FRemTestLifetimePayload>));
             static_assert(sizeof(FRemTestSelfPointeePtr) == sizeof(TWeakObjectPtr<URemTestStringObject>));
 
-            static_assert(sizeof(FRemTestErasedObjectPtr) == sizeof(TWeakObjectPtr<UObject>) + sizeof(IRemStringInterface*));
-            static_assert(sizeof(FRemTestGeneralSharedPtr) == sizeof(TSharedPtr<FRemTestLifetimePayload>) + sizeof(FRemTestForeignPointee*));
+            static_assert(
+                sizeof(FRemTestErasedObjectPtr) == sizeof(TWeakObjectPtr<UObject>) + sizeof(IRemStringInterface*));
+            static_assert(
+                sizeof(FRemTestGeneralSharedPtr) == sizeof(TSharedPtr<FRemTestLifetimePayload>) + sizeof(
+                    FRemTestForeignPointee*));
 
-            TestEqual(TEXT("compact object pointer"), sizeof(FRemTestCompactObjectPtr), sizeof(TWeakObjectPtr<URemTestStringObject>));
-            TestEqual(TEXT("erased object pointer"), sizeof(FRemTestErasedObjectPtr), sizeof(TWeakObjectPtr<UObject>) + sizeof(IRemStringInterface*));
+            TestEqual(TEXT("compact object pointer"), sizeof(FRemTestCompactObjectPtr),
+                sizeof(TWeakObjectPtr<URemTestStringObject>));
+            TestEqual(TEXT("erased object pointer"), sizeof(FRemTestErasedObjectPtr),
+                sizeof(TWeakObjectPtr<UObject>) + sizeof(IRemStringInterface*));
         });
 
         It(TEXT("should report the payload of the liveness"), [this]
         {
             static_assert(std::same_as<Rem::TLifetimePayload<TWeakObjectPtr<UObject>>, UObject>);
-            static_assert(std::same_as<Rem::TLifetimePayload<TSharedPtr<FRemTestLifetimePayload>>, FRemTestLifetimePayload>);
+            static_assert(
+                std::same_as<Rem::TLifetimePayload<TSharedPtr<FRemTestLifetimePayload>>, FRemTestLifetimePayload>);
             static_assert(std::same_as<Rem::TLifetimePayloadPointer<TWeakObjectPtr<UObject>>, UObject*>);
             static_assert(Rem::CHasLifetimePayload<TWeakObjectPtr<UObject>>);
             static_assert(!Rem::CHasLifetimePayload<FRemTestValidityOnly>);
@@ -139,7 +148,9 @@ void FRemLifetimeBoundPtrTest::Define()
         {
             URemTestStringObject* Object = NewObject<URemTestStringObject>();
 
-            FRemTestErasedObjectPtr Handle{TWeakObjectPtr<UObject>{Object}, Rem::MakeNotNull(Cast<IRemStringInterface>(Object))};
+            FRemTestErasedObjectPtr Handle{TWeakObjectPtr<UObject>{Object},
+                Rem::MakeNotNull(Cast<IRemStringInterface>(Object))
+            };
             TestTrue(TEXT("bound"), Handle.IsValid());
 
             Handle.Reset();
@@ -159,7 +170,7 @@ void FRemLifetimeBoundPtrTest::Define()
             const FRemTestCompactObjectPtr Handle{TWeakObjectPtr<URemTestStringObject>{Object}};
 
             const auto* Expected = Cast<IRemStringInterface>(Object);
-            const auto* Static = static_cast<IRemStringInterface*>(Object);
+            const auto* Static   = static_cast<IRemStringInterface*>(Object);
 
             TestTrue(TEXT("valid"), Handle.IsValid());
             TestTrue(TEXT("object"), Handle.GetObject() == Object);
@@ -170,7 +181,8 @@ void FRemLifetimeBoundPtrTest::Define()
                 static_cast<const void*>(Object) != static_cast<const void*>(Expected));
             TestTrue(TEXT("checked pointer"), static_cast<IRemStringInterface*>(Handle.Get()) == Expected);
             TestEqual(TEXT("member access"), Handle->ToString(), FString{TEXT("RemTestStringObject")});
-            TestTrue(TEXT("matches TWeakInterfacePtr"), Handle.TryGet() == TWeakInterfacePtr<IRemStringInterface>{Object}.Get());
+            TestTrue(TEXT("matches TWeakInterfacePtr"),
+                Handle.TryGet() == TWeakInterfacePtr<IRemStringInterface>{Object}.Get());
         });
 
         It(TEXT("should invalidate when the tracked object dies, without touching the derived pointer"), [this]
@@ -204,7 +216,7 @@ void FRemLifetimeBoundPtrTest::Define()
     {
         It(TEXT("should expose the stored pointer while the tracked object lives"), [this]
         {
-            URemTestStringObject* Object = NewObject<URemTestStringObject>();
+            URemTestStringObject* Object   = NewObject<URemTestStringObject>();
             IRemStringInterface* Interface = Cast<IRemStringInterface>(Object);
 
             const FRemTestErasedObjectPtr Handle{TWeakObjectPtr<UObject>{Object}, Rem::MakeNotNull(Interface)};
@@ -246,7 +258,9 @@ void FRemLifetimeBoundPtrTest::Define()
         {
             URemTestStringObject* Object = NewObject<URemTestStringObject>();
 
-            const FRemTestErasedObjectPtr Handle{TWeakObjectPtr<UObject>{Object}, Rem::MakeNotNull(Cast<IRemStringInterface>(Object))};
+            const FRemTestErasedObjectPtr Handle{TWeakObjectPtr<UObject>{Object},
+                Rem::MakeNotNull(Cast<IRemStringInterface>(Object))
+            };
 
             Object->MarkAsGarbage();
             CollectGarbage(RF_NoFlags, true);
@@ -262,20 +276,21 @@ void FRemLifetimeBoundPtrTest::Define()
         It(TEXT("should derive an interface from a shared payload by a compile-time offset"), [this]
         {
             const TSharedPtr<FRemTestLifetimePayload> Shared = MakeShared<FRemTestLifetimePayload>();
-            Shared->Number = 7;
+            Shared->Number                                   = 7;
 
             const FRemTestCompactSharedPtr Handle{Shared};
 
             TestTrue(TEXT("valid"), Handle.IsValid());
             TestTrue(TEXT("object"), Handle.GetObject() == Shared.Get());
-            TestTrue(TEXT("derived pointer"), Handle.TryGet() == static_cast<FRemTestLifetimePayloadInterface*>(Shared.Get()));
+            TestTrue(TEXT("derived pointer"),
+                Handle.TryGet() == static_cast<FRemTestLifetimePayloadInterface*>(Shared.Get()));
             TestEqual(TEXT("member access"), Handle->GetNumber(), 7);
         });
 
         It(TEXT("should keep a shared payload alive, because the handle holds a shared reference"), [this]
         {
             TSharedPtr<FRemTestLifetimePayload> Shared = MakeShared<FRemTestLifetimePayload>();
-            FRemTestLifetimePayload* Payload = Shared.Get();
+            FRemTestLifetimePayload* Payload           = Shared.Get();
 
             FRemTestCompactSharedPtr Handle{Shared};
 
@@ -292,7 +307,7 @@ void FRemLifetimeBoundPtrTest::Define()
 
         It(TEXT("should invalidate a weak liveness when the last shared owner is released"), [this]
         {
-            TSharedPtr<FRemTestLifetimePayload> Shared = MakeShared<FRemTestLifetimePayload>();
+            TSharedPtr<FRemTestLifetimePayload> Shared        = MakeShared<FRemTestLifetimePayload>();
             const FRemTestLifetimePayloadInterface* Interface = Shared.Get();
 
             const FRemTestWeakSharedPtr Handle{TWeakPtr<FRemTestLifetimePayload>{Shared}, Rem::MakeNotNull(Interface)};
@@ -324,7 +339,9 @@ void FRemLifetimeBoundPtrTest::Define()
             constexpr FRemTestForeignPointee Foreign{};
 
             const FRemTestValidityOnlyPtr ValidHandle{FRemTestValidityOnly{.bValid = true}, Rem::MakeNotNull(&Foreign)};
-            const FRemTestValidityOnlyPtr InvalidHandle{FRemTestValidityOnly{.bValid = false}, Rem::MakeNotNull(&Foreign)};
+            const FRemTestValidityOnlyPtr InvalidHandle{FRemTestValidityOnly{.bValid = false},
+                Rem::MakeNotNull(&Foreign)
+            };
 
             TestTrue(TEXT("valid"), ValidHandle.IsValid());
             TestTrue(TEXT("stored pointer"), ValidHandle.TryGet() == &Foreign);

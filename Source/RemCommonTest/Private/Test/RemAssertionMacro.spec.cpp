@@ -104,7 +104,7 @@ void FRemAssertionMacroTest::Define()
 
                 const FRemEnsureFailedBroadcastScope BroadcastScope;
 
-                int32 HandlerCallCount{0};
+                auto HandlerCallCount{0};
                 const FRemEnsureHandlerScope HandlerScope{[&HandlerCallCount](const FEnsureHandlerArgs&)
                     {
                         ++HandlerCallCount;
@@ -112,8 +112,8 @@ void FRemAssertionMacroTest::Define()
                     }
                 };
 
-                const bool bCase1Condition{false};
-                int32 HandledCallCount{0};
+                const auto bCase1Condition{false};
+                auto HandledCallCount{0};
                 RemEnsureCondition(bCase1Condition, ++HandledCallCount;);
 
                 TestEqual(TEXT("the handling statement ran once"), HandledCallCount, 1);
@@ -136,7 +136,7 @@ void FRemAssertionMacroTest::Define()
 
         It(TEXT("should run the handling statement of a REM_NO_ASSERTION form without reporting"), [this]
         {
-            int32 HandlerCallCount{0};
+            auto HandlerCallCount{0};
             const FRemEnsureHandlerScope HandlerScope{[&HandlerCallCount](const FEnsureHandlerArgs&)
                 {
                     ++HandlerCallCount;
@@ -144,7 +144,7 @@ void FRemAssertionMacroTest::Define()
                 }
             };
 
-            int32 HandledCallCount{0};
+            auto HandledCallCount{0};
             RemEnsureCondition(REM_NO_ASSERTION, false, ++HandledCallCount;);
 
             TestEqual(TEXT("the handling statement ran once"), HandledCallCount, 1);
@@ -157,7 +157,7 @@ void FRemAssertionMacroTest::Define()
         It(TEXT("should report every REM_ENSURE_ALWAYS failure and only the first failure of a REM_ENSURE call site"), [
             this]
         {
-            int32 HandlerCallCount{0};
+            auto HandlerCallCount{0};
             const FRemEnsureHandlerScope HandlerScope{[&HandlerCallCount](const FEnsureHandlerArgs&)
                 {
                     ++HandlerCallCount;
@@ -185,7 +185,7 @@ void FRemAssertionMacroTest::Define()
         It(TEXT("should format a UTF8 message and hand it to the ensure handler"), [this]
         {
             FString HandlerMessage;
-            int32 HandlerCallCount{0};
+            auto HandlerCallCount{0};
             const FRemEnsureHandlerScope HandlerScope{
                 [&HandlerMessage, &HandlerCallCount](const FEnsureHandlerArgs& Args)
                 {
@@ -208,7 +208,7 @@ void FRemAssertionMacroTest::Define()
             const FString ExpectedMessage = FString::Printf(TEXT("name=%s"), *SourceText);
 
             FString HandlerMessage;
-            int32 HandlerCallCount{0};
+            auto HandlerCallCount{0};
             const FRemEnsureHandlerScope HandlerScope{
                 [&HandlerMessage, &HandlerCallCount](const FEnsureHandlerArgs& Args)
                 {
@@ -218,7 +218,7 @@ void FRemAssertionMacroTest::Define()
                 }
             };
 
-            const bool bCase5Condition{false};
+            const auto bCase5Condition{false};
             REM_ENSURE_ALWAYS_MESSAGE(bCase5Condition, UTF8TEXT("name=%s"), StringCast<UTF8CHAR>(*SourceText).Get());
 
             TestEqual(TEXT("the ensure handler was called once"), HandlerCallCount, 1);
@@ -243,7 +243,7 @@ void FRemAssertionMacroTest::Define()
                     }
                 };
 
-                const bool bCase6Condition{false};
+                const auto bCase6Condition{false};
                 REM_ENSURE_ALWAYS_MESSAGE(bCase6Condition, UTF8TEXT("probe=%d"), 7);
 
                 const auto& Broadcasts = BroadcastScope.GetBroadcasts();

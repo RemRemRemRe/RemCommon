@@ -15,7 +15,7 @@ void FRemCommonFunctorTest::Define()
     {
         It(TEXT("should convert a reference wrapper to a pointer"), [this]
         {
-            auto Value     = 42;
+            auto Value           = 42;
             const auto Reference = std::ref(Value);
 
             const auto* Pointer = Rem::RefToPtr(Reference);
