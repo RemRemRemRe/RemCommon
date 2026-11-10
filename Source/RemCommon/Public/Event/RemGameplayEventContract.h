@@ -5,6 +5,7 @@
 #include "Enum/RemLifecyclePhase.h"
 #include "GameplayTagContainer.h"
 #include "Math/Vector.h"
+#include "Templates/SubclassOf.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
 #include "RemGameplayEventContract.generated.h"
@@ -64,6 +65,43 @@ struct REMCOMMON_API FRemEventSpatial
     /** who the event happened to (the victim, the effect's target); may be null */
     UPROPERTY(BlueprintReadWrite, Category = "Rem")
     TWeakObjectPtr<AActor> Target;
+};
+
+/**
+ * what an event is about, in the terms every module can name: an instance and its kind
+ *
+ * a consumer that selects on "which ability / which actor class / which projectile" reads this slice, so it needs
+ * nothing from the module that produced the event. A producer fills it whenever the event has a subject a
+ * presentation could care about.
+ */
+USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemEventSubject
+{
+    GENERATED_BODY()
+
+    /** the instance: the caster of an ability, the actor that appeared, the projectile in flight, the victim */
+    UPROPERTY(BlueprintReadWrite, Category = "Rem")
+    TWeakObjectPtr<UObject> Instance;
+
+    /** the kind behind that instance - an ability class, an actor class, a projectile class */
+    UPROPERTY(BlueprintReadWrite, Category = "Rem")
+    TSubclassOf<UObject> Class;
+};
+
+/**
+ * the tags a producer attaches to describe what kind of event this is - the combo stage, the damage type, ...
+ *
+ * optional: a consumer that selects on it reads this slice, so it still needs nothing from the module that
+ * produced the event. Producers that have nothing to classify leave it out.
+ */
+USTRUCT(BlueprintType)
+struct REMCOMMON_API FRemEventTags
+{
+    GENERATED_BODY()
+
+    /** the event's own classification tags; empty when the producer names none */
+    UPROPERTY(BlueprintReadWrite, Category = "Rem")
+    FGameplayTagContainer Tags;
 };
 
 /**
