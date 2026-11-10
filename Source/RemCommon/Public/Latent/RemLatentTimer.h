@@ -111,7 +111,7 @@ public:
  * in this case, with FrameToDelay set to 2, the call back will fire at "fourth frame(frame at index 3)" in the context above
  *
  * @note LevelCollection related functionality is not supported as the engine does, you have to do it on your own delegates
- *	@see FTimerData::LevelCollection, FScopedLevelCollectionContextSwitch
+ *    @see FTimerData::LevelCollection, FScopedLevelCollectionContextSwitch
  *
  * @note By default, in order to tick alongside the tick group of the bound object, the bound object need to be a BLUEPRINT class,
  * and the delta time is not effected by AActor::CustomTimeDilation, it's the UWorld::GetDeltaSeconds

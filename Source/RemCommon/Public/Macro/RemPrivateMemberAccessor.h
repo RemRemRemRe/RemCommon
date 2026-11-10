@@ -110,8 +110,8 @@ decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
 #define REM_DEFINE_PRIVATE_MEMBER_ACCESSOR(AccessorName, MemberPointer, ...) \
     namespace \
     { \
-	    struct AccessorName \
-	    { \
+        struct AccessorName \
+        { \
             using MemberType = __VA_ARGS__; \
             \
             template <typename ThisType, typename... ArgumentsType> \
@@ -119,7 +119,7 @@ decltype(auto) Access(ThisType&& This, ArgumentsType&&... Arguments)
             { \
                 return Rem::PrivateMemberAccessor::Access<AccessorName>(Forward<ThisType>(This), Forward<ArgumentsType>(Arguments)...); \
             } \
-	    }; \
+        }; \
     } \
-	\
-	template struct Rem::PrivateMemberAccessor::TPointerInitializer<AccessorName, MemberPointer>;
+    \
+    template struct Rem::PrivateMemberAccessor::TPointerInitializer<AccessorName, MemberPointer>;

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Misc/Build.h"
+
 #include "Macro/RemMacroUtilities.h"
 #include "Macro/RemFunctionNameUtility.h"
 
@@ -9,10 +11,10 @@
 
 // An alternative for PURE_VIRTUAL which will cause unwanted process terminated
 #define REM_VIRTUAL_WARN(CategoryName, ...) \
-	{ \
-		UE_LOGF(CategoryName, Error, "Frame:%d Called a virtual function which is not implemented (%hs)", ::GFrameNumber, REM_FUNCTION_LINE_FORMATED); \
-		__VA_ARGS__ \
-	}
+    { \
+        UE_LOGF(CategoryName, Error, "Frame:%d Called a virtual function which is not implemented (%hs)", ::GFrameNumber, REM_FUNCTION_LINE_FORMATED); \
+        __VA_ARGS__ \
+    }
 
 #else
 

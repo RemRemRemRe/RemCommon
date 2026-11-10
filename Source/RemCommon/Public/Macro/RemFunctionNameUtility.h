@@ -8,22 +8,22 @@
 
 #define REM_FUNCTION_SIGNATURE_HELPER() REM_FUNCTION_SIGNATURE
 #define REM_FUNCTION_NAME_VIEW \
-	( \
-		[]() constexpr noexcept -> std::string_view \
-		{ \
-			return Rem::Private::TFunctionNameParser<__COUNTER__>::ParseSignature(REM_FUNCTION_SIGNATURE_HELPER()); \
-		}() \
-	)
+    ( \
+        []() constexpr noexcept -> std::string_view \
+        { \
+            return Rem::Private::TFunctionNameParser<__COUNTER__>::ParseSignature(REM_FUNCTION_SIGNATURE_HELPER()); \
+        }() \
+    )
 
 #if defined(__GNUC__) || defined(__clang__)
 
 #define REM_FUNCTION_SIGNATURE __PRETTY_FUNCTION__
 #define REM_FUNCTION_NAME \
-	[]() \
-	{ \
-		auto View = REM_FUNCTION_NAME_VIEW; \
-		return View.data(); \
-	}()
+    []() \
+    { \
+        auto View = REM_FUNCTION_NAME_VIEW; \
+        return View.data(); \
+    }()
 
 #elif defined(_MSC_VER)
 
