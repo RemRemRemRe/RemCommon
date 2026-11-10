@@ -3,12 +3,29 @@
 #pragma once
 
 #include "Containers/ArrayView.h"
+#include "StructUtils/StructView.h"
 #include "UObject/Interface.h"
 
 #include "RemTagEventSourceInterface.generated.h"
 
 struct FGameplayTagContainer;
 struct FGameplayTag;
+
+namespace Rem::GameplayTag
+{
+/**
+ * one event's data: a group of struct views
+ *
+ * the views are valid only while the callback runs - they point at memory the sender owns - so a consumer that
+ * keeps the data copies it. A view never owns its memory: reading a typed datum inside a view is a read, not a copy.
+ *
+ * a consumer that looks for one type walks the views with Rem::Struct::FindConstStructView (Struct/RemInstancedStructStatics.inl)
+ */
+struct FEventPayload
+{
+    TConstArrayView<FStructView> Views;
+};
+}
 
 /**
  * generic gameplay tag event source
@@ -80,4 +97,40 @@ public:
 
     /** unregister every tag event this source remembers */
     virtual void UnregisterAllTagEvents() = 0;
+
+    /**
+     * payload channel: the same events as the tag channel above, delivered with their data
+     *
+     * the payload channel is part of the source contract: a source that can deliver payload events implements
+     * the three methods below, and only such a source is a presentation bus
+     *
+     * the payload arrives by reference and is valid only while that call runs (@see Rem::GameplayTag::FEventPayload)
+     *
+     * a payload listener outlives an ability system swap: SetAbilitySystem rebinds it to the new system
+     * instead of dropping it. The tag channel does the opposite - its bindings are cleared unconditionally -
+     * because a cleared payload listener would silently lose the presentation state it accumulated across
+     * events, while a re-registered tag listener only observes tag counts again
+     */
+    using FPayloadEventDelegate = TMulticastDelegate<void
+        (FGameplayTag, const Rem::GameplayTag::FEventPayload&)>::FDelegate;
+
+    /**
+     * register a payload listener for Tag and, on a source that supports the channel, subscribe to the
+     * ability system for it
+     *
+     * the returned handle identifies the bound delegate instance, not one registration, in the same way
+     * as the tag channel: registering the same instance for several tags yields the same handle, so pass
+     * the tag back on unregister to pick which binding to remove
+     */
+    [[nodiscard]] virtual FDelegateHandle RegisterPayloadEvent(const FGameplayTag& Tag,
+        const FPayloadEventDelegate& Delegate) = 0;
+
+    /**
+     * unregister one payload registration: the tag selects the binding when a single delegate
+     * instance was registered for several tags
+     */
+    virtual void UnregisterPayloadEvent(const FGameplayTag& Tag, FDelegateHandle Handle) = 0;
+
+    /** unregister every payload listener and every subscription this source holds */
+    virtual void UnregisterAllPayloadEvents() = 0;
 };

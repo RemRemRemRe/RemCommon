@@ -46,6 +46,12 @@ public:
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) override;
     virtual void UnregisterTagEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
     virtual void UnregisterAllTagEvents() override;
+
+    // this worker carries the tag channel only, so it answers the payload channel with "no channel"
+    [[nodiscard]] virtual FDelegateHandle RegisterPayloadEvent(const FGameplayTag& Tag,
+        const FPayloadEventDelegate& Delegate) override;
+    virtual void UnregisterPayloadEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
+    virtual void UnregisterAllPayloadEvents() override;
 };
 
 /**
@@ -172,6 +178,12 @@ public:
     virtual FDelegateHandle RegisterTagEvent(const FGameplayTag& Tag, const FEventDelegate& Delegate) override;
     virtual void UnregisterTagEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
     virtual void UnregisterAllTagEvents() override;
+
+    // this component carries the tag channel only, so it answers the payload channel with "no channel"
+    [[nodiscard]] virtual FDelegateHandle RegisterPayloadEvent(const FGameplayTag& Tag,
+        const FPayloadEventDelegate& Delegate) override;
+    virtual void UnregisterPayloadEvent(const FGameplayTag& Tag, FDelegateHandle Handle) override;
+    virtual void UnregisterAllPayloadEvents() override;
 };
 
 /**
@@ -252,6 +264,20 @@ inline void URemTestBareTagEventWorker::UnregisterAllTagEvents()
 {
     Events.Reset();
     TagToHandles.Reset();
+}
+
+inline FDelegateHandle URemTestBareTagEventWorker::RegisterPayloadEvent(const FGameplayTag&,
+    const FPayloadEventDelegate&)
+{
+    return {};
+}
+
+inline void URemTestBareTagEventWorker::UnregisterPayloadEvent(const FGameplayTag&, const FDelegateHandle)
+{
+}
+
+inline void URemTestBareTagEventWorker::UnregisterAllPayloadEvents()
+{
 }
 
 inline UObject* URemTestTagEventWorker::GetLifetimeBoundOwner() const
@@ -355,6 +381,20 @@ inline void URemTestTagEventSourceComponent::UnregisterTagEvent(const FGameplayT
 inline void URemTestTagEventSourceComponent::UnregisterAllTagEvents()
 {
     Worker->UnregisterAllTagEvents();
+}
+
+inline FDelegateHandle URemTestTagEventSourceComponent::RegisterPayloadEvent(const FGameplayTag&,
+    const FPayloadEventDelegate&)
+{
+    return {};
+}
+
+inline void URemTestTagEventSourceComponent::UnregisterPayloadEvent(const FGameplayTag&, const FDelegateHandle)
+{
+}
+
+inline void URemTestTagEventSourceComponent::UnregisterAllPayloadEvents()
+{
 }
 
 inline bool FRemTestCustomHandle::IsValid() const
